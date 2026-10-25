@@ -1,6 +1,6 @@
-# tintloom.github.io
+# swordfishapps.github.io
 
-The website for [Tintloom](https://github.com/Tintloom): open-source Android apps that take on your
+The website for [Swordfish](https://github.com/Swordfish): open-source Android apps that take on your
 wallpaper's colours with Material You.
 
 A single static page. Colours are generated with Google's

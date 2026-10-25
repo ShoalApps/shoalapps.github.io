@@ -3,49 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tintloom</title>
-<meta name="description" content="Tintloom: open-source Android apps that take on your wallpaper's colours with Material You.">
-<meta name="theme-color" content="#8b4a61">
+<title>Swordfish</title>
+<meta name="description" content="Swordfish: open-source Android apps that take on your wallpaper's colours with Material You.">
+<meta name="theme-color" content="#36618e">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  /* Fallback palette (Tintloom mauve, #7D5260). JavaScript replaces these with a full Material You scheme. */
+  /* Fallback palette (Swordfish blue, #1F5F99). JavaScript replaces these with a full Material You scheme. */
   :root {
     color-scheme: light dark;
-    --primary: #8b4a61; --on-primary: #ffffff;
-    --primary-container: #ffd9e3; --on-primary-container: #6f334a;
-    --secondary-container: #ffd9e3; --on-secondary-container: #5a3f48;
-    --tertiary-container: #ffdcc2; --on-tertiary-container: #623f20;
-    --surface: #fff8f8; --on-surface: #22191c; --on-surface-variant: #514347;
-    --surface-container-low: #fff0f2; --surface-container: #faeaed;
-    --surface-container-high: #f4e4e7; --surface-container-highest: #efdfe2;
-    --outline: #837377; --outline-variant: #d5c2c6;
+    --primary: #36618e; --on-primary: #ffffff;
+    --primary-container: #d2e4ff; --on-primary-container: #1a4975;
+    --secondary-container: #d7e3f8; --on-secondary-container: #3b4858;
+    --tertiary-container: #f3daff; --on-tertiary-container: #523f5f;
+    --surface: #f8f9ff; --on-surface: #191c20; --on-surface-variant: #43474e;
+    --surface-container-low: #f2f3fa; --surface-container: #eceef4;
+    --surface-container-high: #e6e8ee; --surface-container-highest: #e1e2e8;
+    --outline: #70757c; --outline-variant: #c3c6cf;
     --spring: cubic-bezier(.34, 1.56, .64, 1);
     --emphasized: cubic-bezier(.2, 0, 0, 1);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-        --primary: #ffb0ca; --on-primary: #541d33;
-      --primary-container: #6f334a; --on-primary-container: #ffd9e3;
-      --secondary-container: #5a3f48; --on-secondary-container: #ffd9e3;
-      --tertiary-container: #623f20; --on-tertiary-container: #ffdcc2;
-      --surface: #191114; --on-surface: #efdfe2; --on-surface-variant: #d5c2c6;
-      --surface-container-low: #22191c; --surface-container: #261d20;
-      --surface-container-high: #31282a; --surface-container-highest: #3c3235;
-      --outline: #9e8c90; --outline-variant: #514347;
+        --primary: #a1cafd; --on-primary: #003259;
+      --primary-container: #1a4975; --on-primary-container: #d2e4ff;
+      --secondary-container: #3b4858; --on-secondary-container: #d7e3f8;
+      --tertiary-container: #523f5f; --on-tertiary-container: #f3daff;
+      --surface: #111418; --on-surface: #e1e2e8; --on-surface-variant: #c3c6cf;
+      --surface-container-low: #191c20; --surface-container: #1d2024;
+      --surface-container-high: #272a2f; --surface-container-highest: #32353a;
+      --outline: #8d9199; --outline-variant: #43474e;
     }
   }
   :root[data-theme="dark"] {
-      --primary: #ffb0ca; --on-primary: #541d33;
-      --primary-container: #6f334a; --on-primary-container: #ffd9e3;
-      --secondary-container: #5a3f48; --on-secondary-container: #ffd9e3;
-      --tertiary-container: #623f20; --on-tertiary-container: #ffdcc2;
-      --surface: #191114; --on-surface: #efdfe2; --on-surface-variant: #d5c2c6;
-      --surface-container-low: #22191c; --surface-container: #261d20;
-      --surface-container-high: #31282a; --surface-container-highest: #3c3235;
-      --outline: #9e8c90; --outline-variant: #514347;
+      --primary: #a1cafd; --on-primary: #003259;
+      --primary-container: #1a4975; --on-primary-container: #d2e4ff;
+      --secondary-container: #3b4858; --on-secondary-container: #d7e3f8;
+      --tertiary-container: #523f5f; --on-tertiary-container: #f3daff;
+      --surface: #111418; --on-surface: #e1e2e8; --on-surface-variant: #c3c6cf;
+      --surface-container-low: #191c20; --surface-container: #1d2024;
+      --surface-container-high: #272a2f; --surface-container-highest: #32353a;
+      --outline: #8d9199; --outline-variant: #43474e;
   }
 
   * { box-sizing: border-box; }
@@ -132,6 +132,7 @@
   .card .icon { display: block; width: 64px; height: 64px; margin-bottom: 16px; }
   .card .icon path.bg { fill: var(--primary-container); }
   .card .icon path.fg { fill: var(--on-primary-container); }
+  .card .icon path.bg-ink { fill: var(--primary-container); }
   .card.soon .icon path.bg { fill: var(--surface-container-highest); }
   .card.soon .icon path.fg { fill: var(--on-surface-variant); }
   .card h3 { margin: 0 0 6px; font-size: 24px; }
@@ -193,12 +194,12 @@
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Tintloom</a>
+    <a class="brand" href="#"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Swordfish</a>
     <nav class="links">
       <a href="#apps">Apps</a>
       <a href="#credits">Credits</a>
       <a href="#legal">Legal</a>
-      <a href="https://github.com/Tintloom">GitHub</a>
+      <a href="https://github.com/Swordfish">GitHub</a>
     </nav>
   </div>
 </header>
@@ -207,13 +208,13 @@
   <div class="hero">
     <div>
       <h1>Your apps, in <em>your colours</em>.</h1>
-      <p class="lede">Tintloom makes open-source Android apps that take on your wallpaper's colours with Material You. No ads, no tracking.</p>
+      <p class="lede">Swordfish makes open-source Android apps that take on your wallpaper's colours with Material You. No ads, no tracking.</p>
       <div class="row">
-        <a class="btn filled" href="https://github.com/Tintloom/video/releases/latest/download/TintloomVideo.apk">
+        <a class="btn filled" href="https://github.com/SwordfishApps/video/releases/latest/download/SwordfishVideo.apk">
           <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>
-          Get Tintloom Video
+          Get Swordfish Video
         </a>
-        <a class="btn tonal" href="https://github.com/Tintloom/video">View the code</a>
+        <a class="btn tonal" href="https://github.com/SwordfishApps/video">View the code</a>
       </div>
       <div class="tint" role="group" aria-label="Try a colour">
         <span>Try a wallpaper colour:</span>
@@ -235,38 +236,38 @@
     <p class="sub">Each one is built with Jetpack Compose and Material 3 Expressive, and is free software under the GPL.</p>
     <div class="apps">
       <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2"><path class="bg cookie9"/><path class="fg" d="M-.2 -.32 L.34 0 L-.2 .32 Z"/></svg>
+        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Video"><path class="bg cookie9"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M45,51.6 L52.6,55 L45,58.4 Z"/></g></g></svg>
         <span class="chip">Available now</span>
-        <h3>Tintloom Video</h3>
+        <h3>Swordfish Video</h3>
         <p>Watch YouTube videos with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Works on phones, tablets, Chromebooks and TVs.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/Tintloom/video/releases/latest/download/TintloomVideo.apk">Download APK</a></div>
+        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/video/releases/latest/download/SwordfishVideo.apk">Download APK</a></div>
       </div>
       <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2"><path class="bg cookie12"/><path class="fg" d="M-.3 -.36 h.6 a.08 .08 0 0 1 .08 .08 v.56 a.08 .08 0 0 1 -.08 .08 h-.6 a.08 .08 0 0 1 -.08 -.08 v-.56 a.08 .08 0 0 1 .08 -.08 z M-.08 -.16 v.32 l.26 -.16 z" fill-rule="evenodd"/></svg>
+        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Clips"><path class="bg cookie12"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M42.5,53.4 h10.5 v5.4 h-10.5 z M42.3,51.1 l10.2,-1.6 l0.4,2 l-10.2,1.6 z"/></g></g></svg>
         <span class="chip">Early release</span>
-        <h3>Tintloom Clips</h3>
+        <h3>Swordfish Clips</h3>
         <p>YouTube Shorts, TikTok and Instagram Reels in one app, each in its own tab and signed in with your own accounts. Shorts play in 1080p with daily limits and three layouts.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/Tintloom/clips/releases/latest/download/TintloomClips.apk">Download APK</a></div>
+        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/clips/releases/latest/download/SwordfishClips.apk">Download APK</a></div>
       </div>
       <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2"><path class="bg cookie6"/><path class="fg" d="M-.38 -.3 h.76 a.1 .1 0 0 1 .1 .1 v.38 a.1 .1 0 0 1 -.1 .1 h-.42 l-.22 .18 v-.18 h-.12 a.1 .1 0 0 1 -.1 -.1 v-.38 a.1 .1 0 0 1 .1 -.1 z"/></svg>
+        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Social"><path class="bg cookie6"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M42.6,51.4 h9 a1.6,1.6 0 0 1 1.6,1.6 v3.4 a1.6,1.6 0 0 1 -1.6,1.6 h-4.6 l-2.6,2.2 v-2.2 h-1.8 a1.6,1.6 0 0 1 -1.6,-1.6 v-3.4 a1.6,1.6 0 0 1 1.6,-1.6 z"/></g></g></svg>
         <span class="chip">Available now</span>
-        <h3>Tintloom Social</h3>
+        <h3>Swordfish Social</h3>
         <p>A Material You client for Bluesky, with mu-style formatting: code blocks with syntax highlighting, inline code, bold and italic. Browse signed out, or sign in with an app password.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/Tintloom/social/releases/latest/download/TintloomSocial.apk">Download APK</a></div>
+        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/social/releases/latest/download/SwordfishSocial.apk">Download APK</a></div>
       </div>
       <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2"><path class="bg cookie9"/><path class="fg" d="M-.06 -.42 h.12 v.4 h-.12 z M-.24 -.06 h.48 l-.24 .26 z M-.38 .2 h.12 v.12 h.52 v-.12 h.12 v.16 a.08 .08 0 0 1 -.08 .08 h-.6 a.08 .08 0 0 1 -.08 -.08 z"/></svg>
+        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Manager"><path class="bg cookie9"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M46.6,50.6 h2.8 v4.4 h2.6 l-4,4 l-4,-4 h2.6 z"/></g></g></svg>
         <span class="chip">New</span>
-        <h3>Tintloom Manager</h3>
-        <p>Installs and updates every Tintloom app from one place, silently in the background with Shizuku or root. It only installs apps signed by Tintloom. Start here.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/Tintloom/manager/releases/latest/download/TintloomManager.apk">Download APK</a></div>
+        <h3>Swordfish Manager</h3>
+        <p>Installs and updates every Swordfish app from one place, silently in the background with Shizuku or root. It only installs apps signed by Swordfish. Start here.</p>
+        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/manager/releases/latest/download/SwordfishManager.apk">Download APK</a></div>
       </div>
     </div>
   </section>
 
   <section id="video">
-    <h2>Tintloom Video</h2>
+    <h2>Swordfish Video</h2>
     <p class="sub">Everything you'd expect from a video app, without the parts you wouldn't choose.</p>
     <div class="features">
       <div class="feature"><b>Material You everywhere</b><span>The app, its icon and its launch screen follow your wallpaper, in light and dark.</span></div>
@@ -283,7 +284,7 @@
 
   <section id="credits">
     <h2>Credits</h2>
-    <p class="sub">The people who make Tintloom, turning together. Updated from GitHub every day.</p>
+    <p class="sub">The people who make Swordfish, turning together. Updated from GitHub every day.</p>
     <div class="machine" id="machine"></div>
     <p class="names" id="names"></p>
     <p class="muted" style="margin-top:32px">Built on the shoulders of
@@ -302,16 +303,16 @@
     <div class="legal">
       <article id="licence">
         <h3>Licence</h3>
-        <p>Tintloom apps are free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a>. You can use, study, share and change them. Anything you distribute that is built from them must stay under the same licence, with its source code available. They come with no warranty.</p>
+        <p>Swordfish apps are free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a>. You can use, study, share and change them. Anything you distribute that is built from them must stay under the same licence, with its source code available. They come with no warranty.</p>
       </article>
       <article id="privacy">
         <h3>Privacy</h3>
-        <p>Tintloom has no servers, no analytics and no ads. Your settings, history and subscriptions stay on your phone.</p>
-        <p>To work, the apps talk directly to the services they show. Tintloom Video contacts YouTube, and, only while those features are turned on, sends the ID of the video you're watching to SponsorBlock, DeArrow and Return YouTube Dislike. If you sign in, your YouTube cookies are stored only on your phone and sent only to YouTube. Once a day the app asks GitHub whether a newer version has been released; you can turn that off in Settings. With Tintloom Manager installed, the Manager does this instead: it contacts only GitHub, to check for and download Tintloom releases.</p>
+        <p>Swordfish has no servers, no analytics and no ads. Your settings, history and subscriptions stay on your phone.</p>
+        <p>To work, the apps talk directly to the services they show. Swordfish Video contacts YouTube, and, only while those features are turned on, sends the ID of the video you're watching to SponsorBlock, DeArrow and Return YouTube Dislike. If you sign in, your YouTube cookies are stored only on your phone and sent only to YouTube. Once a day the app asks GitHub whether a newer version has been released; you can turn that off in Settings. With Swordfish Manager installed, the Manager does this instead: it contacts only GitHub, to check for and download Swordfish releases.</p>
       </article>
       <article id="disclaimer">
         <h3>Not affiliated</h3>
-        <p>Tintloom is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, TikTok, Bluesky or any other company whose service an app connects to. All trademarks belong to their owners and are used only to describe what the apps work with.</p>
+        <p>Swordfish is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, TikTok, Bluesky or any other company whose service an app connects to. All trademarks belong to their owners and are used only to describe what the apps work with.</p>
         <p>You are responsible for using the apps in line with the laws where you live and the terms of the services you use.</p>
       </article>
     </div>
@@ -320,7 +321,7 @@
 
 <footer>
   <div class="wrap">
-    Tintloom · free software under the GPL-3.0 · <a href="https://github.com/Tintloom">github.com/Tintloom</a>
+    Swordfish · free software under the GPL-3.0 · <a href="https://github.com/Swordfish">github.com/Swordfish</a>
   </div>
 </footer>
 
@@ -347,7 +348,7 @@
     }
     return d + "Z";
   }
-  // The Tintloom mark: two threads woven into a T, the stem crossing over the bar.
+  // The Swordfish mark: two threads woven into a T, the stem crossing over the bar.
   // Colours come from CSS variables, so the mark can sit on any of the theme's surfaces.
   const WOVEN_T = '<rect x="-.54" y="-.42" width="1.08" height=".22" rx=".11" style="fill: var(--t-bar, var(--on-primary))"/>' +
     '<rect x="-.11" y="-.52" width=".22" height="1.08" rx=".11" stroke-width=".06" paint-order="stroke" ' +
@@ -380,21 +381,21 @@
   requestAnimationFrame(frame);
 
   // Material You: build a full colour scheme from one seed colour, like Android does from a wallpaper.
-  const seeds = ["#7d5260", "#6750a4", "#00695f", "#b3261e", "#386a20", "#0061a4", "#8b5000"];
+  const seeds = ["#1f5f99", "#6750a4", "#00695f", "#b3261e", "#386a20", "#0061a4", "#8b5000"];
   const swatches = document.getElementById("swatches");
-  let seed = localStorageGet("tintloom-seed") || seeds[0];
-  let forced = localStorageGet("tintloom-theme"); // "light", "dark" or null for system
+  let seed = localStorageGet("swordfish-seed") || seeds[0];
+  let forced = localStorageGet("swordfish-theme"); // "light", "dark" or null for system
   seeds.forEach(s => {
     const b = document.createElement("button");
     b.className = "swatch"; b.style.background = s; b.type = "button";
     b.setAttribute("aria-label", "Use colour " + s);
-    b.onclick = () => { seed = s; localStorageSet("tintloom-seed", s); apply(); };
+    b.onclick = () => { seed = s; localStorageSet("swordfish-seed", s); apply(); };
     swatches.appendChild(b);
   });
   document.getElementById("theme-toggle").onclick = () => {
     const dark = forced ? forced === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
     forced = dark ? "light" : "dark";
-    localStorageSet("tintloom-theme", forced);
+    localStorageSet("swordfish-theme", forced);
     apply();
   };
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => apply());
@@ -445,9 +446,9 @@
     crew = [{ login: "calamityCocoa", avatar: "https://github.com/calamityCocoa.png", url: "https://github.com/calamityCocoa", contributions: 1 }];
   }
   const parts = [
-    { login: "Tintloom", url: "https://github.com/Tintloom", teeth: 18, org: true },
+    { login: "Swordfish", url: "https://github.com/Swordfish", teeth: 18, org: true },
     ...crew.map(c => ({ ...c, teeth: c.contributions >= 100 ? 15 : 12 })),
-    { login: "Your gear here: help build Tintloom", url: "https://github.com/Tintloom/video", teeth: 9, ghost: true },
+    { login: "Your gear here: help build Swordfish", url: "https://github.com/SwordfishApps/video", teeth: 9, ghost: true },
   ];
   document.getElementById("names").textContent = crew.map(c => c.login).join(" · ");
 
@@ -555,7 +556,7 @@
       if (g.ghost) {
         group.innerHTML = `<path class="ghost-rim" d="${d}"/><text class="ghost-plus">+</text>`;
       } else if (g.org) {
-        // The drive gear is the Tintloom mark, drawn in the page's Material You colours.
+        // The drive gear is the Swordfish mark, drawn in the page's Material You colours.
         const k = g.R * .62;
         group.innerHTML = `<path class="org-gear" d="${d}"/><g transform="scale(${(g.R * .9).toFixed(2)})">${WOVEN_T}</g><path class="rim" d="${d}"/>`;
       } else {
