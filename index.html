@@ -148,8 +148,11 @@
   .machine svg { display: block; width: 100%; height: 100%; overflow: visible; }
   .machine a { cursor: pointer; }
   .machine a:focus-visible { outline: none; }
-  .machine .rim { fill: none; stroke: var(--outline-variant); stroke-width: 1.5; transition: stroke .3s; }
+  .machine .rim { fill: none; stroke: transparent; stroke-width: 3; transition: stroke .3s; }
   .machine a:hover .rim, .machine a:focus-visible .rim { stroke: var(--primary); stroke-width: 3; }
+  .machine .halo { fill: var(--primary-container); opacity: .55; transition: fill .6s; }
+  .machine .gear { opacity: 0; transform: translateY(14px); transition: opacity .5s var(--emphasized), transform .7s var(--emphasized); }
+  .machine.shown .gear { opacity: 1; transform: none; }
   .machine .org-gear { fill: var(--primary-container); transition: fill .6s; }
   .machine .org-cookie { fill: var(--primary); transition: fill .6s; }
   .machine .org-play { fill: var(--on-primary); stroke: var(--on-primary); stroke-width: .08; stroke-linejoin: round; transition: fill .6s; }
@@ -424,9 +427,9 @@
     crew = [{ login: "calamityCocoa", avatar: "https://github.com/calamityCocoa.png", url: "https://github.com/calamityCocoa", contributions: 1 }];
   }
   const parts = [
-    { login: "Tintloom", url: "https://github.com/Tintloom", teeth: 20, org: true },
-    ...crew.map(c => ({ ...c, teeth: Math.max(11, Math.min(17, 11 + Math.round(Math.log2(c.contributions + 1) * 1.5))) })),
-    { login: "Your gear here: help build Tintloom", url: "https://github.com/Tintloom/video", teeth: 10, ghost: true },
+    { login: "Tintloom", url: "https://github.com/Tintloom", teeth: 18, org: true },
+    ...crew.map(c => ({ ...c, teeth: c.contributions >= 100 ? 15 : 12 })),
+    { login: "Your gear here: help build Tintloom", url: "https://github.com/Tintloom/video", teeth: 9, ghost: true },
   ];
   document.getElementById("names").textContent = crew.map(c => c.login).join(" · ");
 
@@ -434,24 +437,27 @@
   const SVGNS = "http://www.w3.org/2000/svg";
   const TAU = Math.PI * 2;
 
+  // Material 3's Cookie shapes: a rounded star whose lobes are broad and soft, valleys a little tighter.
+  // Lobe k is centred on angle k * 2π/n, so the same tooth-in-gap maths as real gears applies.
+  const LOBE_IN = .84, PITCH = .92; // valley radius and the meshing (pitch) radius, as fractions of the outer radius
   function gearPath(n, m) {
-    const R = m * n / 2, outer = R + m, root = R - 1.2 * m, step = TAU / n;
-    const pt = (r, a) => `${(Math.cos(a) * r).toFixed(2)} ${(Math.sin(a) * r).toFixed(2)}`;
+    const outer = (m * n / 2) / PITCH, steps = n * 24;
     let d = "";
-    for (let k = 0; k < n; k++) {
-      const c = k * step;
-      d += (k ? "L" : "M") + pt(root, c - step * .28) + "L" + pt(outer, c - step * .15) +
-           "L" + pt(outer, c + step * .15) + "L" + pt(root, c + step * .28);
-      d += `A${root.toFixed(2)} ${root.toFixed(2)} 0 0 1 ` + pt(root, c + step * .72);
+    for (let i = 0; i <= steps; i++) {
+      const a = i / steps * TAU, c = Math.cos(n * a);
+      const shaped = c >= 0 ? Math.pow(c, .85) : -Math.pow(-c, 1.1);
+      const r = outer * (LOBE_IN + (1 - LOBE_IN) * (shaped + 1) / 2);
+      d += (i ? "L" : "M") + (Math.cos(a) * r).toFixed(2) + " " + (Math.sin(a) * r).toFixed(2);
     }
     return d + "Z";
   }
+  const outerOf = (n, m) => (m * n / 2) / PITCH;
 
   // Place each gear against the one before it, winding left to right and back like a gear train.
   function place(width, m) {
-    const g = parts.map(p => ({ ...p, R: m * p.teeth / 2 }));
-    const fits = (q, upto) => g.slice(0, upto).every(o => Math.hypot(o.x - q.x, o.y - q.y) >= o.R + q.R + 2.6 * m);
-    g[0].x = g[0].R + m; g[0].y = g[0].R + m;
+    const g = parts.map(p => ({ ...p, R: m * p.teeth / 2, outer: outerOf(p.teeth, m) }));
+    const fits = (q, upto) => g.slice(0, upto).every(o => Math.hypot(o.x - q.x, o.y - q.y) >= o.outer + q.outer + 1.5 * m);
+    g[0].x = g[0].outer + m; g[0].y = g[0].outer + m;
     let heading = 0;
     for (let i = 1; i < g.length; i++) {
       const a = g[i - 1], b = g[i], dist = a.R + b.R;
@@ -459,8 +465,8 @@
       let placed = false;
       for (const turn of [wiggle, -wiggle, 0, wiggle * 2, -wiggle * 2, Math.PI / 2, -Math.PI / 2]) {
         let t = heading + turn;
-        const q = { x: a.x + Math.cos(t) * dist, y: a.y + Math.sin(t) * dist, R: b.R };
-        if (q.x - q.R - m < 0 || q.x + q.R + m > width) continue;
+        const q = { x: a.x + Math.cos(t) * dist, y: a.y + Math.sin(t) * dist, outer: b.outer };
+        if (q.x - q.outer - m < 0 || q.x + q.outer + m > width) continue;
         if (!fits(q, i - 1)) continue;
         Object.assign(b, q, { from: i - 1, contact: t });
         placed = true;
@@ -470,8 +476,8 @@
         // Out of room: drop below and head back the other way.
         heading = heading === 0 ? Math.PI : 0;
         for (const t of [Math.PI / 2, Math.PI / 2 - .5, Math.PI / 2 + .5, Math.PI / 2 - 1, Math.PI / 2 + 1]) {
-          const q = { x: a.x + Math.cos(t) * dist, y: a.y + Math.sin(t) * dist, R: b.R };
-          if (q.x - q.R - m < 0 || q.x + q.R + m > width || !fits(q, i - 1)) continue;
+          const q = { x: a.x + Math.cos(t) * dist, y: a.y + Math.sin(t) * dist, outer: b.outer };
+          if (q.x - q.outer - m < 0 || q.x + q.outer + m > width || !fits(q, i - 1)) continue;
           Object.assign(b, q, { from: i - 1, contact: t });
           placed = true;
           break;
@@ -491,13 +497,14 @@
     return g;
   }
 
-  let gears = [], svg, speed = 1, target = 1, angle = 0, last = performance.now();
+  let gears = [], svg, angle = 0, last = performance.now();
   function build() {
     const width = Math.min(machine.parentElement.clientWidth, 900);
     const m = Math.max(4, Math.min(7.5, width / 110));
     gears = place(width, m);
-    const minY = Math.min(...gears.map(g => g.y - g.R - m)), maxY = Math.max(...gears.map(g => g.y + g.R + m));
-    const minX = Math.min(...gears.map(g => g.x - g.R - m)), maxX = Math.max(...gears.map(g => g.x + g.R + m));
+    const pad = m * 3; // room for the breathing halos
+    const minY = Math.min(...gears.map(g => g.y - g.outer)) - pad, maxY = Math.max(...gears.map(g => g.y + g.outer)) + pad;
+    const minX = Math.min(...gears.map(g => g.x - g.outer)) - pad, maxX = Math.max(...gears.map(g => g.x + g.outer)) + pad;
     machine.style.width = `${maxX - minX}px`;
     machine.style.height = `${maxY - minY}px`;
     machine.innerHTML = "";
@@ -507,6 +514,17 @@
     svg.appendChild(defs);
     const tip = document.createElement("div");
     tip.className = "tip";
+    // Halos first, so they sit behind every gear like the halo behind the profile picture in the app.
+    const halos = document.createElementNS(SVGNS, "g");
+    svg.appendChild(halos);
+    gears.forEach(g => {
+      if (g.ghost) return;
+      const h = document.createElementNS(SVGNS, "path");
+      h.setAttribute("class", "halo");
+      h.setAttribute("d", gearPath(12, g.outer * 2 * PITCH / 12));
+      g.halo = h;
+      halos.appendChild(h);
+    });
     gears.forEach((g, i) => {
       const d = gearPath(g.teeth, m);
       const link = document.createElementNS(SVGNS, "a");
@@ -514,6 +532,8 @@
       link.setAttribute("aria-label", g.login);
       const group = document.createElementNS(SVGNS, "g");
       g.el = group;
+      link.setAttribute("class", "gear");
+      link.style.transitionDelay = `${i * 90}ms`;
       if (g.ghost) {
         group.innerHTML = `<path class="ghost-rim" d="${d}"/><text class="ghost-plus">+</text>`;
       } else if (g.org) {
@@ -527,7 +547,7 @@
         clip.id = `gear-${i}`;
         clip.innerHTML = `<path d="${d}"/>`;
         defs.appendChild(clip);
-        const outer = g.R + m;
+        const outer = g.outer;
         const px = Math.ceil(outer * 2 * Math.max(2, devicePixelRatio));
         const src = g.avatar.endsWith(".svg") ? g.avatar : `${g.avatar}${g.avatar.includes("?") ? "&" : "?"}s=${px}`;
         group.innerHTML = `<image href="${src}" x="${-outer}" y="${-outer}" width="${outer * 2}" height="${outer * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#gear-${i})"/><path class="rim" d="${d}"/>`;
@@ -537,8 +557,10 @@
         tip.textContent = g.login;
         const box = svg.viewBox.baseVal, scale = machine.clientWidth / box.width;
         tip.style.left = `${(g.x - box.x) * scale}px`;
-        tip.style.top = `${(g.y - g.R - m - box.y) * scale}px`;
+        tip.style.top = `${(g.y - g.outer - box.y) * scale}px`;
         tip.classList.add("show");
+        // A springy extra turn of this gear, like tapping the picture in the app; the rest follow by ratio.
+        kick += TAU * g.teeth / gears[0].teeth;
       });
       link.addEventListener("pointerleave", () => tip.classList.remove("show"));
       link.addEventListener("focus", () => link.dispatchEvent(new Event("pointerenter")));
@@ -549,24 +571,36 @@
     draw();
   }
 
-  function draw() {
+  let kick = 0, kickPos = 0, kickVel = 0;
+  function draw(now = performance.now()) {
+    const breath = Math.sin(now / 2600 * Math.PI) * .04;
     for (const g of gears) {
       // The drive gear turns at `angle`; every other gear follows by its tooth ratio.
-      const a = g.phase + g.dir * angle * (gears[0].teeth / g.teeth);
+      const a = g.phase + g.dir * (angle + kickPos) * (gears[0].teeth / g.teeth);
       g.el.setAttribute("transform", `translate(${g.x.toFixed(2)} ${g.y.toFixed(2)}) rotate(${(a * 180 / Math.PI).toFixed(3)})`);
+      // The halo turns slowly the other way and breathes, out of step with its neighbours.
+      if (g.halo) {
+        const h = -g.dir * now / 32000 * TAU + g.phase;
+        const b = 1.06 + breath * g.dir;
+        g.halo.setAttribute("transform", `translate(${g.x.toFixed(2)} ${g.y.toFixed(2)}) rotate(${(h * 180 / Math.PI).toFixed(2)}) scale(${b.toFixed(4)})`);
+      }
     }
   }
-  // Hovering the machine spins it up; leaving lets it ease back down.
-  machine.addEventListener("pointerenter", () => target = 4);
-  machine.addEventListener("pointerleave", () => target = 1);
   function tick(now) {
     const dt = Math.min(64, now - last) / 1000;
     last = now;
-    speed += (target - speed) * Math.min(1, dt * 3);
-    angle += dt * 0.25 * speed;
-    draw();
+    angle += dt * 0.22;
+    // Material's spatial spring (stiffness 380, damping ratio 0.8) settles the extra turn.
+    const k = 380, c = 2 * .8 * Math.sqrt(k);
+    kickVel += ((kick - kickPos) * k - kickVel * c) * dt;
+    kickPos += kickVel * dt;
+    draw(now);
     requestAnimationFrame(tick);
   }
+  // Gears fade in and ease into view, one after another, when the credits scroll into sight.
+  new IntersectionObserver((entries, obs) => {
+    if (entries.some(e => e.isIntersecting)) { machine.classList.add("shown"); obs.disconnect(); }
+  }, { threshold: .2 }).observe(machine);
   build();
   if (!still) requestAnimationFrame(tick);
   let resizeTimer;
