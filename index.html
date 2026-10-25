@@ -143,35 +143,24 @@
   .feature b { display: block; margin-bottom: 4px; font-size: 17px; }
   .feature span { color: var(--on-surface-variant); font-size: 15px; }
 
-  /* Credits: contributors as interlocking cogs */
-  .gears { position: relative; margin: 8px auto 0; }
-  .gear { position: absolute; display: block; text-decoration: none; color: var(--on-surface); }
-  .gear .cog { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
-    transform: rotate(var(--phase)); animation: spin 18s linear infinite; }
-  .gear .cog path { fill: var(--gear-fill); transition: fill .6s; }
-  .gear .cog circle { fill: var(--surface); transition: fill .6s; }
-  .gear img, .gear .plus {
-    position: absolute; left: 21%; top: 21%; width: 58%; height: 58%; border-radius: 50%;
-    object-fit: cover; background: var(--surface-container-high);
-    /* No transforms on the picture: scaling it mid-animation makes the browser stretch a blurry snapshot. */
-    box-shadow: 0 0 0 0 var(--primary);
-    transition: box-shadow .35s var(--spring);
-  }
-  .gear .plus { display: grid; place-items: center; font-size: 34px; font-weight: 700; color: var(--on-surface-variant); background: none; }
-  .gear.ghost .cog path { fill: none; stroke: var(--outline); stroke-width: .035; stroke-dasharray: .09 .07; }
-  .gear:hover img, .gear:focus-visible img { box-shadow: 0 0 0 4px var(--primary); }
-  .gear:hover .plus, .gear:focus-visible .plus { color: var(--primary); }
-  .gear .tip {
-    position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, 6px) scale(.9); opacity: 0;
+  /* Credits: each contributor's picture is a gear, and the gears mesh into one machine */
+  .machine { position: relative; margin: 0 auto; }
+  .machine svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .machine a { cursor: pointer; }
+  .machine a:focus-visible { outline: none; }
+  .machine .rim { fill: none; stroke: var(--outline-variant); stroke-width: 1.5; transition: stroke .3s; }
+  .machine a:hover .rim, .machine a:focus-visible .rim { stroke: var(--primary); stroke-width: 3; }
+  .machine .org-gear { fill: var(--primary-container); transition: fill .6s; }
+  .machine .org-cookie { fill: var(--primary); transition: fill .6s; }
+  .machine .org-play { fill: var(--on-primary); stroke: var(--on-primary); stroke-width: .08; stroke-linejoin: round; transition: fill .6s; }
+  .machine .ghost-rim { fill: none; stroke: var(--outline); stroke-width: 2; stroke-dasharray: 6 5; }
+  .machine .ghost-plus { fill: var(--on-surface-variant); font: 700 34px "Google Sans Flex", sans-serif; text-anchor: middle; dominant-baseline: central; }
+  .machine .tip {
+    position: absolute; transform: translate(-50%, -100%) scale(.9); opacity: 0; pointer-events: none;
     background: var(--on-surface); color: var(--surface); font-size: 14px; font-weight: 600; white-space: nowrap;
-    padding: 6px 12px; border-radius: 12px; pointer-events: none; z-index: 2;
-    transition: opacity .2s, transform .35s var(--spring);
+    padding: 6px 12px; border-radius: 12px; transition: opacity .2s, transform .35s var(--spring); z-index: 2;
   }
-  .gear:hover .tip, .gear:focus-visible .tip { opacity: 1; transform: translate(-50%, -4px) scale(1); }
-  @keyframes spin {
-    from { transform: rotate(var(--phase)); }
-    to { transform: rotate(calc(var(--phase) + var(--dir) * 360deg)); }
-  }
+  .machine .tip.show { opacity: 1; transform: translate(-50%, calc(-100% - 6px)) scale(1); }
   .names { margin-top: 24px; color: var(--on-surface-variant); font-size: 15px; text-align: center; }
   .muted { color: var(--on-surface-variant); }
 
@@ -282,7 +271,7 @@
   <section id="credits">
     <h2>Credits</h2>
     <p class="sub">The people who make Tintloom, turning together. Updated from GitHub every day.</p>
-    <div class="gears" id="gears" role="list" aria-label="Contributors"></div>
+    <div class="machine" id="machine"></div>
     <p class="names" id="names"></p>
     <p class="muted" style="margin-top:32px">Built on the shoulders of
       <a href="https://github.com/TeamNewPipe/NewPipeExtractor">NewPipeExtractor</a>,
@@ -426,76 +415,162 @@
   }
   apply();
 
-  // Credits as clockwork. contributors.json is written daily by a GitHub Action.
-  const TEETH = 12;
-  const STEP = Math.PI * 2 / TEETH;
-  function gearPath() {
-    // Each tooth is a trapezoid centred on k * STEP; gaps sit half a step between them.
-    const outer = 1, root = .8;
-    let d = "";
-    const pt = (r, a) => `${(Math.cos(a) * r).toFixed(4)} ${(Math.sin(a) * r).toFixed(4)}`;
-    for (let k = 0; k < TEETH; k++) {
-      const c = k * STEP;
-      d += (k ? "L" : "M") + pt(root, c - STEP * .27) + "L" + pt(outer, c - STEP * .16) +
-           "L" + pt(outer, c + STEP * .16) + "L" + pt(root, c + STEP * .27);
-      d += `A${root} ${root} 0 0 1 ` + pt(root, c + STEP * .73);
-    }
-    return d + "Z";
-  }
-  const GEAR = gearPath();
-  const fills = ["var(--primary-container)", "var(--tertiary-container)", "var(--secondary-container)"];
-
+  // Credits as a machine: every gear is a contributor's picture cut into a cog.
+  // All gears share one tooth size (module), so any two can mesh; bigger gears have more teeth and turn slower.
   let crew = [];
   try {
     crew = await (await fetch("contributors.json", { cache: "no-cache" })).json();
   } catch {
-    crew = [{ login: "calamityCocoa", avatar: "https://github.com/calamityCocoa.png?size=160", url: "https://github.com/calamityCocoa", contributions: 0 }];
+    crew = [{ login: "calamityCocoa", avatar: "https://github.com/calamityCocoa.png", url: "https://github.com/calamityCocoa", contributions: 1 }];
   }
-  const items = [
-    { login: "Tintloom", avatar: "logo.svg", url: "https://github.com/Tintloom", org: true },
-    ...crew,
-    { login: "Your gear here: help build Tintloom", url: "https://github.com/Tintloom/video", ghost: true },
+  const parts = [
+    { login: "Tintloom", url: "https://github.com/Tintloom", teeth: 20, org: true },
+    ...crew.map(c => ({ ...c, teeth: Math.max(11, Math.min(17, 11 + Math.round(Math.log2(c.contributions + 1) * 1.5))) })),
+    { login: "Your gear here: help build Tintloom", url: "https://github.com/Tintloom/video", teeth: 10, ghost: true },
   ];
   document.getElementById("names").textContent = crew.map(c => c.login).join(" · ");
 
-  const box = document.getElementById("gears");
-  function layout() {
-    const width = box.parentElement.clientWidth;
-    const size = Math.min(132, Math.max(88, width / 4));
-    const pitch = size * .9; // centres one pitch diameter apart, so the teeth interlock
-    const cols = Math.max(1, Math.min(items.length, Math.floor((width - size) / pitch) + 1));
-    const rows = Math.ceil(items.length / cols);
-    box.style.width = `${(cols - 1) * pitch + size}px`;
-    box.style.height = `${(rows - 1) * pitch + size}px`;
-    box.innerHTML = "";
-    items.forEach((it, i) => {
-      const r = Math.floor(i / cols), c = i % cols;
-      // Checkerboard: every neighbour turns the other way, half a tooth out of step.
-      const odd = (r + c) % 2 === 1;
-      const a = document.createElement("a");
-      a.className = "gear" + (it.ghost ? " ghost" : "");
-      a.href = it.url; a.setAttribute("role", "listitem");
-      a.setAttribute("aria-label", it.login);
-      a.style.cssText = `left:${c * pitch}px; top:${r * pitch}px; width:${size}px; height:${size}px;` +
-        `--dir:${odd ? -1 : 1}; --phase:${odd ? 180 / TEETH : 0}deg; --gear-fill:${fills[i % fills.length]}`;
-      a.innerHTML = `<svg class="cog" viewBox="-1 -1 2 2" aria-hidden="true"><path d="${GEAR}"/><circle r=".66"/></svg>`;
-      if (it.ghost) {
-        a.insertAdjacentHTML("beforeend", '<span class="plus" aria-hidden="true">+</span>');
-      } else {
-        const img = document.createElement("img");
-        img.src = it.org ? it.avatar : `${it.avatar}${it.avatar.includes("?") ? "&" : "?"}s=${Math.ceil(size * .58 * Math.max(2, devicePixelRatio))}`;
-        img.alt = ""; img.loading = "lazy";
-        a.appendChild(img);
-      }
-      const tip = document.createElement("span");
-      tip.className = "tip"; tip.textContent = it.login;
-      a.appendChild(tip);
-      box.appendChild(a);
-    });
+  const machine = document.getElementById("machine");
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const TAU = Math.PI * 2;
+
+  function gearPath(n, m) {
+    const R = m * n / 2, outer = R + m, root = R - 1.2 * m, step = TAU / n;
+    const pt = (r, a) => `${(Math.cos(a) * r).toFixed(2)} ${(Math.sin(a) * r).toFixed(2)}`;
+    let d = "";
+    for (let k = 0; k < n; k++) {
+      const c = k * step;
+      d += (k ? "L" : "M") + pt(root, c - step * .28) + "L" + pt(outer, c - step * .15) +
+           "L" + pt(outer, c + step * .15) + "L" + pt(root, c + step * .28);
+      d += `A${root.toFixed(2)} ${root.toFixed(2)} 0 0 1 ` + pt(root, c + step * .72);
+    }
+    return d + "Z";
   }
-  layout();
+
+  // Place each gear against the one before it, winding left to right and back like a gear train.
+  function place(width, m) {
+    const g = parts.map(p => ({ ...p, R: m * p.teeth / 2 }));
+    const fits = (q, upto) => g.slice(0, upto).every(o => Math.hypot(o.x - q.x, o.y - q.y) >= o.R + q.R + 2.6 * m);
+    g[0].x = g[0].R + m; g[0].y = g[0].R + m;
+    let heading = 0;
+    for (let i = 1; i < g.length; i++) {
+      const a = g[i - 1], b = g[i], dist = a.R + b.R;
+      const wiggle = (i % 2 ? -1 : 1) * 0.5;
+      let placed = false;
+      for (const turn of [wiggle, -wiggle, 0, wiggle * 2, -wiggle * 2, Math.PI / 2, -Math.PI / 2]) {
+        let t = heading + turn;
+        const q = { x: a.x + Math.cos(t) * dist, y: a.y + Math.sin(t) * dist, R: b.R };
+        if (q.x - q.R - m < 0 || q.x + q.R + m > width) continue;
+        if (!fits(q, i - 1)) continue;
+        Object.assign(b, q, { from: i - 1, contact: t });
+        placed = true;
+        break;
+      }
+      if (!placed) {
+        // Out of room: drop below and head back the other way.
+        heading = heading === 0 ? Math.PI : 0;
+        for (const t of [Math.PI / 2, Math.PI / 2 - .5, Math.PI / 2 + .5, Math.PI / 2 - 1, Math.PI / 2 + 1]) {
+          const q = { x: a.x + Math.cos(t) * dist, y: a.y + Math.sin(t) * dist, R: b.R };
+          if (q.x - q.R - m < 0 || q.x + q.R + m > width || !fits(q, i - 1)) continue;
+          Object.assign(b, q, { from: i - 1, contact: t });
+          placed = true;
+          break;
+        }
+        if (!placed) Object.assign(b, { x: a.x, y: a.y + dist, from: i - 1, contact: Math.PI / 2 });
+      }
+    }
+    // Speeds and starting angles so that every pair of neighbours stays tooth-in-gap.
+    g[0].dir = 1; g[0].phase = 0;
+    for (let i = 1; i < g.length; i++) {
+      const a = g[g[i].from], b = g[i];
+      b.dir = -a.dir;
+      const stepA = TAU / a.teeth, stepB = TAU / b.teeth;
+      const u = (((b.contact - a.phase) / stepA) % 1 + 1) % 1;
+      b.phase = b.contact + Math.PI - (0.5 - u) * stepB;
+    }
+    return g;
+  }
+
+  let gears = [], svg, speed = 1, target = 1, angle = 0, last = performance.now();
+  function build() {
+    const width = Math.min(machine.parentElement.clientWidth, 900);
+    const m = Math.max(4, Math.min(7.5, width / 110));
+    gears = place(width, m);
+    const minY = Math.min(...gears.map(g => g.y - g.R - m)), maxY = Math.max(...gears.map(g => g.y + g.R + m));
+    const minX = Math.min(...gears.map(g => g.x - g.R - m)), maxX = Math.max(...gears.map(g => g.x + g.R + m));
+    machine.style.width = `${maxX - minX}px`;
+    machine.style.height = `${maxY - minY}px`;
+    machine.innerHTML = "";
+    svg = document.createElementNS(SVGNS, "svg");
+    svg.setAttribute("viewBox", `${minX} ${minY} ${maxX - minX} ${maxY - minY}`);
+    const defs = document.createElementNS(SVGNS, "defs");
+    svg.appendChild(defs);
+    const tip = document.createElement("div");
+    tip.className = "tip";
+    gears.forEach((g, i) => {
+      const d = gearPath(g.teeth, m);
+      const link = document.createElementNS(SVGNS, "a");
+      link.setAttribute("href", g.url);
+      link.setAttribute("aria-label", g.login);
+      const group = document.createElementNS(SVGNS, "g");
+      g.el = group;
+      if (g.ghost) {
+        group.innerHTML = `<path class="ghost-rim" d="${d}"/><text class="ghost-plus">+</text>`;
+      } else if (g.org) {
+        // The drive gear is the Tintloom mark, drawn in the page's Material You colours.
+        const k = g.R * .62;
+        group.innerHTML = `<path class="org-gear" d="${d}"/>` +
+          `<path class="org-cookie" transform="scale(${k.toFixed(2)})" d="${cookie(9)}"/>` +
+          `<path class="org-play" transform="scale(${k.toFixed(2)})" d="M-.22 -.36 L.4 0 L-.22 .36 Z"/><path class="rim" d="${d}"/>`;
+      } else {
+        const clip = document.createElementNS(SVGNS, "clipPath");
+        clip.id = `gear-${i}`;
+        clip.innerHTML = `<path d="${d}"/>`;
+        defs.appendChild(clip);
+        const outer = g.R + m;
+        const px = Math.ceil(outer * 2 * Math.max(2, devicePixelRatio));
+        const src = g.avatar.endsWith(".svg") ? g.avatar : `${g.avatar}${g.avatar.includes("?") ? "&" : "?"}s=${px}`;
+        group.innerHTML = `<image href="${src}" x="${-outer}" y="${-outer}" width="${outer * 2}" height="${outer * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#gear-${i})"/><path class="rim" d="${d}"/>`;
+      }
+      link.appendChild(group);
+      link.addEventListener("pointerenter", () => {
+        tip.textContent = g.login;
+        const box = svg.viewBox.baseVal, scale = machine.clientWidth / box.width;
+        tip.style.left = `${(g.x - box.x) * scale}px`;
+        tip.style.top = `${(g.y - g.R - m - box.y) * scale}px`;
+        tip.classList.add("show");
+      });
+      link.addEventListener("pointerleave", () => tip.classList.remove("show"));
+      link.addEventListener("focus", () => link.dispatchEvent(new Event("pointerenter")));
+      link.addEventListener("blur", () => tip.classList.remove("show"));
+      svg.appendChild(link);
+    });
+    machine.append(svg, tip);
+    draw();
+  }
+
+  function draw() {
+    for (const g of gears) {
+      // The drive gear turns at `angle`; every other gear follows by its tooth ratio.
+      const a = g.phase + g.dir * angle * (gears[0].teeth / g.teeth);
+      g.el.setAttribute("transform", `translate(${g.x.toFixed(2)} ${g.y.toFixed(2)}) rotate(${(a * 180 / Math.PI).toFixed(3)})`);
+    }
+  }
+  // Hovering the machine spins it up; leaving lets it ease back down.
+  machine.addEventListener("pointerenter", () => target = 4);
+  machine.addEventListener("pointerleave", () => target = 1);
+  function tick(now) {
+    const dt = Math.min(64, now - last) / 1000;
+    last = now;
+    speed += (target - speed) * Math.min(1, dt * 3);
+    angle += dt * 0.25 * speed;
+    draw();
+    requestAnimationFrame(tick);
+  }
+  build();
+  if (!still) requestAnimationFrame(tick);
   let resizeTimer;
-  addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(layout, 150); });
+  addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(build, 150); });
 </script>
 </body>
 </html>
