@@ -1,6 +1,6 @@
-# swordfishapps.github.io
+# shoalapps.github.io
 
-The website for [Swordfish](https://github.com/Swordfish): open-source Android apps that take on your
+The website for [Shoal](https://github.com/ShoalApps): open-source Android apps that take on your
 wallpaper's colours with Material You.
 
 A single static page. Colours are generated with Google's

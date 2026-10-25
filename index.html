@@ -3,49 +3,49 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Swordfish</title>
-<meta name="description" content="Swordfish: open-source Android apps that take on your wallpaper's colours with Material You.">
-<meta name="theme-color" content="#36618e">
+<title>Shoal</title>
+<meta name="description" content="Shoal: open-source Android apps that take on your wallpaper's colours with Material You.">
+<meta name="theme-color" content="#006b5e">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  /* Fallback palette (Swordfish blue, #1F5F99). JavaScript replaces these with a full Material You scheme. */
+  /* Fallback palette (Shoal sea green, #00796B). JavaScript replaces these with a full Material You scheme. */
   :root {
     color-scheme: light dark;
-    --primary: #36618e; --on-primary: #ffffff;
-    --primary-container: #d2e4ff; --on-primary-container: #1a4975;
-    --secondary-container: #d7e3f8; --on-secondary-container: #3b4858;
-    --tertiary-container: #f3daff; --on-tertiary-container: #523f5f;
-    --surface: #f8f9ff; --on-surface: #191c20; --on-surface-variant: #43474e;
-    --surface-container-low: #f2f3fa; --surface-container: #eceef4;
-    --surface-container-high: #e6e8ee; --surface-container-highest: #e1e2e8;
-    --outline: #70757c; --outline-variant: #c3c6cf;
+    --primary: #006b5e; --on-primary: #ffffff;
+    --primary-container: #9ff2e2; --on-primary-container: #005047;
+    --secondary-container: #cae6de; --on-secondary-container: #334b46;
+    --tertiary-container: #5b7890; --on-tertiary-container: #ffffff;
+    --surface: #f4fbf8; --on-surface: #171d1b; --on-surface-variant: #3f4946;
+    --surface-container-low: #eff5f2; --surface-container: #e9efec;
+    --surface-container-high: #e3eae7; --surface-container-highest: #dde4e1;
+    --outline: #6d7774; --outline-variant: #bec9c5;
     --spring: cubic-bezier(.34, 1.56, .64, 1);
     --emphasized: cubic-bezier(.2, 0, 0, 1);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-        --primary: #a1cafd; --on-primary: #003259;
-      --primary-container: #1a4975; --on-primary-container: #d2e4ff;
-      --secondary-container: #3b4858; --on-secondary-container: #d7e3f8;
-      --tertiary-container: #523f5f; --on-tertiary-container: #f3daff;
-      --surface: #111418; --on-surface: #e1e2e8; --on-surface-variant: #c3c6cf;
-      --surface-container-low: #191c20; --surface-container: #1d2024;
-      --surface-container-high: #272a2f; --surface-container-highest: #32353a;
-      --outline: #8d9199; --outline-variant: #43474e;
+        --primary: #83d5c6; --on-primary: #003730;
+      --primary-container: #005047; --on-primary-container: #9ff2e2;
+      --secondary-container: #354e49; --on-secondary-container: #cde8e1;
+      --tertiary-container: #7794ad; --on-tertiary-container: #000000;
+      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
+      --surface-container-low: #171d1b; --surface-container: #1b211f;
+      --surface-container-high: #252b2a; --surface-container-highest: #303634;
+      --outline: #899390; --outline-variant: #3f4946;
     }
   }
   :root[data-theme="dark"] {
-      --primary: #a1cafd; --on-primary: #003259;
-      --primary-container: #1a4975; --on-primary-container: #d2e4ff;
-      --secondary-container: #3b4858; --on-secondary-container: #d7e3f8;
-      --tertiary-container: #523f5f; --on-tertiary-container: #f3daff;
-      --surface: #111418; --on-surface: #e1e2e8; --on-surface-variant: #c3c6cf;
-      --surface-container-low: #191c20; --surface-container: #1d2024;
-      --surface-container-high: #272a2f; --surface-container-highest: #32353a;
-      --outline: #8d9199; --outline-variant: #43474e;
+      --primary: #83d5c6; --on-primary: #003730;
+      --primary-container: #005047; --on-primary-container: #9ff2e2;
+      --secondary-container: #354e49; --on-secondary-container: #cde8e1;
+      --tertiary-container: #7794ad; --on-tertiary-container: #000000;
+      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
+      --surface-container-low: #171d1b; --surface-container: #1b211f;
+      --surface-container-high: #252b2a; --surface-container-highest: #303634;
+      --outline: #899390; --outline-variant: #3f4946;
   }
 
   * { box-sizing: border-box; }
@@ -133,6 +133,14 @@
   .card .icon path.bg { fill: var(--primary-container); }
   .card .icon path.fg { fill: var(--on-primary-container); }
   .card .icon path.bg-ink { fill: var(--primary-container); }
+  /* Each fish in its own colours. */
+  .fish-card .icon path.cookie, .fish-card .icon path.ink { fill: var(--fish-p); }
+  .fish-card .icon path.fish { fill: #fff; }
+  .fish-card .icon { background: var(--fish-c); border-radius: 22px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fish-card .icon { background: var(--fish-dc); } :root:not([data-theme="light"]) .fish-card .icon path.cookie, :root:not([data-theme="light"]) .fish-card .icon path.ink { fill: var(--fish-dp); } :root:not([data-theme="light"]) .fish-card .icon path.fish { fill: var(--fish-dc); } }
+  :root[data-theme="dark"] .fish-card .icon { background: var(--fish-dc); }
+  :root[data-theme="dark"] .fish-card .icon path.cookie, :root[data-theme="dark"] .fish-card .icon path.ink { fill: var(--fish-dp); }
+  :root[data-theme="dark"] .fish-card .icon path.fish { fill: var(--fish-dc); }
   .card.soon .icon path.bg { fill: var(--surface-container-highest); }
   .card.soon .icon path.fg { fill: var(--on-surface-variant); }
   .card h3 { margin: 0 0 6px; font-size: 24px; }
@@ -194,12 +202,12 @@
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Swordfish</a>
+    <a class="brand" href="#"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Shoal</a>
     <nav class="links">
       <a href="#apps">Apps</a>
       <a href="#credits">Credits</a>
       <a href="#legal">Legal</a>
-      <a href="https://github.com/Swordfish">GitHub</a>
+      <a href="https://github.com/ShoalApps">GitHub</a>
     </nav>
   </div>
 </header>
@@ -208,13 +216,13 @@
   <div class="hero">
     <div>
       <h1>Your apps, in <em>your colours</em>.</h1>
-      <p class="lede">Swordfish makes open-source Android apps that take on your wallpaper's colours with Material You. No ads, no tracking.</p>
+      <p class="lede">Shoal makes open-source Android apps that take on your wallpaper's colours with Material You. No ads, no tracking.</p>
       <div class="row">
-        <a class="btn filled" href="https://github.com/SwordfishApps/video/releases/latest/download/SwordfishVideo.apk">
+        <a class="btn filled" href="https://github.com/ShoalApps/anglerfish/releases/latest/download/Anglerfish.apk">
           <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>
-          Get Swordfish Video
+          Get Anglerfish
         </a>
-        <a class="btn tonal" href="https://github.com/SwordfishApps/video">View the code</a>
+        <a class="btn tonal" href="https://github.com/ShoalApps/anglerfish">View the code</a>
       </div>
       <div class="tint" role="group" aria-label="Try a colour">
         <span>Try a wallpaper colour:</span>
@@ -235,39 +243,46 @@
     <h2>The apps</h2>
     <p class="sub">Each one is built with Jetpack Compose and Material 3 Expressive, and is free software under the GPL.</p>
     <div class="apps">
-      <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Video"><path class="bg cookie9"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M45,51.6 L52.6,55 L45,58.4 Z"/></g></g></svg>
+      <div class="card fish-card" style="--fish-c:#E6DEFF;--fish-p:#605790;--fish-dc:#483F77;--fish-dp:#CABEFF">
+        <svg class="icon" viewBox="22 22 64 64" role="img" aria-label="Anglerfish"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" d="M36,57 C36,47 44,41 53,41 C61,41 67,46 68.5,52 L58,56.5 L68.5,60.5 C67,67 60,72 52,72 C43,72 36,66 36,57 Z"/><path class="ink" d="M56.30,49.00 a2.3,2.3 0 1,0 4.6,0 a2.3,2.3 0 1,0 -4.6,0 Z"/><path class="fish" d="M38,57 L28,49 C29.5,52 30,54.5 30,57 C30,59.5 29.5,62 28,65 Z"/><path class="fish" d="M46.5,42.6 L49.6,37 L53,41.2 Z"/><path class="fish" d="M55.2,42 C55.5,35 61,31.5 67.5,34.4 L67,35.8 C61.5,33.4 57.2,36.3 56.8,42 Z"/><path class="fish" d="M66.30,36.40 a3.1,3.1 0 1,0 6.2,0 a3.1,3.1 0 1,0 -6.2,0 Z"/><path class="fish" d="M66,53.1 L64.7,55.8 L63.5,53.9 Z M62.4,54.6 L61.5,56.8 L60.4,55.5 Z"/><path class="fish" d="M66.6,59.8 L65.5,57.3 L64.2,59.3 Z M62.6,58.3 L61.8,56.5 L60.7,57.6 Z"/></svg>
         <span class="chip">Available now</span>
-        <h3>Swordfish Video</h3>
-        <p>Watch YouTube videos with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Works on phones, tablets, Chromebooks and TVs.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/video/releases/latest/download/SwordfishVideo.apk">Download APK</a></div>
+        <h3>Anglerfish</h3>
+        <p>YouTube with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Plays the videos other apps can't, with live chapter names as you scrub. Phones, tablets, Chromebooks and TVs.</p>
+        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/anglerfish/releases/latest/download/Anglerfish.apk">Download APK</a></div>
       </div>
-      <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Clips"><path class="bg cookie12"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M42.5,53.4 h10.5 v5.4 h-10.5 z M42.3,51.1 l10.2,-1.6 l0.4,2 l-10.2,1.6 z"/></g></g></svg>
+      <div class="card fish-card" style="--fish-c:#FFD9E1;--fish-p:#8C4A5E;--fish-dc:#703346;--fish-dp:#FFB1C6">
+        <svg class="icon" viewBox="22 22 64 64" role="img" aria-label="Blobfish"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" d="M34,62 C33,50 41,40 54,40 C67,40 75,50 74,62 C74,69 67,72 60,71 C57,70.6 51,70.6 48,71 C41,72 34,69 34,62 Z"/><path class="ink" d="M43.6,51.6 C45,49.6 48,49.6 49.4,51.6 C48,53.4 45,53.6 43.6,51.6 Z"/><path class="ink" d="M58.6,51.6 C60,49.6 63,49.6 64.4,51.6 C63,53.6 60,53.4 58.6,51.6 Z"/><path class="ink" d="M51.2,53.4 C50.6,57.4 45.4,59.6 45.6,63.6 C45.8,67.6 62.2,67.6 62.4,63.6 C62.6,59.6 57.4,57.4 56.8,53.4 L55.2,53.4 C55.8,58.4 61,60.2 60.8,63.4 C60.6,65.8 47.4,65.8 47.2,63.4 C47,60.2 52.2,58.4 52.8,53.4 Z"/><path class="ink" d="M44.6,68.4 C47.4,66.6 49.4,66.8 50.6,67.6 L50,68.8 C48.8,68.2 47.2,68.2 45.2,69.6 Z"/><path class="ink" d="M63.4,68.4 C60.6,66.6 58.6,66.8 57.4,67.6 L58,68.8 C59.2,68.2 60.8,68.2 62.8,69.6 Z"/><path class="fish" d="M35,59.5 L29.5,63.5 L35.4,65.6 Z"/><path class="fish" d="M73,59.5 L78.5,63.5 L72.6,65.6 Z"/></svg>
+        <span class="chip">Available now</span>
+        <h3>Blobfish</h3>
+        <p>Bluesky laid out like Bluesky: threads, verification badges, Profile Links, followers and profile editing, plus code blocks and rich formatting. X has its own tab, signed in on X's own page.</p>
+        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/blobfish/releases/latest/download/Blobfish.apk">Download APK</a></div>
+      </div>
+      <div class="card fish-card" style="--fish-c:#FFDBCE;--fish-p:#8E4D31;--fish-dc:#71361C;--fish-dp:#FFB598">
+        <svg class="icon" viewBox="22 22 64 64" role="img" aria-label="Clownfish"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" d="M33,56 C35,46.5 45,43 55,43 C65,43 72,49 74,56 C72,63 65,69 55,69 C45,69 35,65.5 33,56 Z"/><path class="ink" d="M64.40,53.00 a1.8,1.8 0 1,0 3.6,0 a1.8,1.8 0 1,0 -3.6,0 Z"/><path class="ink" d="M60.4,43.6 C62.4,49 62.4,63 60.4,68.4 L57.8,68.8 C59.8,63 59.8,49 57.8,43.2 Z"/><path class="ink" d="M47.8,44.3 C49.8,50 49.8,62 47.8,67.7 L45.2,67.1 C47.2,61.6 47.2,50.4 45.2,44.9 Z"/><path class="ink" d="M38.6,49.4 C39.8,53 39.8,59 38.6,62.6 L36.5,61.4 C37.3,58.6 37.3,53.4 36.5,50.6 Z"/><path class="fish" d="M35.5,56 L28.2,49.6 C27.2,52 26.8,54 26.8,56 C26.8,58 27.2,60 28.2,62.4 Z"/><path class="fish" d="M45,44.6 C47,38 56,37 61,41.6 C62,42.6 62,43.6 61.4,44.4 Z"/><path class="fish" d="M47,67.4 C48,72 53,73 56.4,68.8 Z"/></svg>
         <span class="chip">Early release</span>
-        <h3>Swordfish Clips</h3>
-        <p>YouTube Shorts, TikTok and Instagram Reels in one app, each in its own tab and signed in with your own accounts. Shorts play in 1080p with daily limits and three layouts.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/clips/releases/latest/download/SwordfishClips.apk">Download APK</a></div>
+        <h3>Clownfish</h3>
+        <p>YouTube Shorts, TikTok and Instagram Reels in one app, each in its own tab and signed in with your own accounts, without the sites' get-the-app nags.</p>
+        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/clownfish/releases/latest/download/Clownfish.apk">Download APK</a></div>
       </div>
-      <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Social"><path class="bg cookie6"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M42.6,51.4 h9 a1.6,1.6 0 0 1 1.6,1.6 v3.4 a1.6,1.6 0 0 1 -1.6,1.6 h-4.6 l-2.6,2.2 v-2.2 h-1.8 a1.6,1.6 0 0 1 -1.6,-1.6 v-3.4 a1.6,1.6 0 0 1 1.6,-1.6 z"/></g></g></svg>
-        <span class="chip">Available now</span>
-        <h3>Swordfish Social</h3>
-        <p>A Material You client for Bluesky, with mu-style formatting: code blocks with syntax highlighting, inline code, bold and italic. Browse signed out, or sign in with an app password.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/social/releases/latest/download/SwordfishSocial.apk">Download APK</a></div>
-      </div>
-      <div class="card">
-        <svg class="icon" viewBox="-1 -1 2 2" role="img" aria-label="Swordfish Manager"><path class="bg cookie9"/><g transform="scale(0.0389) translate(-55 -52.5)"><path class="fg" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="fg" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fg" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fg" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/><path class="bg-ink" d="M63.6,52.2 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><g transform="translate(1.5 -1)"><path class="bg-ink" d="M46.6,50.6 h2.8 v4.4 h2.6 l-4,4 l-4,-4 h2.6 z"/></g></g></svg>
+      <div class="card fish-card" style="--fish-c:#D2E4FF;--fish-p:#36618E;--fish-dc:#1A4975;--fish-dp:#A1CAFD">
+        <svg class="icon" viewBox="22 22 64 64" role="img" aria-label="Swordfish"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" d="M33,55 C37,48.5 49,46 60,48.6 C63,49.3 65.5,50.5 67.5,52 L83,54.4 L67.5,56.4 C64.5,59.6 59,62 51,62.6 C44,63 37.5,60.6 33,55 Z"/><path class="ink" d="M63.60,52.20 a1.3,1.3 0 1,0 2.6,0 a1.3,1.3 0 1,0 -2.6,0 Z"/><path class="fish" d="M39,55 L26.5,45 C28.5,49.5 29.5,52.5 29.5,55 C29.5,57.5 28.5,60.5 26.5,65 Z"/><path class="fish" d="M43,49.4 C44.5,42.5 49,37.5 57,36.2 C55.6,40 55.4,44.2 56.4,48.2 Z"/><path class="fish" d="M44.5,58.8 L41.5,67 L51.5,59.6 Z"/></svg>
         <span class="chip">New</span>
-        <h3>Swordfish Manager</h3>
-        <p>Installs and updates every Swordfish app from one place, silently in the background with Shizuku or root. It only installs apps signed by Swordfish. Start here.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/SwordfishApps/manager/releases/latest/download/SwordfishManager.apk">Download APK</a></div>
+        <h3>Swordfish</h3>
+        <p>YouTube Music with background play, a radio that keeps going, album and artist pages, and synced lyrics. The player takes its colours from the album art.</p>
+        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/swordfish/releases/latest/download/Swordfish.apk">Download APK</a></div>
+      </div>
+      <div class="card fish-card" style="--fish-c:#9FF2E2;--fish-p:#006B5E;--fish-dc:#005047;--fish-dp:#83D5C6">
+        <svg class="icon" viewBox="22 22 64 64" role="img" aria-label="Shoal"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" d="M 51 44.5 C 54 39.3 62 38.5 69.5 44.5 C 62 50.5 54 49.7 51 44.5 Z"/><path class="ink" d="M63.90,43.50 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" d="M 53 44.5 L 47.5 40.1 L 48.8 44.5 L 47.5 48.9 Z"/><path class="fish" d="M 38 55 C 41 49.8 49 49 56.5 55 C 49 61 41 60.2 38 55 Z"/><path class="ink" d="M50.90,54.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" d="M 40 55 L 34.5 50.6 L 35.8 55 L 34.5 59.4 Z"/><path class="fish" d="M 52 65 C 55 59.8 63 59 70.5 65 C 63 71 55 70.2 52 65 Z"/><path class="ink" d="M64.90,64.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" d="M 54 65 L 48.5 60.6 L 49.8 65 L 48.5 69.4 Z"/></svg>
+        <span class="chip">Start here</span>
+        <h3>Shoal</h3>
+        <p>Installs and updates every app in the shoal, silently with Shevery, Shizuku or root, and only ever installs apps signed by Shoal. Sign in to your accounts once here and the apps use them.</p>
+        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/shoal/releases/latest/download/Shoal.apk">Download APK</a></div>
       </div>
     </div>
   </section>
 
   <section id="video">
-    <h2>Swordfish Video</h2>
+    <h2>Anglerfish</h2>
     <p class="sub">Everything you'd expect from a video app, without the parts you wouldn't choose.</p>
     <div class="features">
       <div class="feature"><b>Material You everywhere</b><span>The app, its icon and its launch screen follow your wallpaper, in light and dark.</span></div>
@@ -284,7 +299,7 @@
 
   <section id="credits">
     <h2>Credits</h2>
-    <p class="sub">The people who make Swordfish, turning together. Updated from GitHub every day.</p>
+    <p class="sub">The people who make Shoal, turning together. Updated from GitHub every day.</p>
     <div class="machine" id="machine"></div>
     <p class="names" id="names"></p>
     <p class="muted" style="margin-top:32px">Built on the shoulders of
@@ -303,16 +318,16 @@
     <div class="legal">
       <article id="licence">
         <h3>Licence</h3>
-        <p>Swordfish apps are free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a>. You can use, study, share and change them. Anything you distribute that is built from them must stay under the same licence, with its source code available. They come with no warranty.</p>
+        <p>Shoal apps are free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a>. You can use, study, share and change them. Anything you distribute that is built from them must stay under the same licence, with its source code available. They come with no warranty.</p>
       </article>
       <article id="privacy">
         <h3>Privacy</h3>
-        <p>Swordfish has no servers, no analytics and no ads. Your settings, history and subscriptions stay on your phone.</p>
-        <p>To work, the apps talk directly to the services they show. Swordfish Video contacts YouTube, and, only while those features are turned on, sends the ID of the video you're watching to SponsorBlock, DeArrow and Return YouTube Dislike. If you sign in, your YouTube cookies are stored only on your phone and sent only to YouTube. Once a day the app asks GitHub whether a newer version has been released; you can turn that off in Settings. With Swordfish Manager installed, the Manager does this instead: it contacts only GitHub, to check for and download Swordfish releases.</p>
+        <p>Shoal has no servers, no analytics and no ads. Your settings, history and subscriptions stay on your phone.</p>
+        <p>To work, the apps talk directly to the services they show. Anglerfish contacts YouTube, and, only while those features are turned on, sends the ID of the video you're watching to SponsorBlock, DeArrow and Return YouTube Dislike. If you sign in, your YouTube cookies are stored only on your phone and sent only to YouTube. Once a day the app asks GitHub whether a newer version has been released; you can turn that off in Settings. With Shoal Manager installed, the Manager does this instead: it contacts only GitHub, to check for and download Shoal releases.</p>
       </article>
       <article id="disclaimer">
         <h3>Not affiliated</h3>
-        <p>Swordfish is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, TikTok, Bluesky or any other company whose service an app connects to. All trademarks belong to their owners and are used only to describe what the apps work with.</p>
+        <p>Shoal is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, TikTok, Instagram, Meta, X, Bluesky or any other company whose service an app connects to. All trademarks belong to their owners and are used only to describe what the apps work with.</p>
         <p>You are responsible for using the apps in line with the laws where you live and the terms of the services you use.</p>
       </article>
     </div>
@@ -321,7 +336,7 @@
 
 <footer>
   <div class="wrap">
-    Swordfish · free software under the GPL-3.0 · <a href="https://github.com/Swordfish">github.com/Swordfish</a>
+    Shoal · free software under the GPL-3.0 · <a href="https://github.com/ShoalApps">github.com/ShoalApps</a>
   </div>
 </footer>
 
@@ -348,11 +363,8 @@
     }
     return d + "Z";
   }
-  // The Swordfish mark: two threads woven into a T, the stem crossing over the bar.
-  // Colours come from CSS variables, so the mark can sit on any of the theme's surfaces.
-  const WOVEN_T = '<rect x="-.54" y="-.42" width="1.08" height=".22" rx=".11" style="fill: var(--t-bar, var(--on-primary))"/>' +
-    '<rect x="-.11" y="-.52" width=".22" height="1.08" rx=".11" stroke-width=".06" paint-order="stroke" ' +
-    'style="fill: var(--t-stem, var(--primary-container)); stroke: var(--t-gap, var(--primary))"/>';
+  // The Shoal mark: three fish swimming together, coloured from CSS variables so it suits any surface.
+  const WOVEN_T = '<g transform="scale(0.034) translate(-54 -54.5)"><path d="M 51 44.5 C 54 39.3 62 38.5 69.5 44.5 C 62 50.5 54 49.7 51 44.5 Z" style="fill: var(--t-bar, var(--on-primary))"/><path d="M63.90,43.50 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z" style="fill: var(--t-gap, var(--primary))"/><path d="M 53 44.5 L 47.5 40.1 L 48.8 44.5 L 47.5 48.9 Z" style="fill: var(--t-bar, var(--on-primary))"/><path d="M 38 55 C 41 49.8 49 49 56.5 55 C 49 61 41 60.2 38 55 Z" style="fill: var(--t-bar, var(--on-primary))"/><path d="M50.90,54.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z" style="fill: var(--t-gap, var(--primary))"/><path d="M 40 55 L 34.5 50.6 L 35.8 55 L 34.5 59.4 Z" style="fill: var(--t-bar, var(--on-primary))"/><path d="M 52 65 C 55 59.8 63 59 70.5 65 C 63 71 55 70.2 52 65 Z" style="fill: var(--t-bar, var(--on-primary))"/><path d="M64.90,64.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z" style="fill: var(--t-gap, var(--primary))"/><path d="M 54 65 L 48.5 60.6 L 49.8 65 L 48.5 69.4 Z" style="fill: var(--t-bar, var(--on-primary))"/></g>';
   window.WOVEN_T = WOVEN_T;
   document.querySelectorAll(".logo-shape").forEach(p => p.setAttribute("d", cookie(12, .08)));
   document.querySelectorAll(".woven-t").forEach(g => g.innerHTML = WOVEN_T);
@@ -381,15 +393,15 @@
   requestAnimationFrame(frame);
 
   // Material You: build a full colour scheme from one seed colour, like Android does from a wallpaper.
-  const seeds = ["#1f5f99", "#6750a4", "#00695f", "#b3261e", "#386a20", "#0061a4", "#8b5000"];
+  const seeds = ["#00796b", "#1f5f99", "#4a3c8c", "#c25e7e", "#e8590c", "#6750a4", "#00695f", "#b3261e", "#386a20", "#0061a4", "#8b5000"];
   const swatches = document.getElementById("swatches");
-  let seed = localStorageGet("swordfish-seed") || seeds[0];
+  let seed = localStorageGet("shoal-seed") || seeds[0];
   let forced = localStorageGet("swordfish-theme"); // "light", "dark" or null for system
   seeds.forEach(s => {
     const b = document.createElement("button");
     b.className = "swatch"; b.style.background = s; b.type = "button";
     b.setAttribute("aria-label", "Use colour " + s);
-    b.onclick = () => { seed = s; localStorageSet("swordfish-seed", s); apply(); };
+    b.onclick = () => { seed = s; localStorageSet("shoal-seed", s); apply(); };
     swatches.appendChild(b);
   });
   document.getElementById("theme-toggle").onclick = () => {
@@ -446,9 +458,9 @@
     crew = [{ login: "calamityCocoa", avatar: "https://github.com/calamityCocoa.png", url: "https://github.com/calamityCocoa", contributions: 1 }];
   }
   const parts = [
-    { login: "Swordfish", url: "https://github.com/Swordfish", teeth: 18, org: true },
+    { login: "Shoal", url: "https://github.com/ShoalApps", teeth: 18, org: true },
     ...crew.map(c => ({ ...c, teeth: c.contributions >= 100 ? 15 : 12 })),
-    { login: "Your gear here: help build Swordfish", url: "https://github.com/SwordfishApps/video", teeth: 9, ghost: true },
+    { login: "Your gear here: help build Shoal", url: "https://github.com/ShoalApps/anglerfish", teeth: 9, ghost: true },
   ];
   document.getElementById("names").textContent = crew.map(c => c.login).join(" · ");
 
@@ -556,7 +568,7 @@
       if (g.ghost) {
         group.innerHTML = `<path class="ghost-rim" d="${d}"/><text class="ghost-plus">+</text>`;
       } else if (g.org) {
-        // The drive gear is the Swordfish mark, drawn in the page's Material You colours.
+        // The drive gear is the Shoal mark, drawn in the page's Material You colours.
         const k = g.R * .62;
         group.innerHTML = `<path class="org-gear" d="${d}"/><g transform="scale(${(g.R * .9).toFixed(2)})">${WOVEN_T}</g><path class="rim" d="${d}"/>`;
       } else {
