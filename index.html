@@ -143,14 +143,33 @@
   .feature b { display: block; margin-bottom: 4px; font-size: 17px; }
   .feature span { color: var(--on-surface-variant); font-size: 15px; }
 
-  /* Credits */
-  .people { display: flex; flex-wrap: wrap; gap: 16px; }
-  .person { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 104px; text-decoration: none; color: var(--on-surface); font-size: 14px; text-align: center; }
-  .person img {
-    width: 80px; height: 80px; object-fit: cover; background: var(--surface-container-high);
-    clip-path: url(#cookie-clip); transition: transform .5s var(--spring);
+  /* Credits: contributors as interlocking cogs */
+  .gears { position: relative; margin: 8px auto 0; }
+  .gear { position: absolute; display: block; text-decoration: none; color: var(--on-surface); }
+  .gear .cog { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible;
+    transform: rotate(var(--phase)); animation: spin 18s linear infinite; }
+  .gear .cog path { fill: var(--gear-fill); transition: fill .6s; }
+  .gear .cog circle { fill: var(--surface); transition: fill .6s; }
+  .gear img, .gear .plus {
+    position: absolute; left: 21%; top: 21%; width: 58%; height: 58%; border-radius: 50%;
+    object-fit: cover; background: var(--surface-container-high);
+    transition: transform .45s var(--spring);
   }
-  .person:hover img { transform: rotate(40deg) scale(1.06); }
+  .gear .plus { display: grid; place-items: center; font-size: 34px; font-weight: 700; color: var(--on-surface-variant); background: none; }
+  .gear.ghost .cog path { fill: none; stroke: var(--outline); stroke-width: .035; stroke-dasharray: .09 .07; }
+  .gear:hover img, .gear:focus-visible img, .gear:hover .plus { transform: scale(1.08); }
+  .gear .tip {
+    position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, 6px) scale(.9); opacity: 0;
+    background: var(--on-surface); color: var(--surface); font-size: 14px; font-weight: 600; white-space: nowrap;
+    padding: 6px 12px; border-radius: 12px; pointer-events: none; z-index: 2;
+    transition: opacity .2s, transform .35s var(--spring);
+  }
+  .gear:hover .tip, .gear:focus-visible .tip { opacity: 1; transform: translate(-50%, -4px) scale(1); }
+  @keyframes spin {
+    from { transform: rotate(var(--phase)); }
+    to { transform: rotate(calc(var(--phase) + var(--dir) * 360deg)); }
+  }
+  .names { margin-top: 24px; color: var(--on-surface-variant); font-size: 15px; text-align: center; }
   .muted { color: var(--on-surface-variant); }
 
   /* Legal */
@@ -259,8 +278,9 @@
 
   <section id="credits">
     <h2>Credits</h2>
-    <p class="sub">The people who make Tintloom, fetched live from GitHub.</p>
-    <div class="people" id="people"><span class="muted">Loading contributors…</span></div>
+    <p class="sub">The people who make Tintloom, turning together. Updated from GitHub every day.</p>
+    <div class="gears" id="gears" role="list" aria-label="Contributors"></div>
+    <p class="names" id="names"></p>
     <p class="muted" style="margin-top:32px">Built on the shoulders of
       <a href="https://github.com/TeamNewPipe/NewPipeExtractor">NewPipeExtractor</a>,
       <a href="https://sponsor.ajay.app">SponsorBlock and DeArrow</a> (data under CC BY-NC-SA 4.0),
@@ -403,35 +423,76 @@
   }
   apply();
 
-  // Credits: everyone who has contributed to any Tintloom repository.
-  const people = document.getElementById("people");
-  try {
-    const repos = await (await fetch("https://api.github.com/orgs/Tintloom/repos?per_page=100")).json();
-    const all = new Map();
-    for (const r of Array.isArray(repos) ? repos : []) {
-      const list = await (await fetch(`https://api.github.com/repos/Tintloom/${r.name}/contributors?per_page=100`)).json();
-      for (const c of Array.isArray(list) ? list : []) {
-        if (c.type !== "User") continue;
-        const prev = all.get(c.login);
-        all.set(c.login, { ...c, contributions: (prev?.contributions || 0) + c.contributions });
-      }
+  // Credits as clockwork. contributors.json is written daily by a GitHub Action.
+  const TEETH = 12;
+  const STEP = Math.PI * 2 / TEETH;
+  function gearPath() {
+    // Each tooth is a trapezoid centred on k * STEP; gaps sit half a step between them.
+    const outer = 1, root = .8;
+    let d = "";
+    const pt = (r, a) => `${(Math.cos(a) * r).toFixed(4)} ${(Math.sin(a) * r).toFixed(4)}`;
+    for (let k = 0; k < TEETH; k++) {
+      const c = k * STEP;
+      d += (k ? "L" : "M") + pt(root, c - STEP * .27) + "L" + pt(outer, c - STEP * .16) +
+           "L" + pt(outer, c + STEP * .16) + "L" + pt(root, c + STEP * .27);
+      d += `A${root} ${root} 0 0 1 ` + pt(root, c + STEP * .73);
     }
-    const sorted = [...all.values()].sort((a, b) => b.contributions - a.contributions);
-    people.innerHTML = "";
-    if (!sorted.length) throw new Error("none");
-    for (const c of sorted) {
-      const a = document.createElement("a");
-      a.className = "person"; a.href = c.html_url;
-      const img = document.createElement("img");
-      img.src = c.avatar_url + "&s=160"; img.alt = ""; img.loading = "lazy";
-      const name = document.createElement("span");
-      name.textContent = c.login;
-      a.append(img, name);
-      people.appendChild(a);
-    }
-  } catch {
-    people.innerHTML = '<a class="person" href="https://github.com/calamityCocoa"><img src="https://github.com/calamityCocoa.png?size=160" alt=""><span>calamityCocoa</span></a>';
+    return d + "Z";
   }
+  const GEAR = gearPath();
+  const fills = ["var(--primary-container)", "var(--tertiary-container)", "var(--secondary-container)"];
+
+  let crew = [];
+  try {
+    crew = await (await fetch("contributors.json", { cache: "no-cache" })).json();
+  } catch {
+    crew = [{ login: "calamityCocoa", avatar: "https://github.com/calamityCocoa.png?size=160", url: "https://github.com/calamityCocoa", contributions: 0 }];
+  }
+  const items = [
+    { login: "Tintloom", avatar: "logo.svg", url: "https://github.com/Tintloom", org: true },
+    ...crew,
+    { login: "Your gear here: help build Tintloom", url: "https://github.com/Tintloom/video", ghost: true },
+  ];
+  document.getElementById("names").textContent = crew.map(c => c.login).join(" · ");
+
+  const box = document.getElementById("gears");
+  function layout() {
+    const width = box.parentElement.clientWidth;
+    const size = Math.min(132, Math.max(88, width / 4));
+    const pitch = size * .9; // centres one pitch diameter apart, so the teeth interlock
+    const cols = Math.max(1, Math.min(items.length, Math.floor((width - size) / pitch) + 1));
+    const rows = Math.ceil(items.length / cols);
+    box.style.width = `${(cols - 1) * pitch + size}px`;
+    box.style.height = `${(rows - 1) * pitch + size}px`;
+    box.innerHTML = "";
+    items.forEach((it, i) => {
+      const r = Math.floor(i / cols), c = i % cols;
+      // Checkerboard: every neighbour turns the other way, half a tooth out of step.
+      const odd = (r + c) % 2 === 1;
+      const a = document.createElement("a");
+      a.className = "gear" + (it.ghost ? " ghost" : "");
+      a.href = it.url; a.setAttribute("role", "listitem");
+      a.setAttribute("aria-label", it.login);
+      a.style.cssText = `left:${c * pitch}px; top:${r * pitch}px; width:${size}px; height:${size}px;` +
+        `--dir:${odd ? -1 : 1}; --phase:${odd ? 180 / TEETH : 0}deg; --gear-fill:${fills[i % fills.length]}`;
+      a.innerHTML = `<svg class="cog" viewBox="-1 -1 2 2" aria-hidden="true"><path d="${GEAR}"/><circle r=".66"/></svg>`;
+      if (it.ghost) {
+        a.insertAdjacentHTML("beforeend", '<span class="plus" aria-hidden="true">+</span>');
+      } else {
+        const img = document.createElement("img");
+        img.src = it.org ? it.avatar : `${it.avatar}${it.avatar.includes("?") ? "&" : "?"}s=160`;
+        img.alt = ""; img.loading = "lazy";
+        a.appendChild(img);
+      }
+      const tip = document.createElement("span");
+      tip.className = "tip"; tip.textContent = it.login;
+      a.appendChild(tip);
+      box.appendChild(a);
+    });
+  }
+  layout();
+  let resizeTimer;
+  addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(layout, 150); });
 </script>
 </body>
 </html>
