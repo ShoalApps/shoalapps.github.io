@@ -86,7 +86,7 @@
   .shape-stage { position: relative; aspect-ratio: 1; max-width: 420px; justify-self: center; width: 100%; }
   .shape-stage svg { width: 100%; height: 100%; overflow: visible; }
   #hero-shape { fill: var(--primary-container); transition: fill .6s var(--emphasized); }
-  #hero-play { fill: var(--on-primary-container); transition: fill .6s var(--emphasized); }
+  .hero-mark { --t-bar: var(--on-primary-container); --t-stem: var(--primary); --t-gap: var(--primary-container); }
   .orbit { fill: var(--tertiary-container); transition: fill .6s; }
 
   /* Buttons */
@@ -153,7 +153,7 @@
   .machine .halo { fill: var(--primary-container); opacity: .55; transition: fill .6s; }
   .machine .gear { opacity: 0; transform: translateY(14px); transition: opacity .5s var(--emphasized), transform .7s var(--emphasized); }
   .machine.shown .gear { opacity: 1; transform: none; }
-  .machine .org-gear { fill: var(--primary-container); transition: fill .6s; }
+  .machine .org-gear { fill: var(--primary); transition: fill .6s; }
   .machine .org-cookie { fill: var(--primary); transition: fill .6s; }
   .machine .org-play { fill: var(--on-primary); stroke: var(--on-primary); stroke-width: .08; stroke-linejoin: round; transition: fill .6s; }
   .machine .ghost-rim { fill: none; stroke: var(--outline); stroke-width: 2; stroke-dasharray: 6 5; }
@@ -193,7 +193,7 @@
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#"><svg viewBox="-1 -1 2 2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><path d="M-.18 -.3 L.32 0 L-.18 .3 Z" fill="var(--on-primary)" stroke="var(--on-primary)" stroke-width=".08" stroke-linejoin="round"/></svg>Tintloom</a>
+    <a class="brand" href="#"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Tintloom</a>
     <nav class="links">
       <a href="#apps">Apps</a>
       <a href="#credits">Credits</a>
@@ -225,7 +225,7 @@
       <svg viewBox="-1.25 -1.25 2.5 2.5">
         <circle class="orbit" id="orbit" r=".12" cx="0" cy="-1.08"/>
         <path id="hero-shape"/>
-        <path id="hero-play" d="M-.2 -.34 L.36 0 L-.2 .34 Z" stroke-linejoin="round"/>
+        <g class="woven-t hero-mark" transform="scale(.95)"></g>
       </svg>
     </div>
   </div>
@@ -336,7 +336,14 @@
     }
     return d + "Z";
   }
-  document.querySelectorAll(".logo-shape").forEach(p => p.setAttribute("d", cookie(9)));
+  // The Tintloom mark: two threads woven into a T, the stem crossing over the bar.
+  // Colours come from CSS variables, so the mark can sit on any of the theme's surfaces.
+  const WOVEN_T = '<rect x="-.54" y="-.42" width="1.08" height=".22" rx=".11" style="fill: var(--t-bar, var(--on-primary))"/>' +
+    '<rect x="-.11" y="-.52" width=".22" height="1.08" rx=".11" stroke-width=".06" paint-order="stroke" ' +
+    'style="fill: var(--t-stem, var(--primary-container)); stroke: var(--t-gap, var(--primary))"/>';
+  window.WOVEN_T = WOVEN_T;
+  document.querySelectorAll(".logo-shape").forEach(p => p.setAttribute("d", cookie(12, .08)));
+  document.querySelectorAll(".woven-t").forEach(g => g.innerHTML = WOVEN_T);
   document.querySelectorAll(".cookie9").forEach(p => p.setAttribute("d", cookie(9)));
   document.querySelectorAll(".cookie12").forEach(p => p.setAttribute("d", cookie(12, 0.06)));
   document.querySelectorAll(".cookie6").forEach(p => p.setAttribute("d", cookie(6, 0.1)));
@@ -539,9 +546,7 @@
       } else if (g.org) {
         // The drive gear is the Tintloom mark, drawn in the page's Material You colours.
         const k = g.R * .62;
-        group.innerHTML = `<path class="org-gear" d="${d}"/>` +
-          `<path class="org-cookie" transform="scale(${k.toFixed(2)})" d="${cookie(9)}"/>` +
-          `<path class="org-play" transform="scale(${k.toFixed(2)})" d="M-.22 -.36 L.4 0 L-.22 .36 Z"/><path class="rim" d="${d}"/>`;
+        group.innerHTML = `<path class="org-gear" d="${d}"/><g transform="scale(${(g.R * .9).toFixed(2)})">${WOVEN_T}</g><path class="rim" d="${d}"/>`;
       } else {
         const clip = document.createElementNS(SVGNS, "clipPath");
         clip.id = `gear-${i}`;
