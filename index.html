@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tintloom</title>
+<meta name="description" content="Tintloom: open-source Android apps that take on your wallpaper's colours with Material You.">
+<meta name="theme-color" content="#00695f">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Fallback palette (Tintloom teal). JavaScript replaces these with a full Material You scheme. */
+  :root {
+    color-scheme: light dark;
+    --primary: #00695f; --on-primary: #ffffff;
+    --primary-container: #9ff2e4; --on-primary-container: #00201c;
+    --secondary-container: #cce8e2; --on-secondary-container: #051f1c;
+    --tertiary-container: #cce5ff; --on-tertiary-container: #001d32;
+    --surface: #f4fbf8; --on-surface: #171d1b; --on-surface-variant: #3f4946;
+    --surface-container-low: #eff5f2; --surface-container: #e9efec;
+    --surface-container-high: #e3eae7; --surface-container-highest: #dee4e1;
+    --outline: #6f7976; --outline-variant: #bec9c5;
+    --spring: cubic-bezier(.34, 1.56, .64, 1);
+    --emphasized: cubic-bezier(.2, 0, 0, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --primary: #83d5c8; --on-primary: #003731;
+      --primary-container: #005048; --on-primary-container: #9ff2e4;
+      --secondary-container: #334b47; --on-secondary-container: #cce8e2;
+      --tertiary-container: #2d4960; --on-tertiary-container: #cce5ff;
+      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
+      --surface-container-low: #171d1b; --surface-container: #1b2120;
+      --surface-container-high: #252b2a; --surface-container-highest: #303634;
+      --outline: #899390; --outline-variant: #3f4946;
+    }
+  }
+  :root[data-theme="dark"] {
+    --primary: #83d5c8; --on-primary: #003731;
+    --primary-container: #005048; --on-primary-container: #9ff2e4;
+    --secondary-container: #334b47; --on-secondary-container: #cce8e2;
+    --tertiary-container: #2d4960; --on-tertiary-container: #cce5ff;
+    --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
+    --surface-container-low: #171d1b; --surface-container: #1b2120;
+    --surface-container-high: #252b2a; --surface-container-highest: #303634;
+    --outline: #899390; --outline-variant: #3f4946;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Google Sans Flex", "Google Sans", Roboto, system-ui, sans-serif;
+    background: var(--surface);
+    color: var(--on-surface);
+    line-height: 1.5;
+    transition: background .6s var(--emphasized), color .6s var(--emphasized);
+    overflow-x: hidden;
+  }
+  a { color: var(--primary); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* Top bar */
+  header.bar {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--surface) 86%, transparent);
+    backdrop-filter: blur(14px);
+  }
+  header.bar .wrap { display: flex; align-items: center; gap: 12px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; letter-spacing: -.5px; text-decoration: none; color: var(--on-surface); }
+  .brand svg { width: 34px; height: 34px; }
+  nav.links { margin-left: auto; display: flex; gap: 4px; }
+  nav.links a {
+    color: var(--on-surface-variant); text-decoration: none; font-weight: 500;
+    padding: 8px 14px; border-radius: 20px; transition: background .2s, border-radius .3s var(--spring);
+  }
+  nav.links a:hover { background: var(--surface-container-high); border-radius: 12px; }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center; padding: 64px 0 40px; }
+  .hero h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.02; letter-spacing: -2px; margin: 0 0 16px; font-weight: 800; }
+  .hero h1 em { font-style: normal; color: var(--primary); }
+  .hero p.lede { font-size: 20px; color: var(--on-surface-variant); margin: 0 0 28px; max-width: 34ch; }
+  .shape-stage { position: relative; aspect-ratio: 1; max-width: 420px; justify-self: center; width: 100%; }
+  .shape-stage svg { width: 100%; height: 100%; overflow: visible; }
+  #hero-shape { fill: var(--primary-container); transition: fill .6s var(--emphasized); }
+  #hero-play { fill: var(--on-primary-container); transition: fill .6s var(--emphasized); }
+  .orbit { fill: var(--tertiary-container); transition: fill .6s; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 28px;
+    border-radius: 28px; font: inherit; font-weight: 700; font-size: 17px; text-decoration: none; cursor: pointer; border: 0;
+    transition: border-radius .35s var(--spring), transform .35s var(--spring), background .3s;
+  }
+  .btn:hover { border-radius: 16px; }
+  .btn:active { transform: scale(.95); }
+  .btn.filled { background: var(--primary); color: var(--on-primary); }
+  .btn.tonal { background: var(--secondary-container); color: var(--on-secondary-container); }
+  .btn svg { width: 22px; height: 22px; fill: currentColor; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* Colour picker */
+  .tint {
+    margin-top: 28px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    color: var(--on-surface-variant); font-size: 14px;
+  }
+  #swatches { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+  .swatch {
+    width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer; padding: 0;
+    transition: border-radius .35s var(--spring), transform .35s var(--spring);
+    outline: 3px solid transparent; outline-offset: 2px;
+  }
+  .swatch:hover { border-radius: 12px; transform: rotate(12deg); }
+  .swatch[aria-pressed="true"] { border-radius: 12px; outline-color: var(--primary); }
+  .theme-toggle { margin-left: 4px; background: var(--surface-container-high); color: var(--on-surface); border: 0; height: 36px; padding: 0 14px; border-radius: 18px; font: inherit; cursor: pointer; }
+
+  /* Sections */
+  section { padding: 56px 0; }
+  h2 { font-size: clamp(30px, 4vw, 44px); letter-spacing: -1px; margin: 0 0 8px; font-weight: 800; }
+  .sub { color: var(--on-surface-variant); margin: 0 0 32px; font-size: 18px; }
+
+  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface-container); border-radius: 28px; padding: 28px;
+    transition: border-radius .45s var(--spring), transform .45s var(--spring), background .6s;
+    position: relative; overflow: hidden;
+  }
+  .card:hover { border-radius: 44px; transform: translateY(-4px); }
+  .card .icon { display: block; width: 64px; height: 64px; margin-bottom: 16px; }
+  .card .icon path.bg { fill: var(--primary-container); }
+  .card .icon path.fg { fill: var(--on-primary-container); }
+  .card.soon .icon path.bg { fill: var(--surface-container-highest); }
+  .card.soon .icon path.fg { fill: var(--on-surface-variant); }
+  .card h3 { margin: 0 0 6px; font-size: 24px; }
+  .card p { margin: 0 0 20px; color: var(--on-surface-variant); }
+  .chip { display: inline-block; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 8px; background: var(--tertiary-container); color: var(--on-tertiary-container); margin-bottom: 12px; }
+
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .feature { background: var(--surface-container-low); border-radius: 20px; padding: 20px; }
+  .feature b { display: block; margin-bottom: 4px; font-size: 17px; }
+  .feature span { color: var(--on-surface-variant); font-size: 15px; }
+
+  /* Credits */
+  .people { display: flex; flex-wrap: wrap; gap: 16px; }
+  .person { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 104px; text-decoration: none; color: var(--on-surface); font-size: 14px; text-align: center; }
+  .person img {
+    width: 80px; height: 80px; object-fit: cover; background: var(--surface-container-high);
+    clip-path: url(#cookie-clip); transition: transform .5s var(--spring);
+  }
+  .person:hover img { transform: rotate(40deg) scale(1.06); }
+  .muted { color: var(--on-surface-variant); }
+
+  /* Legal */
+  .legal { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .legal article { background: var(--surface-container-low); border-radius: 24px; padding: 24px; }
+  .legal h3 { margin-top: 0; }
+  .legal p, .legal li { color: var(--on-surface-variant); font-size: 15px; }
+
+  footer { padding: 40px 0 56px; color: var(--on-surface-variant); font-size: 14px; border-top: 1px solid var(--outline-variant); }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; padding-top: 32px; }
+    .shape-stage { max-width: 260px; grid-row: 1; }
+    nav.links { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<!-- Clip path for avatars: a Material cookie shape, built by script. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs><clipPath id="cookie-clip" clipPathUnits="objectBoundingBox"><path id="cookie-clip-path"/></clipPath></defs>
+</svg>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href="#"><svg viewBox="-1 -1 2 2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><path d="M-.18 -.3 L.32 0 L-.18 .3 Z" fill="var(--on-primary)" stroke="var(--on-primary)" stroke-width=".08" stroke-linejoin="round"/></svg>Tintloom</a>
+    <nav class="links">
+      <a href="#apps">Apps</a>
+      <a href="#credits">Credits</a>
+      <a href="#legal">Legal</a>
+      <a href="https://github.com/Tintloom">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <h1>Your apps, in <em>your colours</em>.</h1>
+      <p class="lede">Tintloom makes open-source Android apps that take on your wallpaper's colours with Material You. No ads, no tracking.</p>
+      <div class="row">
+        <a class="btn filled" href="https://github.com/Tintloom/video/releases/latest/download/TintloomVideo.apk">
+          <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>
+          Get Tintloom Video
+        </a>
+        <a class="btn tonal" href="https://github.com/Tintloom/video">View the code</a>
+      </div>
+      <div class="tint" role="group" aria-label="Try a colour">
+        <span>Try a wallpaper colour:</span>
+        <span id="swatches"></span>
+        <button class="theme-toggle" id="theme-toggle" type="button">Light / dark</button>
+      </div>
+    </div>
+    <div class="shape-stage" aria-hidden="true">
+      <svg viewBox="-1.25 -1.25 2.5 2.5">
+        <circle class="orbit" id="orbit" r=".12" cx="0" cy="-1.08"/>
+        <path id="hero-shape"/>
+        <path id="hero-play" d="M-.2 -.34 L.36 0 L-.2 .34 Z" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <section id="apps">
+    <h2>The apps</h2>
+    <p class="sub">Each one is built with Jetpack Compose and Material 3 Expressive, and is free software under the GPL.</p>
+    <div class="apps">
+      <div class="card">
+        <svg class="icon" viewBox="-1 -1 2 2"><path class="bg cookie9"/><path class="fg" d="M-.2 -.32 L.34 0 L-.2 .32 Z"/></svg>
+        <span class="chip">Available now</span>
+        <h3>Tintloom Video</h3>
+        <p>Watch YouTube videos with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Works on phones, tablets and Chromebooks.</p>
+        <div class="row"><a class="btn filled" href="https://github.com/Tintloom/video/releases/latest/download/TintloomVideo.apk">Download APK</a></div>
+      </div>
+      <div class="card soon">
+        <svg class="icon" viewBox="-1 -1 2 2"><path class="bg cookie12"/><path class="fg" d="M-.3 -.36 h.6 a.08 .08 0 0 1 .08 .08 v.56 a.08 .08 0 0 1 -.08 .08 h-.6 a.08 .08 0 0 1 -.08 -.08 v-.56 a.08 .08 0 0 1 .08 -.08 z M-.08 -.16 v.32 l.26 -.16 z" fill-rule="evenodd"/></svg>
+        <span class="chip">Coming next</span>
+        <h3>Tintloom Clips</h3>
+        <p>A Material You client for short-video feeds, with the distractions turned down.</p>
+      </div>
+      <div class="card soon">
+        <svg class="icon" viewBox="-1 -1 2 2"><path class="bg cookie6"/><path class="fg" d="M-.38 -.3 h.76 a.1 .1 0 0 1 .1 .1 v.38 a.1 .1 0 0 1 -.1 .1 h-.42 l-.22 .18 v-.18 h-.12 a.1 .1 0 0 1 -.1 -.1 v-.38 a.1 .1 0 0 1 .1 -.1 z"/></svg>
+        <span class="chip">Planned</span>
+        <h3>Tintloom Social</h3>
+        <p>A Material You client for the open social web, starting with Bluesky.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="video">
+    <h2>Tintloom Video</h2>
+    <p class="sub">Everything you'd expect from a video app, without the parts you wouldn't choose.</p>
+    <div class="features">
+      <div class="feature"><b>Material You everywhere</b><span>The app, its icon and its launch screen follow your wallpaper, in light and dark.</span></div>
+      <div class="feature"><b>No ads, no tracking</b><span>No account needed. Nothing is sent anywhere except the services listed below.</span></div>
+      <div class="feature"><b>SponsorBlock and DeArrow</b><span>Skip sponsor segments and swap clickbait titles and thumbnails for community ones.</span></div>
+      <div class="feature"><b>Background and picture-in-picture</b><span>Keep listening with the screen off, or keep watching in a floating window.</span></div>
+      <div class="feature"><b>Shorts, your way</b><span>YouTube, TikTok or Reels layouts, daily limits, or turn them off completely.</span></div>
+      <div class="feature"><b>Learning feed</b><span>Swap recommendations for science, maths, history and more.</span></div>
+      <div class="feature"><b>Phones, tablets, Chromebooks</b><span>Grid feeds and a two-pane watch page on big screens.</span></div>
+      <div class="feature"><b>Optional sign-in</b><span>Bring your subscriptions, likes, history and Watch later across from your account.</span></div>
+    </div>
+  </section>
+
+  <section id="credits">
+    <h2>Credits</h2>
+    <p class="sub">The people who make Tintloom, fetched live from GitHub.</p>
+    <div class="people" id="people"><span class="muted">Loading contributors…</span></div>
+    <p class="muted" style="margin-top:32px">Built on the shoulders of
+      <a href="https://github.com/TeamNewPipe/NewPipeExtractor">NewPipeExtractor</a>,
+      <a href="https://sponsor.ajay.app">SponsorBlock and DeArrow</a> (data under CC BY-NC-SA 4.0),
+      <a href="https://returnyoutubedislike.com">Return YouTube Dislike</a>,
+      <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>,
+      <a href="https://developer.android.com/media/media3">Media3</a> and
+      <a href="https://coil-kt.github.io/coil/">Coil</a>.</p>
+  </section>
+
+  <section id="legal">
+    <h2>Legal</h2>
+    <p class="sub">The short version, in plain words.</p>
+    <div class="legal">
+      <article id="licence">
+        <h3>Licence</h3>
+        <p>Tintloom apps are free software under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a>. You can use, study, share and change them. Anything you distribute that is built from them must stay under the same licence, with its source code available. They come with no warranty.</p>
+      </article>
+      <article id="privacy">
+        <h3>Privacy</h3>
+        <p>Tintloom has no servers, no analytics and no ads. Your settings, history and subscriptions stay on your phone.</p>
+        <p>To work, the apps talk directly to the services they show. Tintloom Video contacts YouTube, and, only while those features are turned on, sends the ID of the video you're watching to SponsorBlock, DeArrow and Return YouTube Dislike. If you sign in, your YouTube cookies are stored only on your phone and sent only to YouTube.</p>
+      </article>
+      <article id="disclaimer">
+        <h3>Not affiliated</h3>
+        <p>Tintloom is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, TikTok, Bluesky or any other company whose service an app connects to. All trademarks belong to their owners and are used only to describe what the apps work with.</p>
+        <p>You are responsible for using the apps in line with the laws where you live and the terms of the services you use.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Tintloom · free software under the GPL-3.0 · <a href="https://github.com/Tintloom">github.com/Tintloom</a>
+  </div>
+</footer>
+
+<script type="module">
+  // Material shapes: a "cookie" is a circle with gentle scallops, like Material 3 Expressive's.
+  function cookie(lobes, depth = 0.08, steps = 360) {
+    let d = "";
+    for (let i = 0; i <= steps; i++) {
+      const t = (i / steps) * Math.PI * 2;
+      const r = 0.92 + depth * Math.cos(lobes * t);
+      const x = Math.sin(t) * r, y = -Math.cos(t) * r;
+      d += (i ? "L" : "M") + x.toFixed(4) + " " + y.toFixed(4);
+    }
+    return d + "Z";
+  }
+  // Morphing between two cookies: blend their radii point by point.
+  function morph(a, b, p, steps = 360) {
+    let d = "";
+    for (let i = 0; i <= steps; i++) {
+      const t = (i / steps) * Math.PI * 2;
+      const ra = 0.92 + 0.08 * Math.cos(a * t), rb = 0.92 + 0.08 * Math.cos(b * t);
+      const r = ra + (rb - ra) * p;
+      d += (i ? "L" : "M") + (Math.sin(t) * r).toFixed(4) + " " + (-Math.cos(t) * r).toFixed(4);
+    }
+    return d + "Z";
+  }
+  document.querySelectorAll(".logo-shape").forEach(p => p.setAttribute("d", cookie(9)));
+  document.querySelectorAll(".cookie9").forEach(p => p.setAttribute("d", cookie(9)));
+  document.querySelectorAll(".cookie12").forEach(p => p.setAttribute("d", cookie(12, 0.06)));
+  document.querySelectorAll(".cookie6").forEach(p => p.setAttribute("d", cookie(6, 0.1)));
+  // Clip path in 0..1 box units for the avatars.
+  document.getElementById("cookie-clip-path").setAttribute("d",
+    cookie(12, 0.06).replace(/(-?\d+\.\d+) (-?\d+\.\d+)/g, (_, x, y) => `${(+x / 2 + .5).toFixed(4)} ${(+y / 2 + .5).toFixed(4)}`));
+
+  const shape = document.getElementById("hero-shape");
+  const orbit = document.getElementById("orbit");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let start = performance.now();
+  function frame(now) {
+    const t = (now - start) / 1000;
+    const p = (Math.sin(t * 0.9) + 1) / 2;
+    const ease = p * p * (3 - 2 * p);
+    shape.setAttribute("d", morph(9, 12, ease));
+    shape.setAttribute("transform", `rotate(${(t * 8) % 360})`);
+    const a = t * 0.6;
+    orbit.setAttribute("cx", (Math.sin(a) * 1.08).toFixed(3));
+    orbit.setAttribute("cy", (-Math.cos(a) * 1.08).toFixed(3));
+    if (!still) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  // Material You: build a full colour scheme from one seed colour, like Android does from a wallpaper.
+  const seeds = ["#00695f", "#6750a4", "#b3261e", "#7d5260", "#386a20", "#0061a4", "#8b5000"];
+  const swatches = document.getElementById("swatches");
+  let seed = localStorageGet("tintloom-seed") || seeds[0];
+  let forced = localStorageGet("tintloom-theme"); // "light", "dark" or null for system
+  seeds.forEach(s => {
+    const b = document.createElement("button");
+    b.className = "swatch"; b.style.background = s; b.type = "button";
+    b.setAttribute("aria-label", "Use colour " + s);
+    b.onclick = () => { seed = s; localStorageSet("tintloom-seed", s); apply(); };
+    swatches.appendChild(b);
+  });
+  document.getElementById("theme-toggle").onclick = () => {
+    const dark = forced ? forced === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    forced = dark ? "light" : "dark";
+    localStorageSet("tintloom-theme", forced);
+    apply();
+  };
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => apply());
+
+  function localStorageGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
+  function localStorageSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
+
+  let mcu = null;
+  try {
+    mcu = await import("https://cdn.jsdelivr.net/npm/@material/material-color-utilities@0.3.0/+esm");
+  } catch { /* Offline or blocked: the teal fallback palette stays. */ }
+
+  const roles = {
+    "primary": "primary", "on-primary": "onPrimary",
+    "primary-container": "primaryContainer", "on-primary-container": "onPrimaryContainer",
+    "secondary-container": "secondaryContainer", "on-secondary-container": "onSecondaryContainer",
+    "tertiary-container": "tertiaryContainer", "on-tertiary-container": "onTertiaryContainer",
+    "surface": "surface", "on-surface": "onSurface", "on-surface-variant": "onSurfaceVariant",
+    "surface-container-low": "surfaceContainerLow", "surface-container": "surfaceContainer",
+    "surface-container-high": "surfaceContainerHigh", "surface-container-highest": "surfaceContainerHighest",
+    "outline": "outline", "outline-variant": "outlineVariant",
+  };
+
+  function apply() {
+    const dark = forced ? forced === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    swatches.querySelectorAll(".swatch").forEach(b => b.setAttribute("aria-pressed", String(b.style.background && rgbToHex(b.style.background) === seed)));
+    if (!mcu) return;
+    const scheme = new mcu.SchemeTonalSpot(mcu.Hct.fromInt(mcu.argbFromHex(seed)), dark, 0);
+    const root = document.documentElement.style;
+    for (const [css, role] of Object.entries(roles)) {
+      root.setProperty("--" + css, mcu.hexFromArgb(mcu.MaterialDynamicColors[role].getArgb(scheme)));
+    }
+    document.querySelector('meta[name="theme-color"]').content = mcu.hexFromArgb(mcu.MaterialDynamicColors.surface.getArgb(scheme));
+  }
+  function rgbToHex(rgb) {
+    const m = rgb.match(/\d+/g); if (!m) return rgb;
+    return "#" + m.slice(0, 3).map(n => (+n).toString(16).padStart(2, "0")).join("");
+  }
+  apply();
+
+  // Credits: everyone who has contributed to any Tintloom repository.
+  const people = document.getElementById("people");
+  try {
+    const repos = await (await fetch("https://api.github.com/orgs/Tintloom/repos?per_page=100")).json();
+    const all = new Map();
+    for (const r of Array.isArray(repos) ? repos : []) {
+      const list = await (await fetch(`https://api.github.com/repos/Tintloom/${r.name}/contributors?per_page=100`)).json();
+      for (const c of Array.isArray(list) ? list : []) {
+        if (c.type !== "User") continue;
+        const prev = all.get(c.login);
+        all.set(c.login, { ...c, contributions: (prev?.contributions || 0) + c.contributions });
+      }
+    }
+    const sorted = [...all.values()].sort((a, b) => b.contributions - a.contributions);
+    people.innerHTML = "";
+    if (!sorted.length) throw new Error("none");
+    for (const c of sorted) {
+      const a = document.createElement("a");
+      a.className = "person"; a.href = c.html_url;
+      const img = document.createElement("img");
+      img.src = c.avatar_url + "&s=160"; img.alt = ""; img.loading = "lazy";
+      const name = document.createElement("span");
+      name.textContent = c.login;
+      a.append(img, name);
+      people.appendChild(a);
+    }
+  } catch {
+    people.innerHTML = '<a class="person" href="https://github.com/calamityCocoa"><img src="https://github.com/calamityCocoa.png?size=160" alt=""><span>calamityCocoa</span></a>';
+  }
+</script>
+</body>
+</html>
