@@ -565,7 +565,8 @@
         tip.style.top = `${(g.y - g.outer - box.y) * scale}px`;
         tip.classList.add("show");
         // A springy extra turn of this gear, like tapping the picture in the app; the rest follow by ratio.
-        kick += TAU * g.teeth / gears[0].teeth;
+        // A gentle nudge: the hovered gear advances one tooth, and the train drifts along with it.
+        kick += TAU / gears[0].teeth;
       });
       link.addEventListener("pointerleave", () => tip.classList.remove("show"));
       link.addEventListener("focus", () => link.dispatchEvent(new Event("pointerenter")));
@@ -578,14 +579,14 @@
 
   let kick = 0, kickPos = 0, kickVel = 0;
   function draw(now = performance.now()) {
-    const breath = Math.sin(now / 2600 * Math.PI) * .04;
+    const breath = Math.sin(now / 5200 * Math.PI) * .03;
     for (const g of gears) {
       // The drive gear turns at `angle`; every other gear follows by its tooth ratio.
       const a = g.phase + g.dir * (angle + kickPos) * (gears[0].teeth / g.teeth);
       g.el.setAttribute("transform", `translate(${g.x.toFixed(2)} ${g.y.toFixed(2)}) rotate(${(a * 180 / Math.PI).toFixed(3)})`);
       // The halo turns slowly the other way and breathes, out of step with its neighbours.
       if (g.halo) {
-        const h = -g.dir * now / 32000 * TAU + g.phase;
+        const h = -g.dir * now / 120000 * TAU + g.phase;
         const b = 1.06 + breath * g.dir;
         g.halo.setAttribute("transform", `translate(${g.x.toFixed(2)} ${g.y.toFixed(2)}) rotate(${(h * 180 / Math.PI).toFixed(2)}) scale(${b.toFixed(4)})`);
       }
@@ -594,9 +595,14 @@
   function tick(now) {
     const dt = Math.min(64, now - last) / 1000;
     last = now;
-    angle += dt * 0.22;
-    // Material's spatial spring (stiffness 380, damping ratio 0.8) settles the extra turn.
-    const k = 380, c = 2 * .8 * Math.sqrt(k);
+    // Clockwork pace: the drive gear takes about 90 seconds a turn, advancing in soft escapement
+    // ticks (a quick ease forward, a rest) with a slow drift in speed so it never looks mechanical-perfect.
+    const drift = 1 + .15 * Math.sin(now / 23000) + .08 * Math.sin(now / 9100);
+    const tick = (now % 1000) / 1000;
+    const pulse = tick < .28 ? Math.sin(tick / .28 * Math.PI) : 0;
+    angle += dt * (TAU / 90) * drift * (.35 + 2.3 * pulse);
+    // A soft spring (low stiffness, well damped) lets nudges drift in rather than snap.
+    const k = 40, c = 2 * 1.0 * Math.sqrt(k);
     kickVel += ((kick - kickPos) * k - kickVel * c) * dt;
     kickPos += kickVel * dt;
     draw(now);
