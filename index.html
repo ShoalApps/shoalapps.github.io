@@ -153,11 +153,14 @@
   .gear img, .gear .plus {
     position: absolute; left: 21%; top: 21%; width: 58%; height: 58%; border-radius: 50%;
     object-fit: cover; background: var(--surface-container-high);
-    transition: transform .45s var(--spring);
+    /* No transforms on the picture: scaling it mid-animation makes the browser stretch a blurry snapshot. */
+    box-shadow: 0 0 0 0 var(--primary);
+    transition: box-shadow .35s var(--spring);
   }
   .gear .plus { display: grid; place-items: center; font-size: 34px; font-weight: 700; color: var(--on-surface-variant); background: none; }
   .gear.ghost .cog path { fill: none; stroke: var(--outline); stroke-width: .035; stroke-dasharray: .09 .07; }
-  .gear:hover img, .gear:focus-visible img, .gear:hover .plus { transform: scale(1.08); }
+  .gear:hover img, .gear:focus-visible img { box-shadow: 0 0 0 4px var(--primary); }
+  .gear:hover .plus, .gear:focus-visible .plus { color: var(--primary); }
   .gear .tip {
     position: absolute; left: 50%; bottom: 100%; transform: translate(-50%, 6px) scale(.9); opacity: 0;
     background: var(--on-surface); color: var(--surface); font-size: 14px; font-weight: 600; white-space: nowrap;
@@ -480,7 +483,7 @@
         a.insertAdjacentHTML("beforeend", '<span class="plus" aria-hidden="true">+</span>');
       } else {
         const img = document.createElement("img");
-        img.src = it.org ? it.avatar : `${it.avatar}${it.avatar.includes("?") ? "&" : "?"}s=160`;
+        img.src = it.org ? it.avatar : `${it.avatar}${it.avatar.includes("?") ? "&" : "?"}s=${Math.ceil(size * .58 * Math.max(2, devicePixelRatio))}`;
         img.alt = ""; img.loading = "lazy";
         a.appendChild(img);
       }
