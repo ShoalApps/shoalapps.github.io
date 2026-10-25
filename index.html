@@ -5,47 +5,47 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tintloom</title>
 <meta name="description" content="Tintloom: open-source Android apps that take on your wallpaper's colours with Material You.">
-<meta name="theme-color" content="#00695f">
+<meta name="theme-color" content="#8b4a61">
 <link rel="icon" href="logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  /* Fallback palette (Tintloom teal). JavaScript replaces these with a full Material You scheme. */
+  /* Fallback palette (Tintloom mauve, #7D5260). JavaScript replaces these with a full Material You scheme. */
   :root {
     color-scheme: light dark;
-    --primary: #00695f; --on-primary: #ffffff;
-    --primary-container: #9ff2e4; --on-primary-container: #00201c;
-    --secondary-container: #cce8e2; --on-secondary-container: #051f1c;
-    --tertiary-container: #cce5ff; --on-tertiary-container: #001d32;
-    --surface: #f4fbf8; --on-surface: #171d1b; --on-surface-variant: #3f4946;
-    --surface-container-low: #eff5f2; --surface-container: #e9efec;
-    --surface-container-high: #e3eae7; --surface-container-highest: #dee4e1;
-    --outline: #6f7976; --outline-variant: #bec9c5;
+    --primary: #8b4a61; --on-primary: #ffffff;
+    --primary-container: #ffd9e3; --on-primary-container: #6f334a;
+    --secondary-container: #ffd9e3; --on-secondary-container: #5a3f48;
+    --tertiary-container: #ffdcc2; --on-tertiary-container: #623f20;
+    --surface: #fff8f8; --on-surface: #22191c; --on-surface-variant: #514347;
+    --surface-container-low: #fff0f2; --surface-container: #faeaed;
+    --surface-container-high: #f4e4e7; --surface-container-highest: #efdfe2;
+    --outline: #837377; --outline-variant: #d5c2c6;
     --spring: cubic-bezier(.34, 1.56, .64, 1);
     --emphasized: cubic-bezier(.2, 0, 0, 1);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --primary: #83d5c8; --on-primary: #003731;
-      --primary-container: #005048; --on-primary-container: #9ff2e4;
-      --secondary-container: #334b47; --on-secondary-container: #cce8e2;
-      --tertiary-container: #2d4960; --on-tertiary-container: #cce5ff;
-      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
-      --surface-container-low: #171d1b; --surface-container: #1b2120;
-      --surface-container-high: #252b2a; --surface-container-highest: #303634;
-      --outline: #899390; --outline-variant: #3f4946;
+        --primary: #ffb0ca; --on-primary: #541d33;
+      --primary-container: #6f334a; --on-primary-container: #ffd9e3;
+      --secondary-container: #5a3f48; --on-secondary-container: #ffd9e3;
+      --tertiary-container: #623f20; --on-tertiary-container: #ffdcc2;
+      --surface: #191114; --on-surface: #efdfe2; --on-surface-variant: #d5c2c6;
+      --surface-container-low: #22191c; --surface-container: #261d20;
+      --surface-container-high: #31282a; --surface-container-highest: #3c3235;
+      --outline: #9e8c90; --outline-variant: #514347;
     }
   }
   :root[data-theme="dark"] {
-    --primary: #83d5c8; --on-primary: #003731;
-    --primary-container: #005048; --on-primary-container: #9ff2e4;
-    --secondary-container: #334b47; --on-secondary-container: #cce8e2;
-    --tertiary-container: #2d4960; --on-tertiary-container: #cce5ff;
-    --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
-    --surface-container-low: #171d1b; --surface-container: #1b2120;
-    --surface-container-high: #252b2a; --surface-container-highest: #303634;
-    --outline: #899390; --outline-variant: #3f4946;
+      --primary: #ffb0ca; --on-primary: #541d33;
+      --primary-container: #6f334a; --on-primary-container: #ffd9e3;
+      --secondary-container: #5a3f48; --on-secondary-container: #ffd9e3;
+      --tertiary-container: #623f20; --on-tertiary-container: #ffdcc2;
+      --surface: #191114; --on-surface: #efdfe2; --on-surface-variant: #d5c2c6;
+      --surface-container-low: #22191c; --surface-container: #261d20;
+      --surface-container-high: #31282a; --surface-container-highest: #3c3235;
+      --outline: #9e8c90; --outline-variant: #514347;
   }
 
   * { box-sizing: border-box; }
@@ -369,7 +369,7 @@
   requestAnimationFrame(frame);
 
   // Material You: build a full colour scheme from one seed colour, like Android does from a wallpaper.
-  const seeds = ["#00695f", "#6750a4", "#b3261e", "#7d5260", "#386a20", "#0061a4", "#8b5000"];
+  const seeds = ["#7d5260", "#6750a4", "#00695f", "#b3261e", "#386a20", "#0061a4", "#8b5000"];
   const swatches = document.getElementById("swatches");
   let seed = localStorageGet("tintloom-seed") || seeds[0];
   let forced = localStorageGet("tintloom-theme"); // "light", "dark" or null for system
