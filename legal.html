@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legal · Shoal</title>
+<meta name="description" content="Shoal: open-source Android apps that take on your wallpaper's colours with Material You.">
+<meta name="theme-color" content="#006b5e">
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+  /* Fallback palette (Shoal sea green, #00796B). JavaScript replaces these with a full Material You scheme. */
+  :root {
+    color-scheme: light dark;
+    --primary: #006b5e; --on-primary: #ffffff;
+    --primary-container: #9ff2e2; --on-primary-container: #005047;
+    --secondary-container: #cae6de; --on-secondary-container: #334b46;
+    --tertiary-container: #5b7890; --on-tertiary-container: #ffffff;
+    --surface: #f4fbf8; --on-surface: #171d1b; --on-surface-variant: #3f4946;
+    --surface-container-low: #eff5f2; --surface-container: #e9efec;
+    --surface-container-high: #e3eae7; --surface-container-highest: #dde4e1;
+    --outline: #6d7774; --outline-variant: #bec9c5;
+    --spring: cubic-bezier(.34, 1.56, .64, 1);
+    --emphasized: cubic-bezier(.2, 0, 0, 1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+        --primary: #83d5c6; --on-primary: #003730;
+      --primary-container: #005047; --on-primary-container: #9ff2e2;
+      --secondary-container: #354e49; --on-secondary-container: #cde8e1;
+      --tertiary-container: #7794ad; --on-tertiary-container: #000000;
+      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
+      --surface-container-low: #171d1b; --surface-container: #1b211f;
+      --surface-container-high: #252b2a; --surface-container-highest: #303634;
+      --outline: #899390; --outline-variant: #3f4946;
+    }
+  }
+  :root[data-theme="dark"] {
+      --primary: #83d5c6; --on-primary: #003730;
+      --primary-container: #005047; --on-primary-container: #9ff2e2;
+      --secondary-container: #354e49; --on-secondary-container: #cde8e1;
+      --tertiary-container: #7794ad; --on-tertiary-container: #000000;
+      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
+      --surface-container-low: #171d1b; --surface-container: #1b211f;
+      --surface-container-high: #252b2a; --surface-container-highest: #303634;
+      --outline: #899390; --outline-variant: #3f4946;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Google Sans Flex", "Google Sans", Roboto, system-ui, sans-serif;
+    background: var(--surface);
+    color: var(--on-surface);
+    line-height: 1.5;
+    transition: background .6s var(--emphasized), color .6s var(--emphasized);
+    overflow-x: hidden;
+  }
+  a { color: var(--primary); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+
+  /* Top bar */
+  header.bar {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--surface) 86%, transparent);
+    backdrop-filter: blur(14px);
+  }
+  header.bar .wrap { display: flex; align-items: center; gap: 12px; height: 64px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; letter-spacing: -.5px; text-decoration: none; color: var(--on-surface); }
+  .brand svg { width: 34px; height: 34px; }
+  nav.links { margin-left: auto; display: flex; gap: 4px; }
+  nav.links a {
+    color: var(--on-surface-variant); text-decoration: none; font-weight: 500;
+    padding: 8px 14px; border-radius: 20px; transition: background .2s, border-radius .3s var(--spring);
+  }
+  nav.links a:hover { background: var(--surface-container-high); border-radius: 12px; }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center; padding: 64px 0 40px; }
+  .hero h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.02; letter-spacing: -2px; margin: 0 0 16px; font-weight: 800; }
+  .hero h1 em { font-style: normal; color: var(--primary); }
+  .hero p.lede { font-size: 20px; color: var(--on-surface-variant); margin: 0 0 28px; max-width: 34ch; }
+  .shape-stage { position: relative; aspect-ratio: 1; max-width: 420px; justify-self: center; width: 100%; }
+  .shape-stage svg { width: 100%; height: 100%; overflow: visible; }
+  #hero-shape { fill: var(--primary-container); transition: fill .6s var(--emphasized); }
+  .hero-mark { --t-bar: var(--on-primary-container); --t-stem: var(--primary); --t-gap: var(--primary-container); }
+  .orbit { fill: var(--tertiary-container); transition: fill .6s; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 28px;
+    border-radius: 28px; font: inherit; font-weight: 700; font-size: 17px; text-decoration: none; cursor: pointer; border: 0;
+    transition: border-radius .35s var(--spring), transform .35s var(--spring), background .3s;
+  }
+  .btn:hover { border-radius: 16px; }
+  .btn:active { transform: scale(.95); }
+  .btn.filled { background: var(--primary); color: var(--on-primary); }
+  .btn.tonal { background: var(--secondary-container); color: var(--on-secondary-container); }
+  .btn svg { width: 22px; height: 22px; fill: currentColor; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* Colour picker */
+  .tint {
+    margin-top: 28px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    color: var(--on-surface-variant); font-size: 14px;
+  }
+  #swatches { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+  .swatch {
+    width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer; padding: 0;
+    transition: border-radius .35s var(--spring), transform .35s var(--spring);
+    outline: 3px solid transparent; outline-offset: 2px;
+  }
+  .swatch:hover { border-radius: 12px; transform: rotate(12deg); }
+  .swatch[aria-pressed="true"] { border-radius: 12px; outline-color: var(--primary); }
+  .theme-toggle { margin-left: 4px; background: var(--surface-container-high); color: var(--on-surface); border: 0; height: 36px; padding: 0 14px; border-radius: 18px; font: inherit; cursor: pointer; }
+
+  /* Sections */
+  section { padding: 56px 0; }
+  h2 { font-size: clamp(30px, 4vw, 44px); letter-spacing: -1px; margin: 0 0 8px; font-weight: 800; }
+  .sub { color: var(--on-surface-variant); margin: 0 0 32px; font-size: 18px; }
+
+  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface-container); border-radius: 28px; padding: 28px;
+    transition: border-radius .45s var(--spring), transform .45s var(--spring), background .6s;
+    position: relative; overflow: hidden;
+  }
+  .card:hover { border-radius: 44px; transform: translateY(-4px); }
+  .card .icon { display: block; width: 64px; height: 64px; margin-bottom: 16px; }
+  .card .icon path.bg { fill: var(--primary-container); }
+  .card .icon path.fg { fill: var(--on-primary-container); }
+  .card .icon path.bg-ink { fill: var(--primary-container); }
+  /* Each fish in its own colours. */
+  .fish-card .icon path.cookie, .fish-card .icon path.ink { fill: var(--fish-p); }
+  .fish-card .icon path.fish { fill: #fff; }
+  .fish-card .icon { background: var(--fish-c); border-radius: 22px; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fish-card .icon { background: var(--fish-dc); } :root:not([data-theme="light"]) .fish-card .icon path.cookie, :root:not([data-theme="light"]) .fish-card .icon path.ink { fill: var(--fish-dp); } :root:not([data-theme="light"]) .fish-card .icon path.fish { fill: var(--fish-dc); } }
+  :root[data-theme="dark"] .fish-card .icon { background: var(--fish-dc); }
+  :root[data-theme="dark"] .fish-card .icon path.cookie, :root[data-theme="dark"] .fish-card .icon path.ink { fill: var(--fish-dp); }
+  :root[data-theme="dark"] .fish-card .icon path.fish { fill: var(--fish-dc); }
+  .card.soon .icon path.bg { fill: var(--surface-container-highest); }
+  .card.soon .icon path.fg { fill: var(--on-surface-variant); }
+  .card h3 { margin: 0 0 6px; font-size: 24px; }
+  .card p { margin: 0 0 20px; color: var(--on-surface-variant); }
+  .chip { display: inline-block; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 8px; background: var(--tertiary-container); color: var(--on-tertiary-container); margin-bottom: 12px; }
+
+  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .feature { background: var(--surface-container-low); border-radius: 20px; padding: 20px; }
+  .feature b { display: block; margin-bottom: 4px; font-size: 17px; }
+  .feature span { color: var(--on-surface-variant); font-size: 15px; }
+
+  /* Credits: each contributor's picture is a gear, and the gears mesh into one machine */
+  .machine { position: relative; margin: 0 auto; }
+  .machine svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  /* No grey tap box or focus rectangle around a gear; its rim lights up instead. */
+  .machine a { cursor: pointer; -webkit-tap-highlight-color: transparent; outline: none; }
+  .machine a:focus, .machine a:focus-visible { outline: none; }
+  .machine a:active .rim { stroke: var(--primary); stroke-width: 3; }
+  .machine .rim { fill: none; stroke: transparent; stroke-width: 3; transition: stroke .3s; }
+  .machine a:hover .rim, .machine a:focus-visible .rim { stroke: var(--primary); stroke-width: 3; }
+  .machine .halo { fill: var(--primary-container); opacity: .55; transition: fill .6s; }
+  .machine .gear { opacity: 0; transform: translateY(14px); transition: opacity .5s var(--emphasized), transform .7s var(--emphasized); }
+  .machine.shown .gear { opacity: 1; transform: none; }
+  .machine .org-gear { fill: var(--primary); transition: fill .6s; }
+  .machine .org-cookie { fill: var(--primary); transition: fill .6s; }
+  .machine .org-play { fill: var(--on-primary); stroke: var(--on-primary); stroke-width: .08; stroke-linejoin: round; transition: fill .6s; }
+  .machine .ghost-rim { fill: none; stroke: var(--outline); stroke-width: 2; stroke-dasharray: 6 5; }
+  .machine .ghost-plus { fill: var(--on-surface-variant); font: 700 34px "Google Sans Flex", sans-serif; text-anchor: middle; dominant-baseline: central; }
+  .machine .tip {
+    position: absolute; transform: translate(-50%, -100%) scale(.9); opacity: 0; pointer-events: none;
+    background: var(--on-surface); color: var(--surface); font-size: 14px; font-weight: 600; white-space: nowrap;
+    padding: 6px 12px; border-radius: 12px; transition: opacity .2s, transform .35s var(--spring); z-index: 2;
+  }
+  .machine .tip.show { opacity: 1; transform: translate(-50%, calc(-100% - 6px)) scale(1); }
+  .names { margin-top: 24px; color: var(--on-surface-variant); font-size: 15px; text-align: center; }
+  .muted { color: var(--on-surface-variant); }
+
+  /* Legal */
+  .legal { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .legal article { background: var(--surface-container-low); border-radius: 24px; padding: 24px; }
+  .legal h3 { margin-top: 0; }
+  .legal p, .legal li { color: var(--on-surface-variant); font-size: 15px; }
+
+  footer { padding: 40px 0 56px; color: var(--on-surface-variant); font-size: 14px; border-top: 1px solid var(--outline-variant); }
+
+  @media (max-width: 760px) {
+    .hero { grid-template-columns: 1fr; padding-top: 32px; }
+    .shape-stage { max-width: 260px; grid-row: 1; }
+    nav.links { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* Fewer flourishes, but the gears still turn gently (they're drawn by script). */
+    .card, .swatch, .btn { transition: none !important; }
+  }
+  .doc { max-width: 760px; margin: 0 auto; padding: 32px 20px 64px; }
+  .doc h1 { font-size: clamp(32px, 6vw, 48px); margin: 8px 0 4px; }
+  .doc h2 { margin-top: 36px; font-size: 22px; }
+  .doc p, .doc li { line-height: 1.6; color: var(--on-surface); }
+  .doc .meta { color: var(--on-surface-variant); }
+  .doc table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 15px; }
+  .doc th, .doc td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--outline-variant); vertical-align: top; }
+  .doc a { color: var(--primary); }
+  .back { display: inline-flex; gap: 6px; align-items: center; color: var(--primary); text-decoration: none; font-weight: 600; }
+</style>
+</head>
+<body>
+<main class="doc">
+  <a class="back" href="./">← Shoal</a>
+  <h1>Legal</h1>
+  <p class="meta">Last updated 26 October 2026</p>
+
+  <h2>Licence</h2>
+  <p>Every Shoal app is free software, released under the <a href="https://www.gnu.org/licenses/gpl-3.0.html">GNU General Public License, version 3 or later</a>. You may use, study, share and change it. If you distribute something built from it, it must stay under the same licence with its source code available. The source for each app is on <a href="https://github.com/ShoalApps">GitHub</a>.</p>
+
+  <h2>No warranty</h2>
+  <p>The apps are provided "as is", without warranty of any kind, to the extent the law allows. The services they connect to can change or stop working at any time, and the contributors can't promise any feature will keep working.</p>
+
+  <h2>Not affiliated</h2>
+  <p>Shoal is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, TikTok (ByteDance), Instagram or Meta, X Corp., Bluesky Social PBC, Reddit, Inc., Sentry or any other company whose service an app connects to. YouTube, YouTube Music, TikTok, Instagram, Reels, Bluesky, X, Reddit and other names are trademarks of their owners and are used only to say what the apps work with.</p>
+  <p>The Shoal fish icons are our own drawings. Some are inspired by the shape and colours of the service an app works with, so you can tell them apart, but they don't use anyone's logo.</p>
+
+  <h2>Using the apps</h2>
+  <p>You're responsible for using the apps lawfully and in line with the terms of the services you use them with. Downloading or redistributing content may need the permission of whoever owns it. Don't use the apps to break the law or anyone's rights.</p>
+
+  <h2>Open-source software we build on</h2>
+  <table>
+    <tr><th>Project</th><th>Licence</th><th>Used in</th></tr>
+    <tr><td><a href="https://github.com/TeamNewPipe/NewPipeExtractor">NewPipeExtractor</a></td><td>GPL-3.0</td><td>Swordfish, Clownfish, Pufferfish</td></tr>
+    <tr><td><a href="https://github.com/androidx/media">AndroidX Media3</a>, Jetpack Compose, Glance and other AndroidX libraries</td><td>Apache 2.0</td><td>All apps</td></tr>
+    <tr><td><a href="https://github.com/coil-kt/coil">Coil</a></td><td>Apache 2.0</td><td>All apps</td></tr>
+    <tr><td><a href="https://github.com/square/okhttp">OkHttp</a></td><td>Apache 2.0</td><td>All apps</td></tr>
+    <tr><td><a href="https://github.com/Kotlin/kotlinx.serialization">kotlinx.serialization</a>, <a href="https://github.com/Kotlin/kotlinx.coroutines">kotlinx.coroutines</a></td><td>Apache 2.0</td><td>All apps</td></tr>
+    <tr><td><a href="https://github.com/getsentry/sentry-java">Sentry Java SDK</a></td><td>MIT</td><td>All apps (optional error reports)</td></tr>
+    <tr><td><a href="https://github.com/shy1132/VacuumTube">VacuumTube</a></td><td>GPL-3.0</td><td>Swordfish (TV mode)</td></tr>
+    <tr><td><a href="https://github.com/jordond/materialkolor">MaterialKolor</a></td><td>MIT</td><td>Pufferfish</td></tr>
+    <tr><td><a href="https://github.com/RikkaApps/Shizuku-API">Shizuku API</a></td><td>Apache 2.0</td><td>Shoal</td></tr>
+    <tr><td><a href="https://github.com/HmnDev-Tech/shevery">Shevery</a> (recommended, not bundled)</td><td>Apache 2.0</td><td>Shoal</td></tr>
+  </table>
+  <p>Design ideas come from <a href="https://github.com/PixelPlayerHQ/PixelPlayer">PixelPlayer</a>, <a href="https://github.com/FrancescoGrazioso/Meld">Meld</a> and <a href="https://github.com/MetrolistGroup/Metrolist">Metrolist</a>. Data comes from <a href="https://sponsor.ajay.app">SponsorBlock</a> and <a href="https://dearrow.ajay.app">DeArrow</a> (CC BY-NC-SA 4.0), <a href="https://returnyoutubedislike.com">Return YouTube Dislike</a>, <a href="https://lrclib.net">LRCLIB</a> and <a href="https://github.com/better-lyrics/better-lyrics">BetterLyrics</a>.</p>
+
+  <h2>Donations</h2>
+  <p>Shoal is free. Donations through <a href="https://liberapay.com/ShoalApps">Liberapay</a> are voluntary gifts to support development; they don't buy any product, service or special treatment, and Liberapay's own terms apply.</p>
+
+  <h2>Copyright concerns</h2>
+  <p>If you believe something in a Shoal repository infringes your rights, open an issue on the repository concerned or use <a href="https://docs.github.com/en/site-policy/content-removal-policies/dmca-takedown-policy">GitHub's takedown process</a>, and we'll respond promptly.</p>
+
+  <p class="meta" style="margin-top:48px">Questions: open an issue at <a href="https://github.com/ShoalApps/shoalapps.github.io/issues">github.com/ShoalApps/shoalapps.github.io</a>. · <a href="privacy.html">Privacy policy</a> · <a href="legal.html">Legal</a> · <a href="https://liberapay.com/ShoalApps">Support Shoal</a></p>
+</main>
+</body>
+</html>

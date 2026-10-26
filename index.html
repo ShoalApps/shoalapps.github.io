@@ -155,8 +155,10 @@
   /* Credits: each contributor's picture is a gear, and the gears mesh into one machine */
   .machine { position: relative; margin: 0 auto; }
   .machine svg { display: block; width: 100%; height: 100%; overflow: visible; }
-  .machine a { cursor: pointer; }
-  .machine a:focus-visible { outline: none; }
+  /* No grey tap box or focus rectangle around a gear; its rim lights up instead. */
+  .machine a { cursor: pointer; -webkit-tap-highlight-color: transparent; outline: none; }
+  .machine a:focus, .machine a:focus-visible { outline: none; }
+  .machine a:active .rim { stroke: var(--primary); stroke-width: 3; }
   .machine .rim { fill: none; stroke: transparent; stroke-width: 3; transition: stroke .3s; }
   .machine a:hover .rim, .machine a:focus-visible .rim { stroke: var(--primary); stroke-width: 3; }
   .machine .halo { fill: var(--primary-container); opacity: .55; transition: fill .6s; }
@@ -190,7 +192,8 @@
     nav.links { display: none; }
   }
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; transition: none !important; }
+    /* Fewer flourishes, but the gears still turn gently (they're drawn by script). */
+    .card, .swatch, .btn { transition: none !important; }
   }
 </style>
 </head>
@@ -333,13 +336,13 @@
       </article>
       <article id="privacy">
         <h3>Privacy</h3>
-        <p>Shoal has no servers, no analytics and no ads. Your settings, history and subscriptions stay on your phone.</p>
+        <p>Shoal has no servers of its own, no ads and no tracking. Your settings, history and subscriptions stay on your phone. If you agree, the apps send anonymous error reports so bugs can be fixed; it's off unless you say yes. <a href="privacy.html">Read the full privacy policy</a>.</p>
         <p>To work, the apps talk directly to the services they show. Swordfish contacts YouTube, and, only while those features are turned on, sends the ID of the video you're watching to SponsorBlock, DeArrow and Return YouTube Dislike. If you sign in, your YouTube cookies are stored only on your phone and sent only to YouTube. Once a day the app asks GitHub whether a newer version has been released; you can turn that off in Settings. With Shoal Manager installed, the Manager does this instead: it contacts only GitHub, to check for and download Shoal releases.</p>
       </article>
       <article id="disclaimer">
         <h3>Not affiliated</h3>
         <p>Shoal is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, TikTok, Instagram, Meta, X, Bluesky, Reddit or any other company whose service an app connects to. All trademarks belong to their owners and are used only to describe what the apps work with.</p>
-        <p>You are responsible for using the apps in line with the laws where you live and the terms of the services you use.</p>
+        <p>You are responsible for using the apps in line with the laws where you live and the terms of the services you use. <a href="legal.html">Licences, trademarks and notices in full</a>.</p>
       </article>
     </div>
   </section>
@@ -347,7 +350,7 @@
 
 <footer>
   <div class="wrap">
-    Shoal · free software under the GPL-3.0 · <a href="https://github.com/ShoalApps">github.com/ShoalApps</a> · <a href="https://liberapay.com/ShoalApps">Support Shoal on Liberapay</a>
+    Shoal · free software under the GPL-3.0 · <a href="https://github.com/ShoalApps">github.com/ShoalApps</a> · <a href="https://liberapay.com/ShoalApps">Support Shoal on Liberapay</a> · <a href="privacy.html">Privacy</a> · <a href="legal.html">Legal</a>
   </div>
 </footer>
 
@@ -391,7 +394,8 @@
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let start = performance.now();
   function frame(now) {
-    const t = (now - start) / 1000;
+    // Reduced motion: the same shapes, at a third of the pace.
+    const t = (now - start) / 1000 * (still ? 0.33 : 1);
     const p = (Math.sin(t * 0.9) + 1) / 2;
     const ease = p * p * (3 - 2 * p);
     shape.setAttribute("d", morph(9, 12, ease));
@@ -399,7 +403,7 @@
     const a = t * 0.6;
     orbit.setAttribute("cx", (Math.sin(a) * 1.08).toFixed(3));
     orbit.setAttribute("cy", (-Math.cos(a) * 1.08).toFixed(3));
-    if (!still) requestAnimationFrame(frame);
+    requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
 
@@ -604,6 +608,8 @@
         kick += TAU / gears[0].teeth;
       });
       link.addEventListener("pointerleave", () => tip.classList.remove("show"));
+      // Phones have no hover: a tap gives the gear its spin and shows the name before opening.
+      link.addEventListener("pointerdown", e => { if (e.pointerType !== "mouse") link.dispatchEvent(new Event("pointerenter")); });
       link.addEventListener("focus", () => link.dispatchEvent(new Event("pointerenter")));
       link.addEventListener("blur", () => tip.classList.remove("show"));
       svg.appendChild(link);
@@ -635,7 +641,8 @@
     const drift = 1 + .15 * Math.sin(now / 23000) + .08 * Math.sin(now / 9100);
     const tick = (now % 1000) / 1000;
     const pulse = tick < .28 ? Math.sin(tick / .28 * Math.PI) : 0;
-    angle += dt * (TAU / 90) * drift * (.35 + 2.3 * pulse);
+    // With reduced motion asked for, an even, slower turn without the ticking.
+    angle += still ? dt * (TAU / 150) : dt * (TAU / 90) * drift * (.35 + 2.3 * pulse);
     // A soft spring (low stiffness, well damped) lets nudges drift in rather than snap.
     const k = 40, c = 2 * 1.0 * Math.sqrt(k);
     kickVel += ((kick - kickPos) * k - kickVel * c) * dt;
@@ -648,7 +655,7 @@
     if (entries.some(e => e.isIntersecting)) { machine.classList.add("shown"); obs.disconnect(); }
   }, { threshold: .2 }).observe(machine);
   build();
-  if (!still) requestAnimationFrame(tick);
+  requestAnimationFrame(tick);
   let resizeTimer;
   addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(build, 150); });
 </script>
