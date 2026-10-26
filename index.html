@@ -581,7 +581,13 @@
       link.setAttribute("class", "gear");
       link.style.transitionDelay = `${i * 90}ms`;
       if (g.ghost) {
-        group.innerHTML = `<path class="ghost-rim" d="${d}"/><text class="ghost-plus">+</text>`;
+        // The dashed rim turns with the train; the + stays upright so it never reads as a ✕.
+        group.innerHTML = `<path class="ghost-rim" d="${d}"/>`;
+        const plus = document.createElementNS(SVGNS, "text");
+        plus.setAttribute("class", "ghost-plus");
+        plus.setAttribute("transform", `translate(${g.x.toFixed(2)} ${g.y.toFixed(2)})`);
+        plus.textContent = "+";
+        link.appendChild(plus);
       } else if (g.org) {
         // The drive gear is the Shoal mark, drawn in the page's Material You colours.
         const k = g.R * .62;
