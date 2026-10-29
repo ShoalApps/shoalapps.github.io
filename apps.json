@@ -12,7 +12,7 @@
   {
     "slug": "blobfish",
     "name": "Blobfish",
-    "description": "Bluesky and Twitter in a Material You Android app."
+    "description": "Blobfish: a Shoal app for Android."
   },
   {
     "slug": "clownfish",
@@ -22,11 +22,11 @@
   {
     "slug": "pufferfish",
     "name": "Pufferfish",
-    "description": "A YouTube Music client for Android with Material You and offline listening."
+    "description": "Pufferfish: a Shoal app for Android."
   },
   {
     "slug": "swordfish",
     "name": "Swordfish",
-    "description": "A YouTube client for Android with Material You, offline playback and SponsorBlock."
+    "description": "Swordfish: a Shoal app for Android."
   }
 ]
