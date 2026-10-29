@@ -200,6 +200,8 @@
   .gallery img { width: 100%; height: auto; border-radius: 28px; border: 6px solid var(--surface-container-high, #2a2f33); display: block; background: var(--surface-container); }
   .gallery figcaption { margin-top: 8px; color: var(--on-surface-variant); font-size: 14px; }
 </style>
+<link rel="stylesheet" href="assets/ocean.css">
+<script src="assets/ocean.js" defer></script>
 </head>
 <body>
 <!-- Clip path for avatars: a Material cookie shape, built by script. -->
@@ -212,6 +214,7 @@
     <a class="brand" href="#"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Shoal</a>
     <nav class="links">
       <a href="#apps">Apps</a>
+      <a href="#trailer">Our story</a>
       <a href="#credits">Credits</a>
       <a href="#legal">Legal</a>
       <a href="https://github.com/ShoalApps">GitHub</a>
@@ -223,8 +226,8 @@
 <main class="wrap">
   <div class="hero">
     <div>
-      <h1>Your apps, in <em>your colours</em>.</h1>
-      <p class="lede">Shoal makes open-source Android apps that take on your wallpaper's colours with Material You. No ads, no tracking. Start with Shoal: it installs and updates the rest.</p>
+      <h1>A fresh current.<br><em>Your kind of apps.</em></h1>
+      <p class="lede">Open-source Android apps that feel like they belong together. Your content, your colours, your choice. Free to use, with no Shoal feature paywalls. Start with Shoal to install and update the family.</p>
       <div class="row">
         <a class="btn filled" href="https://github.com/ShoalApps/shoal/releases/latest/download/Shoal.apk">
           <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>
@@ -250,15 +253,61 @@
     </div>
   </div>
 
+  <div class="ocean-controls"><button id="motion-toggle" type="button" aria-pressed="true">Pause fish animations</button><a href="#trailer">Meet the whole shoal ↓</a></div>
+
+  <section id="trailer" class="trailer-section" aria-labelledby="trailer-title">
+    <p class="trailer-label">Meet Shoal</p>
+    <h2 id="trailer-title">Dive into something<br>a little more you.</h2>
+    <p class="sub">Six apps. One design language. A different way to feel at home online.</p>
+    <p class="sub">Synthetic British English narration with original water and transition effects. Captions and a transcript are available below. Morphe is an independent project; the evolution sequence is an illustration, not an app or account migration.</p>
+    <div class="trailer-frame">
+      <video id="shoal-trailer" controls playsinline preload="none" poster="assets/trailer-poster.svg" aria-label="Meet Shoal - an animated introduction to all six apps">
+        <source src="assets/shoal-trailer.mp4" type="video/mp4">
+        <track kind="captions" src="assets/trailer-en.vtt" srclang="en-GB" label="English (UK)" default>
+        Your browser cannot play this trailer. Read the transcript below or download the film.
+      </video>
+    </div>
+    <div class="trailer-meta"><span>Animated film · 1:44 · British English voiceover, sound effects and captions</span><a href="assets/shoal-trailer.mp4" download>Download the trailer</a></div>
+    <details><summary>Read the trailer transcript</summary><div id="trailer-transcript"><p><strong>Meet Shoal</strong> Meet Shoal. Open-source Android apps for your content, your colours, and your choice.</p><p><strong>A crowded habitat.</strong> Sometimes, watching a video feels like an obstacle course: adverts, sponsorships, and another upgrade prompt.</p><p><strong>A change in the current.</strong> A patched app can change the familiar experience. Morphe is one independent example. We imagined a different habitat.</p><p><strong>Evolve into your element.</strong> Our fish adapt to their surroundings, and gather into a new home. Apps designed around you.</p><p><strong>Swordfish</strong> Swordfish brings SponsorBlock, background playback, picture in picture, and available audio tracks to YouTube viewing.</p><p><strong>Clownfish</strong> Clownfish brings Shorts, TikTok and Reels into separate tabs, with the services own pages and account requirements.</p><p><strong>Pufferfish</strong> Pufferfish plays YouTube Music, with playlists, offline downloads, and lyrics when they are available.</p><p><strong>Blobfish</strong> Blobfish offers a Material You home for Bluesky, your feeds, conversations, and community.</p><p><strong>Anglerfish</strong> Anglerfish wraps Reddit in a Material home. Reddit pages, sign-in requirements, and restrictions still apply.</p><p><strong>Shoal</strong> Shoal installs and updates the family, and manages connected accounts. Silent installation needs supported permissions or tools.</p><p><strong>Free to swim.</strong> Fish adapt to their surroundings and thrive in a natural habitat. That is the idea behind Shoal.</p><p><strong>Free to stay.</strong> Shoal features have no paywalls. Donations are optional. Connected services may have their own charges and restrictions.</p><p><strong>By the community. For the community.</strong> Built in the open. Shaped by the people who use it. By the community, for the community.</p><p><strong>Find your shoal.</strong> Find your shoal at shoal apps, dot GitHub, dot I O. Everyone is welcome.</p></div></details>
+  </section>
+
+  <section id="our-current" class="manifesto" aria-labelledby="our-current-title">
+    <p class="trailer-label">Our current</p>
+    <h2 id="our-current-title">Apps should feel like a natural habitat.</h2>
+    <div class="manifesto-grid">
+      <article class="manifesto-card"><h3>Less hassle.<br>More of what you love.</h3>
+        <p>Sometimes watching a video feels like an obstacle course: an advert, a sponsorship, another prompt to upgrade. Downloads sit behind a subscription, and the interface can feel generic, cluttered and tired.</p>
+        <p>We wanted a fresh current. So we dipped our hands into the water of app development.</p>
+        <p>Shoal puts the experience first: a unified Material You design, colours that adapt to your phone, and controls that feel familiar from one app to the next.</p>
+      </article>
+      <article class="manifesto-card alt"><h3>Your content shouldn't<br>need a costume change.</h3>
+        <p>Big companies use different designs to distinguish their brands. But when you're just watching a vertical video, why should every service feel like a completely different world?</p>
+        <p>A friend sends a Reel in one chat, a TikTok in another. Some days you want unhinged Reels; other days, a little brain-rotting Shorts. Clownfish brings those services into one app, each in its own tab, with a familiar home around them.</p>
+        <p>Not every service can share the same native interface. Where an app uses a service's website, its pages and rules still apply. We're building a shared home, not pretending those differences have disappeared.</p>
+      </article>
+      <article class="manifesto-card alt"><h3>Why fish?</h3>
+        <p>Fish are free to swim through a vast ocean. They adapt to their surroundings and thrive in a natural habitat. That's the spirit behind Shoal: simple, adaptable apps that give you room to enjoy what you came for.</p>
+        <p>We believe you should have a choice beyond the primary apps made by monopolies and big companies. Shoal doesn't add advertising profiles or sell your personal information. The services you connect to keep their own privacy policies.</p>
+      </article>
+      <article class="manifesto-card"><h3>Free to swim.<br>Free to stay.</h3>
+        <p>No Shoal feature paywalls. No subscription to unlock our controls. Payment is optional, and donations help keep the project moving. A thank-you should never decide what you're allowed to do.</p>
+        <p>Third-party services may still require an account, impose restrictions or charge for their own content. Shoal's features remain free.</p>
+        <p><a href="https://liberapay.com/ShoalApps">Support the shoal</a> or <a href="https://github.com/ShoalApps">help build it</a>. Both are welcome.</p>
+      </article>
+    </div>
+    <p class="community-line">By the community.<br>For the community.</p>
+  </section>
+
   <section id="apps">
     <h2>The apps</h2>
+    <p class="sub">Features depend on each service and the streams it makes available. Shoal does not promise complete YouTube feature parity, access to paid content, or a fully native interface for embedded websites.</p>
     <p class="sub">Each one is built with Jetpack Compose and Material 3 Expressive, and is free software under the GPL.</p>
     <div class="apps">
       <div class="card fish-card" style="--fish-c:#FFE1DF;--fish-p:#DD4649;--fish-dc:#8A1A21;--fish-dp:#FFB3AF">
         <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Swordfish"><path class="cookie" d="M36,33 H72 A13,13 0 0 1 85,46 V62 A13,13 0 0 1 72,75 H36 A13,13 0 0 1 23,62 V46 A13,13 0 0 1 36,33 Z"/><path class="fish" fill-rule="evenodd" d="M44,43 C51,45.5 60,50 66.5,54 C60,58 51,62.5 44,65 C46.5,58 46.5,50 44,43 Z"/><path class="ink" d="M58.35,52.60 a1.15,1.15 0 1,0 2.3,0 a1.15,1.15 0 1,0 -2.3,0 Z"/><path class="fish" fill-rule="evenodd" d="M65,53.2 L80,54 L65,54.8 Z"/><path class="fish" fill-rule="evenodd" d="M45.5,54 L37,46.5 C38.6,49.6 39.2,51.8 39.2,54 C39.2,56.2 38.6,58.4 37,61.5 Z"/><path class="fish" fill-rule="evenodd" d="M48.2,45.6 C49.6,41.6 53.4,39 57.4,38.6 C56.4,41.4 56.2,44.4 56.9,47.8 Z"/></svg>
         <span class="chip">Available now</span>
         <h3>Swordfish</h3>
-        <p>YouTube with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Plays the videos other apps can't, with live chapter names as you scrub. Phones, tablets, Chromebooks and TVs.</p>
+        <p>YouTube with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Choose available audio tracks, captions and quality, with chapter names as you scrub. Phones, tablets, Chromebooks and TVs.</p>
         <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/swordfish/releases/latest/download/Swordfish.apk">Download APK</a></div>
       </div>
       <div class="card fish-card" style="--fish-c:#DFE8FF;--fish-p:#007AED;--fish-dc:#00468C;--fish-dp:#A9C7FF">
@@ -279,7 +328,7 @@
         <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Pufferfish"><path class="cookie" d="M28.00,54.00 a26,26 0 1,0 52,0 a26,26 0 1,0 -52,0 Z"/><path class="fish" fill-rule="evenodd" d="M35.80,54.00 a18.2,18.2 0 1,0 36.4,0 a18.2,18.2 0 1,0 -36.4,0 Z M38.20,54.00 a15.8,15.8 0 1,0 31.6,0 a15.8,15.8 0 1,0 -31.6,0 Z"/><path class="fish" fill-rule="evenodd" d="M44.40,54.00 a9.6,9.6 0 1,0 19.2,0 a9.6,9.6 0 1,0 -19.2,0 Z"/><path class="ink" d="M50.6,49.4 L59,54 L50.6,58.6 Z"/><path class="fish" fill-rule="evenodd" d="M63.20,52.85 L66.20,54.00 L63.20,55.15 Z"/><path class="fish" fill-rule="evenodd" d="M62.54,57.60 L64.57,60.10 L61.39,59.60 Z"/><path class="fish" fill-rule="evenodd" d="M59.60,61.39 L60.10,64.57 L57.60,62.54 Z"/><path class="fish" fill-rule="evenodd" d="M55.15,63.20 L54.00,66.20 L52.85,63.20 Z"/><path class="fish" fill-rule="evenodd" d="M50.40,62.54 L47.90,64.57 L48.40,61.39 Z"/><path class="fish" fill-rule="evenodd" d="M46.61,59.60 L43.43,60.10 L45.46,57.60 Z"/><path class="fish" fill-rule="evenodd" d="M44.80,55.15 L41.80,54.00 L44.80,52.85 Z"/><path class="fish" fill-rule="evenodd" d="M45.46,50.40 L43.43,47.90 L46.61,48.40 Z"/><path class="fish" fill-rule="evenodd" d="M48.40,46.61 L47.90,43.43 L50.40,45.46 Z"/><path class="fish" fill-rule="evenodd" d="M52.85,44.80 L54.00,41.80 L55.15,44.80 Z"/><path class="fish" fill-rule="evenodd" d="M57.60,45.46 L60.10,43.43 L59.60,46.61 Z"/><path class="fish" fill-rule="evenodd" d="M61.39,48.40 L64.57,47.90 L62.54,50.40 Z"/><path class="fish" fill-rule="evenodd" d="M44.8,54 L40.6,50.6 L41.6,54 L40.6,57.4 Z"/></svg>
         <span class="chip">New</span>
         <h3>Pufferfish</h3>
-        <p>YouTube Music laid out like Spotify: Home mixes, your library and playlists, offline downloads, karaoke-style lyrics, a sleep timer, and the whole app coloured from the album art.</p>
+        <p>YouTube Music laid out like Spotify: Home mixes, your library and playlists, offline downloads, lyrics when available, a sleep timer, and the whole app coloured from the album art.</p>
         <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/pufferfish/releases/latest/download/Pufferfish.apk">Download APK</a></div>
       </div>
       <div class="card fish-card" style="--fish-c:#FFE2DB;--fish-p:#DA4C22;--fish-dc:#872000;--fish-dp:#FFB5A1">
@@ -327,6 +376,7 @@
     </div>
   </section>
   <section id="credits">
+    <details><summary>Trailer voice and sound credits</summary><p>The narration is synthetic, generated locally with Piper and the en_GB-northern_english_male-medium voice. Training data: <a href="https://www.openslr.org/83/">OpenSLR 83</a>, CC BY-SA 4.0. Voice model: <a href="https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_GB/northern_english_male/medium">Piper voices</a>. Trailer audio is provided under CC BY-SA 4.0. Water, bubble and transition sounds are generated by Shoal’s trailer script; no stock soundtrack is used. Screenshots show the apps; illustrated interfaces are labelled in the film.</p></details>
     <h2>Credits</h2>
     <p class="sub">The people who make Shoal, turning together. Updated from GitHub every day.</p>
     <div class="machine" id="machine"></div>
@@ -409,7 +459,11 @@
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   let start = performance.now();
   function frame(now) {
-    // Reduced motion: the same shapes, at a third of the pace.
+    if (document.hidden || document.documentElement.dataset.motion === "off") {
+      shape.setAttribute("d", cookie(12, .08));
+      requestAnimationFrame(frame);
+      return;
+    }
     const t = (now - start) / 1000 * (still ? 0.33 : 1);
     const p = (Math.sin(t * 0.9) + 1) / 2;
     const ease = p * p * (3 - 2 * p);
@@ -657,6 +711,7 @@
   function tick(now) {
     const dt = Math.min(64, now - last) / 1000;
     last = now;
+    if (document.hidden || document.documentElement.dataset.motion === "off") { requestAnimationFrame(tick); return; }
     // Clockwork pace: the drive gear takes about 90 seconds a turn, advancing in soft escapement
     // ticks (a quick ease forward, a rest) with a slow drift in speed so it never looks mechanical-perfect.
     const drift = 1 + .15 * Math.sin(now / 23000) + .08 * Math.sin(now / 9100);
