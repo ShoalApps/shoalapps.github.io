@@ -38,7 +38,4 @@
   });
   reduced.addEventListener('change', () => { choice = null; apply(); });
   apply();
-  const video = document.getElementById('shoal-trailer');
-  // No autoplay or background downloading, including on a data-saving connection.
-  document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); });
 })();
