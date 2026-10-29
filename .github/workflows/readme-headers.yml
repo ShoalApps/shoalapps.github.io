@@ -1,0 +1,32 @@
+name: Refresh app catalogue and README headers
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/readme-headers.py'
+      - '.github/workflows/readme-headers.yml'
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Discover apps and regenerate headers
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/readme-headers.py
+      - name: Publish changed headers
+        run: |
+          git add assets/readme apps.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Refresh the Shoal app catalogue and README headers'
+          git push
