@@ -1,0 +1,30 @@
+/* The fish have room to swim. Motion can always be stopped. */
+.fish-card { position:relative; overflow:hidden; }
+.fish-card .icon { overflow:visible; }
+.fish-swimmer { transform-box:fill-box; transform-origin:center; animation:fin-drift 4s ease-in-out infinite; }
+.fish-card:nth-child(2n) .fish-swimmer { animation-delay:-1.8s; animation-duration:5s; }
+.fish-card:nth-child(3n) .fish-swimmer { animation-delay:-3s; animation-duration:4.6s; }
+.fish-card:hover .fish-swimmer { animation-duration:1.3s; }
+@keyframes fin-drift { 0%,100%{transform:translate(-1px,1px) rotate(-3deg)} 50%{transform:translate(2px,-3px) rotate(3deg)} }
+.ocean-controls { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:18px 0; }
+.ocean-controls button { border:1px solid var(--outline-variant); background:var(--surface-container); color:var(--on-surface); border-radius:24px; padding:10px 18px; cursor:pointer; font:inherit; }
+.trailer-section { padding-top:48px; }
+.trailer-label { color:var(--primary); text-transform:uppercase; font-size:13px; font-weight:800; letter-spacing:.15em; }
+.trailer-section h2,.manifesto h2 { font-size:clamp(32px,5vw,56px); line-height:1.08; letter-spacing:-.04em; max-width:18ch; }
+.trailer-frame { border-radius:28px; overflow:hidden; background:#092729; box-shadow:0 20px 60px #002f2a18; }
+.trailer-frame video { width:100%; aspect-ratio:16/9; display:block; background:#092729; }
+.trailer-meta { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; color:var(--on-surface-variant); font-size:14px; margin:14px 0; }
+.trailer-meta a { font-weight:700; }
+.trailer-section details { background:var(--surface-container-low); border-radius:20px; padding:18px 22px; margin-top:20px; }
+.trailer-section summary { cursor:pointer; font-weight:700; }
+.trailer-section details p { max-width:75ch; }
+.manifesto { padding:60px 0 30px; }
+.manifesto-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.manifesto-card { border-radius:32px; padding:clamp(24px,4vw,44px); background:var(--primary-container); color:var(--on-primary-container); }
+.manifesto-card.alt { background:var(--surface-container); color:var(--on-surface); }
+.manifesto-card h3 { margin:0 0 18px; font-size:28px; line-height:1.15; letter-spacing:-.03em; }
+.manifesto-card p { margin:12px 0; max-width:54ch; }
+.community-line { font-size:clamp(28px,5vw,52px); font-weight:800; letter-spacing:-.035em; padding:36px 0 12px; color:var(--primary); }
+:root[data-motion="off"] *, :root[data-motion="off"] *::before, :root[data-motion="off"] *::after { animation-play-state:paused!important; scroll-behavior:auto!important; }
+@media(max-width:650px) { .manifesto-grid { grid-template-columns:1fr; } .trailer-frame{border-radius:18px} .trailer-section{padding-top:24px} nav.links a { padding:8px; } }
+@media(prefers-reduced-motion:reduce) { .fish-swimmer { animation:none; } html {scroll-behavior:auto;} }
