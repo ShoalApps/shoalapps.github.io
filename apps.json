@@ -1,0 +1,32 @@
+[
+  {
+    "slug": "shoal",
+    "name": "Shoal",
+    "description": "Install, update and manage the Shoal Android apps."
+  },
+  {
+    "slug": "anglerfish",
+    "name": "Anglerfish",
+    "description": "Reddit in a Material You Android app."
+  },
+  {
+    "slug": "blobfish",
+    "name": "Blobfish",
+    "description": "Bluesky and Twitter in a Material You Android app."
+  },
+  {
+    "slug": "clownfish",
+    "name": "Clownfish",
+    "description": "Short videos from Shorts, TikTok and Reels in a Material You Android app."
+  },
+  {
+    "slug": "pufferfish",
+    "name": "Pufferfish",
+    "description": "A YouTube Music client for Android with Material You and offline listening."
+  },
+  {
+    "slug": "swordfish",
+    "name": "Swordfish",
+    "description": "A YouTube client for Android with Material You, offline playback and SponsorBlock."
+  }
+]
