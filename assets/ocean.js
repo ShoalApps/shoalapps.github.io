@@ -1,5 +1,11 @@
 (() => {
   const root = document.documentElement;
+  // Progressive enhancement only: navigation itself is ordinary HTML anchors.
+  const menu = document.querySelector('.mobile-menu');
+  menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+  menu?.addEventListener('keydown', event => {
+    if (event.key === 'Escape') { menu.open = false; menu.querySelector('summary').focus(); }
+  });
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const button = document.getElementById('motion-toggle');
   let choice = null;
