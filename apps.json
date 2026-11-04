@@ -25,6 +25,11 @@
     "description": "A YouTube Music client for Android with Material You and offline listening."
   },
   {
+    "slug": "squill",
+    "name": "Squill",
+    "description": "Jot reminders down like ink on paper, in a Material You Android app."
+  },
+  {
     "slug": "swordfish",
     "name": "Swordfish",
     "description": "A YouTube client for Android with Material You, offline playback and SponsorBlock."
