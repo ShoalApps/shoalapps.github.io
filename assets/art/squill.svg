@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 740" aria-hidden="true" focusable="false" style="pointer-events:none">
+<!-- A writing squid, with a generous margin around every arm and the quill. -->
+<g fill="none" stroke="var(--primary)" opacity=".2" stroke-width="2"><ellipse cx="340" cy="380" rx="310" ry="270"/><ellipse cx="340" cy="380" rx="275" ry="235" stroke-dasharray="4 13"/></g>
+<path fill="var(--secondary-container)" d="M105 592 272 484 635 552 460 684Z"/>
+<path fill="var(--surface)" stroke="var(--primary)" stroke-width="2" d="M118 578 278 464 629 530 451 655Z"/>
+<g fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"><path d="m295 536 180 33m-199-10 129 24m-153-5 86 16" opacity=".3"/><path d="M367 521c20-34 21 28 40 1s21 22 39 4 21 17 35 3"/></g>
+<g class="art-drift">
+<g fill="none" stroke="var(--primary)" stroke-width="25" stroke-linecap="round"><path d="M256 391C181 436 154 512 204 536c28 14 51-9 37-29"/><path d="M288 406c-48 85-29 162 18 150 22-6 25-29 14-39"/><path d="M326 411c-10 49 12 84 50 65 21-11 23-33 18-49"/><path d="M354 395c53 73 111 30 126-11"/></g>
+<path fill="var(--primary)" d="M297 104c-37 49-64 96-78 153l-83 76c25 29 55 39 80 34v32c0 75 148 75 148 0v-32c29 7 58-6 84-33l-81-77c-14-59-43-111-70-153Z"/>
+<path fill="var(--on-primary)" opacity=".18" d="M297 131c-15 45-29 94-31 133l-32 61c22-2 37-19 41-48 4-54 9-103 22-146Z"/>
+<g fill="var(--on-primary)"><ellipse cx="265" cy="366" rx="17" ry="21"/><ellipse cx="322" cy="366" rx="17" ry="21"/></g><g fill="var(--primary)"><circle cx="270" cy="371" r="8"/><circle cx="327" cy="371" r="8"/></g>
+<path fill="none" stroke="var(--on-primary)" stroke-width="4" stroke-linecap="round" d="M282 399q14 12 28-1"/>
+</g>
+<g class="quill"><path fill="var(--tertiary-container)" stroke="var(--primary)" stroke-width="3" d="M438 432c-39-95 36-190 163-233-1 119-66 200-147 219l-55 121-7-3Z"/><path fill="none" stroke="var(--on-tertiary-container)" stroke-width="3" stroke-linecap="round" d="m447 411 132-184m-94 130 61-20m-85 55 55-18m-9-48-1-51m26 18 1-40"/></g>
+<g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".45"><circle cx="112" cy="289" r="12"/><circle cx="137" cy="232" r="6"/><circle cx="493" cy="128" r="8"/></g>
+</svg>

@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 90" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <path fill="var(--primary-container)" opacity=".5" d="M0 23C145 78 240 0 389 25S625 77 786 31 1001 10 1120 29V90H0Z"/>
-  <path fill="var(--secondary-container)" opacity=".65" d="M0 47C143 10 249 80 411 47S652 28 785 53 1006 72 1120 42V90H0Z"/>
-  <path fill="var(--surface-container)" d="M0 66C140 95 248 49 397 65S643 92 801 66 1002 62 1120 74V90H0Z"/>
-</svg>

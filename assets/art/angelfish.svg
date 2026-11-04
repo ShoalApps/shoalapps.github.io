@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 180" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <path fill="var(--primary-container)" d="M51 118C28 74 70 35 128 32 194 25 247 46 259 96 271 140 217 159 164 155 110 158 70 151 51 118Z"/>
+
   <!-- A side-on freshwater angelfish: tall dorsal and anal fins taper towards its snout. -->
   <g class="art-drift">
     <g fill="var(--primary)" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round">

@@ -10,457 +10,54 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;700;800&display=swap" rel="stylesheet">
-<style>
-  /* Fallback palette (Shoal sea green, #00796B). JavaScript replaces these with a full Material You scheme. */
-  :root {
-    color-scheme: light dark;
-    --primary: #006b5e; --on-primary: #ffffff;
-    --primary-container: #9ff2e2; --on-primary-container: #005047;
-    --secondary-container: #cae6de; --on-secondary-container: #334b46;
-    --tertiary-container: #5b7890; --on-tertiary-container: #ffffff;
-    --surface: #f4fbf8; --on-surface: #171d1b; --on-surface-variant: #3f4946;
-    --surface-container-low: #eff5f2; --surface-container: #e9efec;
-    --surface-container-high: #e3eae7; --surface-container-highest: #dde4e1;
-    --outline: #6d7774; --outline-variant: #bec9c5;
-    --spring: cubic-bezier(.34, 1.56, .64, 1);
-    --emphasized: cubic-bezier(.2, 0, 0, 1);
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-        --primary: #83d5c6; --on-primary: #003730;
-      --primary-container: #005047; --on-primary-container: #9ff2e2;
-      --secondary-container: #354e49; --on-secondary-container: #cde8e1;
-      --tertiary-container: #7794ad; --on-tertiary-container: #000000;
-      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
-      --surface-container-low: #171d1b; --surface-container: #1b211f;
-      --surface-container-high: #252b2a; --surface-container-highest: #303634;
-      --outline: #899390; --outline-variant: #3f4946;
-    }
-  }
-  :root[data-theme="dark"] {
-      --primary: #83d5c6; --on-primary: #003730;
-      --primary-container: #005047; --on-primary-container: #9ff2e2;
-      --secondary-container: #354e49; --on-secondary-container: #cde8e1;
-      --tertiary-container: #7794ad; --on-tertiary-container: #000000;
-      --surface: #0e1513; --on-surface: #dde4e1; --on-surface-variant: #bec9c5;
-      --surface-container-low: #171d1b; --surface-container: #1b211f;
-      --surface-container-high: #252b2a; --surface-container-highest: #303634;
-      --outline: #899390; --outline-variant: #3f4946;
-  }
-
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    margin: 0;
-    font-family: "Google Sans Flex", "Google Sans", Roboto, system-ui, sans-serif;
-    background: var(--surface);
-    color: var(--on-surface);
-    line-height: 1.5;
-    transition: background .6s var(--emphasized), color .6s var(--emphasized);
-    overflow-x: hidden;
-  }
-  a { color: var(--primary); }
-  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
-
-  /* Top bar */
-  header.bar {
-    position: sticky; top: 0; z-index: 10;
-    background: color-mix(in srgb, var(--surface) 86%, transparent);
-    backdrop-filter: blur(14px);
-  }
-  header.bar .wrap { display: flex; align-items: center; gap: 12px; height: 64px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 22px; letter-spacing: -.5px; text-decoration: none; color: var(--on-surface); }
-  .brand svg { width: 34px; height: 34px; }
-  nav.links { margin-left: auto; display: flex; gap: 4px; }
-  nav.links a {
-    color: var(--on-surface-variant); text-decoration: none; font-weight: 500;
-    padding: 8px 14px; border-radius: 20px; transition: background .2s, border-radius .3s var(--spring);
-  }
-  nav.links a:hover { background: var(--surface-container-high); border-radius: 12px; }
-
-  /* Hero */
-  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center; padding: 64px 0 40px; }
-  .hero h1 { font-size: clamp(40px, 7vw, 76px); line-height: 1.02; letter-spacing: -2px; margin: 0 0 16px; font-weight: 800; }
-  .hero h1 em { font-style: normal; color: var(--primary); }
-  .hero p.lede { font-size: 20px; color: var(--on-surface-variant); margin: 0 0 28px; max-width: 34ch; }
-  .shape-stage { position: relative; aspect-ratio: 1; max-width: 420px; justify-self: center; width: 100%; }
-  .shape-stage svg { width: 100%; height: 100%; overflow: visible; }
-  #hero-shape { fill: var(--primary-container); transition: fill .6s var(--emphasized); }
-  .hero-mark { --t-bar: var(--on-primary-container); --t-stem: var(--primary); --t-gap: var(--primary-container); }
-  .orbit { fill: var(--tertiary-container); transition: fill .6s; }
-
-  /* Buttons */
-  .btn {
-    display: inline-flex; align-items: center; gap: 10px; height: 56px; padding: 0 28px;
-    border-radius: 28px; font: inherit; font-weight: 700; font-size: 17px; text-decoration: none; cursor: pointer; border: 0;
-    transition: border-radius .35s var(--spring), transform .35s var(--spring), background .3s;
-  }
-  .btn:hover { border-radius: 16px; }
-  .btn:active { transform: scale(.95); }
-  .btn.filled { background: var(--primary); color: var(--on-primary); }
-  .btn.tonal { background: var(--secondary-container); color: var(--on-secondary-container); }
-  .btn svg { width: 22px; height: 22px; fill: currentColor; }
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
-
-  /* Colour picker */
-  .tint {
-    margin-top: 28px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    color: var(--on-surface-variant); font-size: 14px;
-  }
-  #swatches { display: inline-flex; gap: 8px; flex-wrap: wrap; }
-  .swatch {
-    width: 36px; height: 36px; border-radius: 50%; border: 0; cursor: pointer; padding: 0;
-    transition: border-radius .35s var(--spring), transform .35s var(--spring);
-    outline: 3px solid transparent; outline-offset: 2px;
-  }
-  .swatch:hover { border-radius: 12px; transform: rotate(12deg); }
-  .swatch[aria-pressed="true"] { border-radius: 12px; outline-color: var(--primary); }
-  .theme-toggle { margin-left: 4px; background: var(--surface-container-high); color: var(--on-surface); border: 0; height: 36px; padding: 0 14px; border-radius: 18px; font: inherit; cursor: pointer; }
-
-  /* Sections */
-  section { padding: 56px 0; }
-  h2 { font-size: clamp(30px, 4vw, 44px); letter-spacing: -1px; margin: 0 0 8px; font-weight: 800; }
-  .sub { color: var(--on-surface-variant); margin: 0 0 32px; font-size: 18px; }
-
-  .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
-  .card {
-    background: var(--surface-container); border-radius: 28px; padding: 28px;
-    transition: border-radius .45s var(--spring), transform .45s var(--spring), background .6s;
-    position: relative; overflow: hidden;
-  }
-  .card:hover { border-radius: 44px; transform: translateY(-4px); }
-  .card .icon { display: block; width: 64px; height: 64px; margin-bottom: 16px; }
-  .card .icon path.bg { fill: var(--primary-container); }
-  .card .icon path.fg { fill: var(--on-primary-container); }
-  .card .icon path.bg-ink { fill: var(--primary-container); }
-  /* Each fish in its own colours. */
-  .fish-card .icon path.cookie, .fish-card .icon path.ink { fill: var(--fish-p); }
-  .fish-card .icon path.fish { fill: #fff; }
-  .fish-card .icon { background: var(--fish-c); border-radius: 22px; }
-  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .fish-card .icon { background: var(--fish-dc); } :root:not([data-theme="light"]) .fish-card .icon path.cookie, :root:not([data-theme="light"]) .fish-card .icon path.ink { fill: var(--fish-dp); } :root:not([data-theme="light"]) .fish-card .icon path.fish { fill: var(--fish-dc); } }
-  :root[data-theme="dark"] .fish-card .icon { background: var(--fish-dc); }
-  :root[data-theme="dark"] .fish-card .icon path.cookie, :root[data-theme="dark"] .fish-card .icon path.ink { fill: var(--fish-dp); }
-  :root[data-theme="dark"] .fish-card .icon path.fish { fill: var(--fish-dc); }
-  .card.soon .icon path.bg { fill: var(--surface-container-highest); }
-  .card.soon .icon path.fg { fill: var(--on-surface-variant); }
-  .card h3 { margin: 0 0 6px; font-size: 24px; }
-  .card p { margin: 0 0 20px; color: var(--on-surface-variant); }
-  .apps-heading { font-size: 24px; font-weight: 800; margin: 40px 0 4px; }
-  .apps-note { color: var(--on-surface-variant); margin: 0 0 16px; }
-  /* Archived apps: grey, quiet and not inviting a click. */
-  .card.archived { filter: grayscale(1); }
-  .card.archived .icon { opacity: .55; }
-  .card.archived h3, .card.archived p { color: var(--on-surface-variant); }
-  .card.archived:hover { border-radius: 28px; transform: none; }
-  .chip { display: inline-block; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 8px; background: var(--tertiary-container); color: var(--on-tertiary-container); margin-bottom: 12px; }
-
-  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
-  .feature { background: var(--surface-container-low); border-radius: 20px; padding: 20px; }
-  .feature b { display: block; margin-bottom: 4px; font-size: 17px; }
-  .feature span { color: var(--on-surface-variant); font-size: 15px; }
-
-  /* Credits: each contributor's picture is a gear, and the gears mesh into one machine */
-  .machine { position: relative; margin: 0 auto; }
-  .machine svg { display: block; width: 100%; height: 100%; overflow: visible; }
-  /* No grey tap box or focus rectangle around a gear; its rim lights up instead. */
-  .machine a { cursor: pointer; -webkit-tap-highlight-color: transparent; outline: none; }
-  .machine a:focus, .machine a:focus-visible { outline: none; }
-  .machine a:active .rim { stroke: var(--primary); stroke-width: 3; }
-  .machine .rim { fill: none; stroke: transparent; stroke-width: 3; transition: stroke .3s; }
-  .machine a:hover .rim, .machine a:focus-visible .rim { stroke: var(--primary); stroke-width: 3; }
-  .machine .halo { fill: var(--primary-container); opacity: .55; transition: fill .6s; }
-  .machine .gear { opacity: 0; transform: translateY(14px); transition: opacity .5s var(--emphasized), transform .7s var(--emphasized); }
-  .machine.shown .gear { opacity: 1; transform: none; }
-  .machine .org-gear { fill: var(--primary); transition: fill .6s; }
-  .machine .org-cookie { fill: var(--primary); transition: fill .6s; }
-  .machine .org-play { fill: var(--on-primary); stroke: var(--on-primary); stroke-width: .08; stroke-linejoin: round; transition: fill .6s; }
-  .machine .ghost-rim { fill: none; stroke: var(--outline); stroke-width: 2; stroke-dasharray: 6 5; }
-  .machine .ghost-plus { fill: var(--on-surface-variant); font: 700 34px "Google Sans Flex", sans-serif; text-anchor: middle; dominant-baseline: central; }
-  .machine .tip {
-    position: absolute; transform: translate(-50%, -100%) scale(.9); opacity: 0; pointer-events: none;
-    background: var(--on-surface); color: var(--surface); font-size: 14px; font-weight: 600; white-space: nowrap;
-    padding: 6px 12px; border-radius: 12px; transition: opacity .2s, transform .35s var(--spring); z-index: 2;
-  }
-  .machine .tip.show { opacity: 1; transform: translate(-50%, calc(-100% - 6px)) scale(1); }
-  .names { margin-top: 24px; color: var(--on-surface-variant); font-size: 15px; text-align: center; }
-  .muted { color: var(--on-surface-variant); }
-
-  /* Legal */
-  .legal { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-  .legal article { background: var(--surface-container-low); border-radius: 24px; padding: 24px; }
-  .legal h3 { margin-top: 0; }
-  .legal p, .legal li { color: var(--on-surface-variant); font-size: 15px; }
-
-  footer { padding: 40px 0 56px; color: var(--on-surface-variant); font-size: 14px; border-top: 1px solid var(--outline-variant); }
-
-  @media (max-width: 760px) {
-    .hero { grid-template-columns: 1fr; padding-top: 32px; }
-    .shape-stage { max-width: 260px; grid-row: 1; }
-    nav.links { display: none; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    /* Fewer flourishes, but the gears still turn gently (they're drawn by script). */
-    .card, .swatch, .btn { transition: none !important; }
-  }
-  .gallery { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 2px 16px; -webkit-overflow-scrolling: touch; }
-  .gallery figure { flex: 0 0 min(260px, 70vw); margin: 0; scroll-snap-align: start; }
-  .gallery img { width: 100%; height: auto; border-radius: 28px; border: 6px solid var(--surface-container-high, #2a2f33); display: block; background: var(--surface-container); }
-  .gallery figcaption { margin-top: 8px; color: var(--on-surface-variant); font-size: 14px; }
-</style>
 <link rel="stylesheet" href="assets/ocean.css">
 <script src="assets/ocean.js" defer></script>
 </head>
-<body>
-<!-- Clip path for avatars: a Material cookie shape, built by script. -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<body><!-- Clip path for avatars: a Material cookie shape, built by script. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs><clipPath id="cookie-clip" clipPathUnits="objectBoundingBox"><path id="cookie-clip-path"/></clipPath></defs>
 </svg>
 
-<header class="bar">
-  <div class="wrap">
-    <a class="brand" href="#"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Shoal</a>
-    <nav class="links">
-      <a href="#apps">Apps</a>
-      <a href="#our-current">Our story</a>
-      <a href="#credits">Credits</a>
-      <a href="#legal">Legal</a>
-      <a href="https://github.com/ShoalApps">GitHub</a>
-      <a href="https://liberapay.com/ShoalApps">Support</a>
-    </nav>
-  </div>
-</header>
-
-<main class="wrap">
-  <div class="hero">
-    <div>
-      <h1>A fresh current.<br><em>Your kind of apps.</em></h1>
-      <p class="lede">Open-source Android apps that feel like they belong together. Your content, your colours, your choice. Free to use, with no Shoal feature paywalls. Start with Shoal to install and update the family.</p>
-      <div class="row">
-        <a class="btn filled" href="https://github.com/ShoalApps/shoal/releases/latest/download/Shoal.apk">
-          <svg viewBox="0 0 24 24"><path d="M5 20h14v-2H5zM19 9h-4V3H9v6H5l7 7z"/></svg>
-          Get Shoal
-        </a>
-        <a class="btn tonal" href="https://liberapay.com/ShoalApps">
-          <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z"/></svg>
-          Support Shoal
-        </a>
-      </div>
-      <div class="tint" role="group" aria-label="Try a colour">
-        <span>Try a wallpaper colour:</span>
-        <span id="swatches"></span>
-        <button class="theme-toggle" id="theme-toggle" type="button">Light / dark</button>
-      </div>
-    </div>
-    <div class="shape-stage" aria-hidden="true">
-<div class="ocean-art hero-reef" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <!-- Open water in the centre leaves space for the existing Shoal mark. -->
-  <path fill="var(--surface-container)" d="M31 201C19 117 94 42 177 32 274 9 408 43 443 138 473 218 449 329 393 391 338 454 207 460 119 414 47 379 42 291 31 201Z"/>
-  <g fill="var(--primary-container)" opacity=".65">
-    <path d="M105 49 177 32 267 346 223 371Z"/>
-    <path d="M237 28 269 29 359 301 334 330Z"/>
-  </g>
-  <path fill="var(--secondary-container)" d="M28 329C71 292 100 335 137 321 175 307 193 337 231 331 288 318 309 293 356 312 397 330 424 301 455 302L444 374C349 449 139 467 59 385Z"/>
-  <path fill="var(--primary-container)" d="M44 373C98 335 153 373 204 360 264 344 288 380 337 365 386 350 411 362 436 350 415 408 323 453 234 448 151 454 80 420 44 373Z"/>
-  <g fill="var(--primary)">
-    <g class="art-sway">
-      <path d="M100 409C69 374 92 344 77 316 64 291 62 269 76 246 72 280 101 284 100 313 99 345 83 365 109 403Z"/>
-      <path d="M111 410C96 376 123 355 115 331 106 306 117 283 132 276 113 311 143 326 130 354 120 378 119 393 124 411Z"/>
-      <path d="M94 407C58 398 70 375 49 361 70 361 86 375 85 388Z"/>
-    </g>
-    <g class="art-sway art-sway-late">
-      <path d="M377 409C352 382 379 354 368 332 355 306 366 285 382 274 365 305 396 321 384 349 374 374 370 384 389 403Z"/>
-      <path d="M391 406C392 377 417 373 409 347 403 326 416 311 431 309 413 327 433 345 425 362 416 380 405 385 406 398Z"/>
-    </g>
-  </g>
-  <g fill="none" stroke="var(--primary)" stroke-width="2.5" opacity=".55" class="art-bubbles">
-    <circle cx="66" cy="194" r="8"/><circle cx="83" cy="164" r="4"/><circle cx="393" cy="113" r="10"/><circle cx="412" cy="82" r="5"/>
-  </g>
-  <g fill="var(--tertiary-container)">
-    <path d="M321 93C332 81 350 81 365 92 351 105 334 105 321 93L311 84 313 93 311 102Z"/>
-    <path d="M361 131C368 123 381 123 391 131 381 140 368 140 361 131L353 125 355 131 353 138Z"/>
-    <path d="M147 392C160 379 184 384 191 399 171 408 155 404 147 392Z"/>
-  </g>
-  <g fill="var(--on-primary-container)" opacity=".45"><ellipse cx="218" cy="412" rx="5" ry="2"/><ellipse cx="237" cy="418" rx="3" ry="2"/><ellipse cx="332" cy="400" rx="6" ry="2"/></g>
+<a class="skip-link" href="#apps">Skip to apps</a><header class="bar"><div class="wrap"><a class="brand" href="#surface"><svg viewBox="-1.1 -1.1 2.2 2.2" aria-hidden="true" focusable="false"><path class="logo-shape" fill="var(--primary)"/><g class="woven-t"></g></svg>Shoal</a><nav class="links" aria-label="Main navigation"><a href="#apps">The apps</a><a href="#our-current">Our current</a><a href="#credits">Credits</a><a href="#legal">Legal</a><a href="https://github.com/ShoalApps">GitHub ↗</a></nav></div></header><main><div class="sunlit"><section id="surface" class="surface-scene">
+<div class="surface-lines" aria-hidden="true"></div>
+<div class="wrap hero">
+<p class="section-label">Free software. Open water.</p>
+<h1>Swim against<br><em>the feed.</em></h1>
+<div class="hero-bottom"><div><p class="lede">A family of free, open-source Android apps. Your content, your colours, your choice.</p>
+<div class="row"><a class="btn filled" href="https://github.com/ShoalApps/shoal/releases/latest/download/Shoal.apk">Get Shoal <span aria-hidden="true">↓</span></a><a class="btn tonal" href="https://liberapay.com/ShoalApps">Support Shoal <span aria-hidden="true">♡</span></a></div>
+<div class="tint" role="group" aria-label="Try a wallpaper colour"><span>Make the water yours.</span><span id="swatches"></span><button class="theme-toggle" id="theme-toggle" type="button">Light / dark</button></div></div>
+<p class="dive-note">Same sea.<br>Your own current.<a href="#apps">Take a dive ↓</a></p></div>
+<div class="ocean-controls"><button id="motion-toggle" type="button" aria-pressed="true">Pause animations</button><span>Scroll to meet the shoal</span></div>
+</div><div class="ocean-art surface-art" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 420" aria-hidden="true" focusable="false" style="pointer-events:none">
+<!-- No containing blob: currents and rays cross the entire surface. -->
+<g fill="var(--primary)" opacity=".07"><path d="M100 0H390L680 420H540Z"/><path d="M700 0h120l290 420H990Z"/><path d="M1120 0h65l210 420h-95Z"/></g>
+<g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".26"><path d="M-40 105C170 10 320 170 560 90S985 10 1490 100M-40 140C170 45 320 205 560 125S985 45 1490 135M-40 290C180 190 390 360 650 270S1150 200 1490 270"/><path d="M-40 307C180 207 390 377 650 287S1150 217 1490 287"/></g>
+<g class="art-drift" fill="var(--primary)"><path d="M990 188c25-29 70-29 101 0-31 29-76 29-101 0l-28-21 7 21-7 21Z"/><path d="M1130 241c18-20 48-20 70 0-22 20-52 20-70 0l-20-15 5 15-5 15Z"/><path d="M843 240c18-20 48-20 70 0-22 20-52 20-70 0l-20-15 5 15-5 15Z"/></g>
+<g fill="var(--on-primary)"><circle cx="1070" cy="184" r="4"/><circle cx="1184" cy="238" r="3"/><circle cx="897" cy="237" r="3"/></g>
+<g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".4"><circle cx="1240" cy="145" r="9"/><circle cx="1264" cy="111" r="4"/><circle cx="741" cy="317" r="7"/></g>
 </svg>
-</div>
-      <svg viewBox="-1.25 -1.25 2.5 2.5">
-        <circle class="orbit" id="orbit" r=".12" cx="0" cy="-1.08"/>
-        <path id="hero-shape"/>
-        <g class="woven-t hero-mark" transform="scale(.95)"></g>
-      </svg>
-    </div>
-  </div>
-
-  <div class="ocean-controls"><button id="motion-toggle" type="button" aria-pressed="true">Pause fish animations</button><a href="#our-current">Meet the whole shoal ↓</a></div>
-
-  <div class="ocean-art tidal-divider tide-shallow" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 90" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <path fill="var(--primary-container)" opacity=".5" d="M0 23C145 78 240 0 389 25S625 77 786 31 1001 10 1120 29V90H0Z"/>
-  <path fill="var(--secondary-container)" opacity=".65" d="M0 47C143 10 249 80 411 47S652 28 785 53 1006 72 1120 42V90H0Z"/>
-  <path fill="var(--surface-container)" d="M0 66C140 95 248 49 397 65S643 92 801 66 1002 62 1120 74V90H0Z"/>
+</div></section><section id="apps" class="wrap squill fish-card showcase" aria-labelledby="squill-title">
+<div class="section-top"><p class="section-label">01 / Meet Squill</p><span class="specimen">A little ink. A clear head.</span></div>
+<div class="squill-layout"><div class="squill-copy"><span class="icon-source" style="--fish-c:#000000;--fish-p:#FFFFFF;--fish-dc:#000000;--fish-dp:#FFFFFF;--icon-white:#000000"><svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Squill"><path class="cookie" d="M83.50,54.00 L83.46,54.77 L83.33,55.54 L83.12,56.29 L82.84,57.03 L82.50,57.75 L82.11,58.45 L81.69,59.13 L81.23,59.79 L80.78,60.43 L80.32,61.05 L79.88,61.67 L79.48,62.28 L79.10,62.89 L78.77,63.51 L78.48,64.14 L78.24,64.79 L78.04,65.46 L77.87,66.16 L77.72,66.88 L77.60,67.62 L77.48,68.39 L77.35,69.16 L77.20,69.95 L77.03,70.73 L76.81,71.50 L76.54,72.25 L76.21,72.97 L75.83,73.65 L75.37,74.28 L74.86,74.86 L74.28,75.37 L73.65,75.83 L72.97,76.21 L72.25,76.54 L71.50,76.81 L70.73,77.03 L69.95,77.20 L69.16,77.35 L68.39,77.48 L67.62,77.60 L66.88,77.72 L66.16,77.87 L65.46,78.04 L64.79,78.24 L64.14,78.48 L63.51,78.77 L62.89,79.10 L62.28,79.48 L61.67,79.88 L61.05,80.32 L60.43,80.78 L59.79,81.23 L59.13,81.69 L58.45,82.11 L57.75,82.50 L57.03,82.84 L56.29,83.12 L55.54,83.33 L54.77,83.46 L54.00,83.50 L53.23,83.46 L52.46,83.33 L51.71,83.12 L50.97,82.84 L50.25,82.50 L49.55,82.11 L48.87,81.69 L48.21,81.23 L47.57,80.78 L46.95,80.32 L46.33,79.88 L45.72,79.48 L45.11,79.10 L44.49,78.77 L43.86,78.48 L43.21,78.24 L42.54,78.04 L41.84,77.87 L41.12,77.72 L40.38,77.60 L39.61,77.48 L38.84,77.35 L38.05,77.20 L37.27,77.03 L36.50,76.81 L35.75,76.54 L35.03,76.21 L34.35,75.83 L33.72,75.37 L33.14,74.86 L32.63,74.28 L32.17,73.65 L31.79,72.97 L31.46,72.25 L31.19,71.50 L30.97,70.73 L30.80,69.95 L30.65,69.16 L30.52,68.39 L30.40,67.62 L30.28,66.88 L30.13,66.16 L29.96,65.46 L29.76,64.79 L29.52,64.14 L29.23,63.51 L28.90,62.89 L28.52,62.28 L28.12,61.67 L27.68,61.05 L27.22,60.43 L26.77,59.79 L26.31,59.13 L25.89,58.45 L25.50,57.75 L25.16,57.03 L24.88,56.29 L24.67,55.54 L24.54,54.77 L24.50,54.00 L24.54,53.23 L24.67,52.46 L24.88,51.71 L25.16,50.97 L25.50,50.25 L25.89,49.55 L26.31,48.87 L26.77,48.21 L27.22,47.57 L27.68,46.95 L28.12,46.33 L28.52,45.72 L28.90,45.11 L29.23,44.49 L29.52,43.86 L29.76,43.21 L29.96,42.54 L30.13,41.84 L30.28,41.12 L30.40,40.38 L30.52,39.61 L30.65,38.84 L30.80,38.05 L30.97,37.27 L31.19,36.50 L31.46,35.75 L31.79,35.03 L32.17,34.35 L32.63,33.72 L33.14,33.14 L33.72,32.63 L34.35,32.17 L35.03,31.79 L35.75,31.46 L36.50,31.19 L37.27,30.97 L38.05,30.80 L38.84,30.65 L39.61,30.52 L40.37,30.40 L41.12,30.28 L41.84,30.13 L42.54,29.96 L43.21,29.76 L43.86,29.52 L44.49,29.23 L45.11,28.90 L45.72,28.52 L46.33,28.12 L46.95,27.68 L47.57,27.22 L48.21,26.77 L48.87,26.31 L49.55,25.89 L50.25,25.50 L50.97,25.16 L51.71,24.88 L52.46,24.67 L53.23,24.54 L54.00,24.50 L54.77,24.54 L55.54,24.67 L56.29,24.88 L57.03,25.16 L57.75,25.50 L58.45,25.89 L59.13,26.31 L59.79,26.77 L60.43,27.22 L61.05,27.68 L61.67,28.12 L62.28,28.52 L62.89,28.90 L63.51,29.23 L64.14,29.52 L64.79,29.76 L65.46,29.96 L66.16,30.13 L66.88,30.28 L67.62,30.40 L68.39,30.52 L69.16,30.65 L69.95,30.80 L70.73,30.97 L71.50,31.19 L72.25,31.46 L72.97,31.79 L73.65,32.17 L74.28,32.63 L74.86,33.14 L75.37,33.72 L75.83,34.35 L76.21,35.03 L76.54,35.75 L76.81,36.50 L77.03,37.27 L77.20,38.05 L77.35,38.84 L77.48,39.61 L77.60,40.38 L77.72,41.12 L77.87,41.84 L78.04,42.54 L78.24,43.21 L78.48,43.86 L78.77,44.49 L79.10,45.11 L79.48,45.72 L79.88,46.33 L80.32,46.95 L80.78,47.57 L81.23,48.21 L81.69,48.87 L82.11,49.55 L82.50,50.25 L82.84,50.97 L83.12,51.71 L83.33,52.46 L83.46,53.23 Z"/><path class="fish" fill-rule="evenodd" d="M41 57 C36 62 32 68 36 72 C37.5 73.5 40 73 40 71.5 C40 70.5 38 71 37.5 69.5 C36.5 66.5 40 63 44 60 Z"/><path class="fish" fill-rule="evenodd" d="M45 59 C42 64 41 70 45 73 C47 74.5 50 74 50 72.5 C50 71 47 72 46 70 C44.5 67 47 63 48 60 Z"/><path class="fish" fill-rule="evenodd" d="M49 59 C49 63 48 67 51 69 C53 70 56 69.5 56 68 C56 66.5 53.5 68 52.5 66 C51.5 64 53 61 52 59 Z"/><path class="fish" fill-rule="evenodd" d="M52 57 C56 62 62 65 66 61 C68 59 68 56 66.5 56 C65 56 65.5 59 63.5 60 C61 61.5 57 59 55 56 Z"/><path class="fish" fill-rule="evenodd" d="M47 34 C43 39 40 44 39 49 L33.5 55 Q36 58 40 58 L40 60 C40 67 55 67 55 60 L55 58 Q59 58 61 55 L55 49 C54 44 51 38 47 34 Z"/><path class="fish" fill-rule="evenodd" d="M63 60 C58 51 62 40 73 35 C76 46 72 55 66 59 L60 72 Q59 74 58 72.5 Z"/><path class="ink" d="M41.7 57.5 A1.8 1.8 0 1 0 45.3 57.5 A1.8 1.8 0 1 0 41.7 57.5 Z"/><path class="ink" d="M49.2 57.5 A1.8 1.8 0 1 0 52.8 57.5 A1.8 1.8 0 1 0 49.2 57.5 Z"/><path class="ink" d="M64 54 L69 41 Q69.5 40 70.5 41 L68 48 L71 46.5 L70.5 48.5 L67 50.5 L66 54 Q65 56 64 54 Z"/></svg></span><h2 id="squill-title">A thought.<br>A time.<br><em>Consider it<br>remembered.</em></h2><p class="app-name">Squill / Reminders</p><p class="lede">Jot it down. Let Squill remember.</p><p>Reminders that ring at the exact minute, once or on a repeat. Mark them Done or Snooze them straight from the notification. Your home-screen widget shows what’s next.</p><a class="btn filled" href="https://github.com/ShoalApps/squill/releases/latest/download/Squill.apk">Download Squill <span aria-hidden="true">↗</span></a></div><div class="ocean-art squill-art" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 740" aria-hidden="true" focusable="false" style="pointer-events:none">
+<!-- A writing squid, with a generous margin around every arm and the quill. -->
+<g fill="none" stroke="var(--primary)" opacity=".2" stroke-width="2"><ellipse cx="340" cy="380" rx="310" ry="270"/><ellipse cx="340" cy="380" rx="275" ry="235" stroke-dasharray="4 13"/></g>
+<path fill="var(--secondary-container)" d="M105 592 272 484 635 552 460 684Z"/>
+<path fill="var(--surface)" stroke="var(--primary)" stroke-width="2" d="M118 578 278 464 629 530 451 655Z"/>
+<g fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round"><path d="m295 536 180 33m-199-10 129 24m-153-5 86 16" opacity=".3"/><path d="M367 521c20-34 21 28 40 1s21 22 39 4 21 17 35 3"/></g>
+<g class="art-drift">
+<g fill="none" stroke="var(--primary)" stroke-width="25" stroke-linecap="round"><path d="M256 391C181 436 154 512 204 536c28 14 51-9 37-29"/><path d="M288 406c-48 85-29 162 18 150 22-6 25-29 14-39"/><path d="M326 411c-10 49 12 84 50 65 21-11 23-33 18-49"/><path d="M354 395c53 73 111 30 126-11"/></g>
+<path fill="var(--primary)" d="M297 104c-37 49-64 96-78 153l-83 76c25 29 55 39 80 34v32c0 75 148 75 148 0v-32c29 7 58-6 84-33l-81-77c-14-59-43-111-70-153Z"/>
+<path fill="var(--on-primary)" opacity=".18" d="M297 131c-15 45-29 94-31 133l-32 61c22-2 37-19 41-48 4-54 9-103 22-146Z"/>
+<g fill="var(--on-primary)"><ellipse cx="265" cy="366" rx="17" ry="21"/><ellipse cx="322" cy="366" rx="17" ry="21"/></g><g fill="var(--primary)"><circle cx="270" cy="371" r="8"/><circle cx="327" cy="371" r="8"/></g>
+<path fill="none" stroke="var(--on-primary)" stroke-width="4" stroke-linecap="round" d="M282 399q14 12 28-1"/>
+</g>
+<g class="quill"><path fill="var(--tertiary-container)" stroke="var(--primary)" stroke-width="3" d="M438 432c-39-95 36-190 163-233-1 119-66 200-147 219l-55 121-7-3Z"/><path fill="none" stroke="var(--on-tertiary-container)" stroke-width="3" stroke-linecap="round" d="m447 411 132-184m-94 130 61-20m-85 55 55-18m-9-48-1-51m26 18 1-40"/></g>
+<g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".45"><circle cx="112" cy="289" r="12"/><circle cx="137" cy="232" r="6"/><circle cx="493" cy="128" r="8"/></g>
 </svg>
-</div>
+</div></div>
+<div class="squill-facts"><p><b>Right on time.</b>Exact-time alarms.</p><p><b>Right at hand.</b>Done, Snooze and a widget.</p><p><b>Only on your phone.</b>No account. No network access.</p></div></section><section id="angelfish" class="wrap angelfish fish-card showcase" aria-labelledby="angel-title"><div class="section-top"><p class="section-label">02 / Angelfish</p><span class="specimen">Room to watch. Room to breathe.</span></div>
+<div class="angel-layout"><div class="angel-copy"><span class="icon-source" style="--fish-c:#FFE1DF;--fish-p:#DD4649;--fish-dc:#8A1A21;--fish-dp:#FFB3AF"><svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Angelfish"><path class="cookie" d="M36,33 H72 A13,13 0 0 1 85,46 V62 A13,13 0 0 1 72,75 H36 A13,13 0 0 1 23,62 V46 A13,13 0 0 1 36,33 Z"/><path class="fish" fill-rule="evenodd" d="M45 50 C41 49 37 46 33 44 Q36 54 33 63 C37 61 41 58 45 58 Z"/><path class="fish" fill-rule="evenodd" d="M76 53 C73 50 69 48 64 47 C57 44 52 40 47 37 Q45 35 45.5 38 C47 44 45 47 43 50 C41.5 53 42 57 44 60 C46 63 47 67 45.5 70 Q45 72 47 70.5 C53 66 58 62 64 60 C69 58 73 56 76 53 Z"/><path class="fish" fill-rule="evenodd" d="M62 60 C60 65 57 69 54 71 Q53 71.5 53.5 70 C56 67 58 63 59.5 60 Z"/><path class="fish" fill-rule="evenodd" d="M66 59 C65 64 63.5 67.5 61 70 Q60 71 60 69.5 C62 66 63 62 63.5 60 Z"/><path class="ink" d="M49 42 Q50 41.5 51.5 44 C54 51 54 58 51 65 L48.5 67 C51.5 58 51.5 50 49 42 Z"/><path class="ink" d="M57 47 L59.5 48.3 C61.5 52 61 57 59 61 L56.5 62.5 C58.5 56.5 59 52.5 57 47 Z"/><path class="ink" d="M67.95 52 A1.55 1.55 0 1 0 71.05 52 A1.55 1.55 0 1 0 67.95 52 Z"/></svg></span><h2 id="angel-title">Less noise.<br><em>More play.</em></h2><p class="lede">Your videos, with the controls you’d choose.</p><p>YouTube with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Choose available audio tracks, captions and quality, with chapter names as you scrub. Phones, tablets, Chromebooks and TVs.</p><a class="btn filled" href="https://github.com/ShoalApps/angelfish/releases/latest/download/Angelfish.apk">Download Angelfish <span aria-hidden="true">↗</span></a><div class="ocean-art angel-art" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 180" aria-hidden="true" focusable="false" style="pointer-events:none">
 
-  <section id="our-current" class="manifesto" aria-labelledby="our-current-title">
-    <p class="section-label">Our current</p>
-    <h2 id="our-current-title">Apps should feel like a natural habitat.</h2>
-    <div class="manifesto-grid">
-      <article class="manifesto-card"><h3>Less hassle.<br>More of what you love.</h3>
-        <p>Sometimes watching a video feels like an obstacle course: an advert, a sponsorship, another prompt to upgrade. Downloads sit behind a subscription, and the interface can feel generic, cluttered and tired.</p>
-        <p>We wanted a fresh current. So we dipped our hands into the water of app development.</p>
-        <p>Shoal puts the experience first: a unified Material You design, colours that adapt to your phone, and controls that feel familiar from one app to the next.</p>
-      </article>
-      <article class="manifesto-card alt"><h3>Your content shouldn't<br>need a costume change.</h3>
-        <p>Big companies use different designs to distinguish their brands. But when you're just catching up with people, why should every service feel like a completely different world?</p>
-        <p>One friend posts on Bluesky, another on X. Butterflyfish brings both into one app, each in its own tab, with a familiar home around them.</p>
-        <p>Not every service can share the same native interface. Where an app uses a service's website, its pages and rules still apply. We're building a shared home, not pretending those differences have disappeared.</p>
-      </article>
-      <article class="manifesto-card alt habitat-card"><h3>Why fish?</h3>
-        <p>Fish are free to swim through a vast ocean. They adapt to their surroundings and thrive in a natural habitat. That's the spirit behind Shoal: simple, adaptable apps that give you room to enjoy what you came for.</p>
-        <p>We believe you should have a choice beyond the primary apps made by monopolies and big companies. Shoal doesn't add advertising profiles or sell your personal information. The services you connect to keep their own privacy policies.</p>
-      <div class="ocean-art habitat-shoal" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <path fill="none" stroke="var(--outline-variant)" stroke-width="2" stroke-linecap="round" d="M9 57C60 29 89 81 140 62S222 22 265 34M109 88C162 102 190 76 225 71"/>
-  <g class="art-drift" fill="var(--primary)">
-    <path d="M48 35C59 18 84 18 107 35 85 53 60 53 48 35L30 21 34 35 30 49Z"/>
-    <path d="M141 59C151 44 174 44 194 59 174 75 152 75 141 59L125 46 128 59 125 72Z"/>
-    <path d="M253 38C264 20 291 20 314 38 291 56 264 56 253 38L235 23 239 38 235 53Z"/>
-  </g>
-  <g class="art-drift" fill="var(--on-primary)"><circle cx="92" cy="33" r="3"/><circle cx="181" cy="57" r="2.5"/><circle cx="300" cy="36" r="3"/></g>
-  <g fill="var(--tertiary-container)"><path d="M203 15C209 7 222 7 233 15 222 23 209 23 203 15L194 8 196 15 194 22Z"/><path d="M301 77C307 69 320 69 331 77 320 85 307 85 301 77L292 70 294 77 292 84Z"/></g>
-</svg>
-</div>
-      </article>
-      <article class="manifesto-card"><h3>Free to swim.<br>Free to stay.</h3>
-        <p>No Shoal feature paywalls. No subscription to unlock our controls. Payment is optional, and donations help keep the project moving. A thank-you should never decide what you're allowed to do.</p>
-        <p>Third-party services may still require an account, impose restrictions or charge for their own content. Shoal's features remain free.</p>
-        <p><a href="https://liberapay.com/ShoalApps">Support the shoal</a> or <a href="https://github.com/ShoalApps">help build it</a>. Both are welcome.</p>
-      </article>
-    </div>
-    <p class="community-line">By the community.<br>For the community.</p>
-  </section>
-
-  <section id="apps">
-<div class="ocean-art apps-companions" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 210" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <!-- Butterflyfish from above: a slender body, small forefins and broader hind fins. -->
-  <path fill="var(--surface)" d="M15 106C3 47 59 17 121 25 168 26 186 81 173 129 161 171 103 191 57 168 30 156 19 133 15 106Z"/>
-  <g class="art-drift">
-    <g transform="rotate(10 103 104)">
-      <g fill="var(--primary)" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round">
-        <!-- Paired fins join the body rather than a butterfly's thorax. -->
-        <path d="M97 71C85 60 67 53 58 59 49 66 59 87 75 96 82 100 91 101 98 96Z"/>
-        <path d="M110 71C122 60 140 53 149 59 158 66 148 87 132 96 125 100 116 101 109 96Z"/>
-        <path d="M97 100C76 91 45 96 35 116 25 137 40 159 58 157 77 155 91 134 100 116Z"/>
-        <path d="M110 100C131 91 162 96 172 116 182 137 167 159 149 157 130 155 116 134 107 116Z"/>
-        <!-- A narrow caudal peduncle ends in a small, forked fish tail. -->
-        <path d="M101 143 94 169 103 163 113 169 106 143Z"/>
-      </g>
-      <g fill="none" stroke="var(--on-primary)" stroke-width="2" stroke-linecap="round">
-        <path d="M92 85Q76 69 62 63M91 92 64 79M115 85Q131 69 145 63M116 92 143 79"/>
-        <path d="M93 110Q61 114 43 139M93 117Q78 143 56 151M114 110Q146 114 164 139M114 117Q129 143 151 151"/>
-      </g>
-      <path fill="var(--primary)" stroke="var(--on-primary)" stroke-width="2" stroke-linejoin="round" d="M103 35C112 36 117 49 115 63 113 80 112 94 112 108 112 123 108 137 105 150Q103 154 101 150C98 137 94 123 94 108 94 94 93 80 91 63 89 49 94 36 103 35Z"/>
-      <g fill="var(--on-primary)"><ellipse cx="96" cy="52" rx="2.3" ry="3"/><ellipse cx="110" cy="52" rx="2.3" ry="3"/></g>
-      <g fill="none" stroke="var(--on-primary)" stroke-width="1.6" stroke-linecap="round">
-        <path d="M95 62 96 70M111 62 110 70M103 77V135"/>
-      </g>
-    </g>
-  </g>
-  <!-- Squill's pointed mantle, side fins and four curling arms echo its app icon. -->
-  <path fill="var(--primary-container)" d="M240 163C213 137 224 63 274 42 313 26 367 53 377 99 388 148 348 175 304 177Z"/>
-  <path fill="var(--surface-container-highest)" d="M259 174 279 145 395 150 378 183Z"/>
-  <path fill="var(--surface)" d="M264 168 281 139 393 145 376 176Z"/>
-  <g fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round"><path d="M299 158Q307 151 311 158T325 158T339 159M295 166 345 168"/></g>
-  <g class="art-quill">
-    <g fill="none" stroke="var(--primary)" stroke-width="7" stroke-linecap="round">
-      <path d="M260 116C238 137 237 151 251 157"/><path d="M270 122C257 146 264 164 277 164"/><path d="M281 122C283 139 279 145 290 148"/><path d="M291 117C303 133 325 136 332 116"/>
-    </g>
-    <path fill="var(--primary)" d="M275 42C264 55 255 69 251 84L229 106Q241 118 252 115V121C252 144 296 144 296 121V115Q308 118 319 106L299 84C295 69 285 52 275 42Z"/>
-    <g fill="var(--on-primary)"><circle cx="264" cy="115" r="5"/><circle cx="283" cy="115" r="5"/></g>
-    <path fill="var(--tertiary-container)" d="M327 126C310 100 326 64 357 49 365 80 354 105 334 118L316 156 312 155Z"/>
-    <path fill="none" stroke="var(--on-tertiary-container)" stroke-width="2" stroke-linecap="round" d="M329 116 351 62M337 97 350 90M333 107 328 92"/>
-  </g>
-  <g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".45" class="art-bubbles"><circle cx="199" cy="80" r="6"/><circle cx="212" cy="55" r="3"/></g>
-</svg>
-</div>
-    <h2>The apps</h2>
-    <p class="sub">Features depend on each service and the streams it makes available. Shoal does not promise complete YouTube feature parity, access to paid content, or a fully native interface for embedded websites.</p>
-    <p class="sub">Each one is built with Jetpack Compose and Material 3 Expressive, and is free software under the GPL.</p>
-    <div class="apps">
-      <div class="card fish-card" style="--fish-c:#000000;--fish-p:#FFFFFF;--fish-dc:#000000;--fish-dp:#FFFFFF">
-        <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Squill"><path class="cookie" d="M83.50,54.00 L83.46,54.77 L83.33,55.54 L83.12,56.29 L82.84,57.03 L82.50,57.75 L82.11,58.45 L81.69,59.13 L81.23,59.79 L80.78,60.43 L80.32,61.05 L79.88,61.67 L79.48,62.28 L79.10,62.89 L78.77,63.51 L78.48,64.14 L78.24,64.79 L78.04,65.46 L77.87,66.16 L77.72,66.88 L77.60,67.62 L77.48,68.39 L77.35,69.16 L77.20,69.95 L77.03,70.73 L76.81,71.50 L76.54,72.25 L76.21,72.97 L75.83,73.65 L75.37,74.28 L74.86,74.86 L74.28,75.37 L73.65,75.83 L72.97,76.21 L72.25,76.54 L71.50,76.81 L70.73,77.03 L69.95,77.20 L69.16,77.35 L68.39,77.48 L67.62,77.60 L66.88,77.72 L66.16,77.87 L65.46,78.04 L64.79,78.24 L64.14,78.48 L63.51,78.77 L62.89,79.10 L62.28,79.48 L61.67,79.88 L61.05,80.32 L60.43,80.78 L59.79,81.23 L59.13,81.69 L58.45,82.11 L57.75,82.50 L57.03,82.84 L56.29,83.12 L55.54,83.33 L54.77,83.46 L54.00,83.50 L53.23,83.46 L52.46,83.33 L51.71,83.12 L50.97,82.84 L50.25,82.50 L49.55,82.11 L48.87,81.69 L48.21,81.23 L47.57,80.78 L46.95,80.32 L46.33,79.88 L45.72,79.48 L45.11,79.10 L44.49,78.77 L43.86,78.48 L43.21,78.24 L42.54,78.04 L41.84,77.87 L41.12,77.72 L40.38,77.60 L39.61,77.48 L38.84,77.35 L38.05,77.20 L37.27,77.03 L36.50,76.81 L35.75,76.54 L35.03,76.21 L34.35,75.83 L33.72,75.37 L33.14,74.86 L32.63,74.28 L32.17,73.65 L31.79,72.97 L31.46,72.25 L31.19,71.50 L30.97,70.73 L30.80,69.95 L30.65,69.16 L30.52,68.39 L30.40,67.62 L30.28,66.88 L30.13,66.16 L29.96,65.46 L29.76,64.79 L29.52,64.14 L29.23,63.51 L28.90,62.89 L28.52,62.28 L28.12,61.67 L27.68,61.05 L27.22,60.43 L26.77,59.79 L26.31,59.13 L25.89,58.45 L25.50,57.75 L25.16,57.03 L24.88,56.29 L24.67,55.54 L24.54,54.77 L24.50,54.00 L24.54,53.23 L24.67,52.46 L24.88,51.71 L25.16,50.97 L25.50,50.25 L25.89,49.55 L26.31,48.87 L26.77,48.21 L27.22,47.57 L27.68,46.95 L28.12,46.33 L28.52,45.72 L28.90,45.11 L29.23,44.49 L29.52,43.86 L29.76,43.21 L29.96,42.54 L30.13,41.84 L30.28,41.12 L30.40,40.38 L30.52,39.61 L30.65,38.84 L30.80,38.05 L30.97,37.27 L31.19,36.50 L31.46,35.75 L31.79,35.03 L32.17,34.35 L32.63,33.72 L33.14,33.14 L33.72,32.63 L34.35,32.17 L35.03,31.79 L35.75,31.46 L36.50,31.19 L37.27,30.97 L38.05,30.80 L38.84,30.65 L39.61,30.52 L40.37,30.40 L41.12,30.28 L41.84,30.13 L42.54,29.96 L43.21,29.76 L43.86,29.52 L44.49,29.23 L45.11,28.90 L45.72,28.52 L46.33,28.12 L46.95,27.68 L47.57,27.22 L48.21,26.77 L48.87,26.31 L49.55,25.89 L50.25,25.50 L50.97,25.16 L51.71,24.88 L52.46,24.67 L53.23,24.54 L54.00,24.50 L54.77,24.54 L55.54,24.67 L56.29,24.88 L57.03,25.16 L57.75,25.50 L58.45,25.89 L59.13,26.31 L59.79,26.77 L60.43,27.22 L61.05,27.68 L61.67,28.12 L62.28,28.52 L62.89,28.90 L63.51,29.23 L64.14,29.52 L64.79,29.76 L65.46,29.96 L66.16,30.13 L66.88,30.28 L67.62,30.40 L68.39,30.52 L69.16,30.65 L69.95,30.80 L70.73,30.97 L71.50,31.19 L72.25,31.46 L72.97,31.79 L73.65,32.17 L74.28,32.63 L74.86,33.14 L75.37,33.72 L75.83,34.35 L76.21,35.03 L76.54,35.75 L76.81,36.50 L77.03,37.27 L77.20,38.05 L77.35,38.84 L77.48,39.61 L77.60,40.38 L77.72,41.12 L77.87,41.84 L78.04,42.54 L78.24,43.21 L78.48,43.86 L78.77,44.49 L79.10,45.11 L79.48,45.72 L79.88,46.33 L80.32,46.95 L80.78,47.57 L81.23,48.21 L81.69,48.87 L82.11,49.55 L82.50,50.25 L82.84,50.97 L83.12,51.71 L83.33,52.46 L83.46,53.23 Z"/><path fill="#000" d="M46.26,33.43 C48.41,36.01 50.56,39.45 51.59,42.89 L56.58,48.48 C54.86,50.20 53.48,50.63 52.45,50.63 L52.45,56.65 C52.45,60.09 49.70,62.24 46.26,62.24 C42.82,62.24 40.07,60.09 40.07,56.65 L40.07,50.63 C39.04,50.63 37.66,50.20 35.94,48.48 L40.93,42.89 C41.96,39.45 44.11,36.01 46.26,33.43 Z"/><path fill="#000" d="M40.45,58.24 L39.90,58.90 L39.35,59.55 L38.82,60.18 L38.30,60.80 L37.81,61.42 L37.34,62.03 L36.89,62.64 L36.48,63.24 L36.09,63.84 L35.74,64.44 L35.42,65.05 L35.15,65.66 L34.92,66.27 L34.74,66.90 L34.61,67.53 L34.54,68.17 L34.52,68.81 L34.57,69.46 L34.69,70.10 L34.87,70.75 L35.12,71.39 L35.43,72.04 L35.82,72.69 L36.25,73.33 L37.35,72.65 L37.00,72.02 L36.72,71.42 L36.52,70.87 L36.38,70.32 L36.30,69.82 L36.27,69.33 L36.29,68.84 L36.36,68.38 L36.46,67.92 L36.62,67.48 L36.82,67.02 L37.05,66.56 L37.33,66.09 L37.64,65.62 L38.00,65.14 L38.39,64.65 L38.82,64.15 L39.29,63.63 L39.78,63.10 L40.29,62.56 L40.83,62.00 L41.41,61.42 L41.99,60.83 L42.61,60.22 Z"/><path fill="#000" d="M42.83,60.43 L42.58,61.19 L42.35,61.91 L42.11,62.62 L41.90,63.31 L41.68,63.98 L41.50,64.64 L41.31,65.29 L41.15,65.93 L41.01,66.57 L40.88,67.19 L40.78,67.81 L40.71,68.43 L40.67,69.04 L40.66,69.66 L40.69,70.27 L40.75,70.89 L40.84,71.50 L40.98,72.12 L41.16,72.74 L41.38,73.36 L41.64,73.98 L41.94,74.61 L42.30,75.25 L42.68,75.88 L43.82,75.26 L43.50,74.62 L43.24,74.01 L43.03,73.43 L42.86,72.87 L42.73,72.32 L42.65,71.79 L42.60,71.27 L42.58,70.75 L42.59,70.26 L42.63,69.75 L42.70,69.24 L42.79,68.73 L42.92,68.22 L43.07,67.69 L43.23,67.16 L43.43,66.61 L43.64,66.04 L43.87,65.46 L44.12,64.85 L44.39,64.23 L44.66,63.57 L44.95,62.89 L45.25,62.19 L45.56,61.47 Z"/><path fill="#000" d="M46.18,61.12 L46.30,61.85 L46.41,62.55 L46.50,63.24 L46.59,63.92 L46.66,64.58 L46.74,65.23 L46.81,65.88 L46.88,66.51 L46.96,67.14 L47.03,67.76 L47.12,68.37 L47.21,68.97 L47.32,69.56 L47.45,70.14 L47.58,70.73 L47.75,71.30 L47.93,71.85 L48.13,72.41 L48.38,72.96 L48.64,73.49 L48.94,74.01 L49.28,74.53 L49.65,75.04 L50.04,75.52 L51.08,74.76 L50.77,74.27 L50.49,73.79 L50.26,73.32 L50.06,72.84 L49.89,72.35 L49.74,71.86 L49.62,71.36 L49.53,70.87 L49.45,70.35 L49.39,69.83 L49.34,69.28 L49.30,68.73 L49.29,68.17 L49.27,67.59 L49.26,66.99 L49.25,66.38 L49.25,65.74 L49.25,65.09 L49.24,64.42 L49.24,63.73 L49.22,63.02 L49.18,62.29 L49.14,61.53 L49.09,60.78 Z"/><path fill="#000" d="M49.48,59.49 L50.16,60.12 L50.86,60.72 L51.57,61.28 L52.27,61.78 L52.98,62.25 L53.69,62.66 L54.40,63.02 L55.12,63.34 L55.84,63.60 L56.55,63.81 L57.28,63.96 L57.99,64.05 L58.70,64.08 L59.42,64.05 L60.11,63.95 L60.80,63.80 L61.47,63.58 L62.14,63.30 L62.77,62.95 L63.38,62.55 L63.98,62.09 L64.54,61.57 L65.09,60.99 L65.59,60.39 L63.91,58.93 L63.43,59.45 L62.97,59.88 L62.51,60.26 L62.04,60.58 L61.59,60.85 L61.12,61.06 L60.66,61.23 L60.19,61.35 L59.73,61.42 L59.25,61.46 L58.77,61.45 L58.28,61.40 L57.78,61.30 L57.28,61.16 L56.76,60.98 L56.23,60.76 L55.69,60.49 L55.13,60.17 L54.57,59.80 L54.00,59.38 L53.42,58.93 L52.84,58.42 L52.25,57.87 L51.63,57.25 Z"/><path fill="#000" d="M57.87,74.71 L60.04,71.55 L63.34,61.79 Q65.69,60.89 67.55,59.81 Q71.48,55.56 71.84,52.61 Q74.14,47.31 73.54,44.46 Q73.49,39.60 72.06,36.01 Q68.96,37.95 66.54,40.57 Q63.49,43.41 62.88,47.57 Q61.09,50.43 60.44,53.70 Q60.64,58.16 62.05,61.31 L58.26,70.90 Z"/><path fill="#fff" d="M41.64,54.50 a1.7,1.7 0 1,0 3.4,0 a1.7,1.7 0 1,0 -3.4,0 Z"/><path fill="#fff" d="M47.48,54.50 a1.7,1.7 0 1,0 3.4,0 a1.7,1.7 0 1,0 -3.4,0 Z"/><path fill="#fff" d="M64.07,59.42 L64.75,57.48 L65.43,55.53 L66.12,53.59 L66.80,51.64 L67.48,49.69 L68.16,47.75 L68.84,45.81 L69.52,43.86 L70.20,41.92 L70.88,39.97 L70.40,39.79 L69.66,41.71 L68.92,43.64 L68.18,45.56 L67.45,47.49 L66.71,49.42 L65.97,51.34 L65.23,53.26 L64.50,55.19 L63.76,57.11 L63.02,59.04 Z"/></svg>
-        <span class="chip">New</span>
-        <h3>Squill</h3>
-        <p>Jot reminders down like ink on paper, once or on a repeat, ringing at the exact minute with Done and Snooze on the notification. A home-screen widget shows what's next. Everything stays on your phone, with no account and no network access.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/squill/releases/latest/download/Squill.apk">Download APK</a></div>
-      </div>
-      <div class="card fish-card" style="--fish-c:#FFE1DF;--fish-p:#DD4649;--fish-dc:#8A1A21;--fish-dp:#FFB3AF">
-        <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Angelfish"><path class="cookie" d="M36,33 H72 A13,13 0 0 1 85,46 V62 A13,13 0 0 1 72,75 H36 A13,13 0 0 1 23,62 V46 A13,13 0 0 1 36,33 Z"/><path class="fish" fill-rule="evenodd" d="M78 54 C74 49.6 69 46.4 63.6 44.6 C57 42.2 51.6 39 46.4 35.4 C45.2 34.6 44 35.4 44.2 36.8 C45.2 41.4 45 45.4 44 49 C43.4 51.8 43.4 56.2 44 59 C45 62.6 45.2 66.6 44.2 71.2 C44 72.6 45.2 73.4 46.4 72.6 C51.6 69 57 65.8 63.6 63.4 C69 61.6 74 58.4 78 54 Z"/><path class="fish" fill-rule="evenodd" d="M44.6 49.6 L34.6 45 C33.4 44.6 32.6 45.4 33 46.6 C34.2 51.4 34.2 56.6 33 61.4 C32.6 62.6 33.4 63.4 34.6 63 L44.6 58.4 Z"/><path class="ink" d="M64.6 46.8 C66.6 50.6 66.6 57.4 64.6 61.2 L62.6 62 C64.8 57.6 64.8 50.4 62.6 46 Z"/><path class="ink" d="M56.4 43.8 C59 49.4 59 58.6 56.4 64.2 L54 65.4 C56.8 59 56.8 49 54 42.6 Z"/><path class="ink" d="M69.75 52.60 C69.75 51.91 70.31 51.35 71.00 51.35 C71.69 51.35 72.25 51.91 72.25 52.60 C72.25 53.29 71.69 53.85 71.00 53.85 C70.31 53.85 69.75 53.29 69.75 52.60 Z"/></svg>
-        <span class="chip">Available now</span>
-        <h3>Angelfish</h3>
-        <p>YouTube with SponsorBlock, DeArrow, Return YouTube Dislike, background play and picture-in-picture built in. Choose available audio tracks, captions and quality, with chapter names as you scrub. Phones, tablets, Chromebooks and TVs.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/angelfish/releases/latest/download/Angelfish.apk">Download APK</a></div>
-      </div>
-      <div class="card fish-card" style="--fish-c:#DFE8FF;--fish-p:#007AED;--fish-dc:#00468C;--fish-dp:#A9C7FF">
-        <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Butterflyfish"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" fill-rule="evenodd" d="M 60.21,43.93 C 64.93,39.07 72.10,36.68 76.38,38.65 C 79.77,40.27 79.46,45.29 76.35,49.82 C 72.46,55.43 65.32,57.62 59.99,55.06 C 58.41,54.17 57.53,52.59 57.99,51.05 Z"/><path class="fish" fill-rule="evenodd" d="M 56.54,57.09 C 61.35,56.11 68.06,58.51 70.48,63.40 C 72.59,67.84 70.02,73.68 65.21,74.66 C 59.81,75.74 55.61,71.14 53.95,64.15 Z"/><path class="fish" fill-rule="evenodd" d="M 52.29,42.53 C 50.11,36.46 45.22,31.94 41.23,32.45 C 38.06,32.91 36.72,37.75 37.74,43.01 C 39.03,49.53 43.95,53.85 48.96,53.11 C 50.48,52.77 51.67,51.56 51.79,49.95 Z"/><path class="fish" fill-rule="evenodd" d="M 51.03,56.12 C 47.56,53.68 41.52,53.83 38.08,57.69 C 35.02,61.21 35.20,67.54 38.67,69.98 C 42.58,72.70 47.34,69.68 50.85,63.60 Z"/><path class="fish" fill-rule="evenodd" d="M 57.91,31.84 C 60.71,32.34 61.69,36.67 60.82,41.60 C 59.88,46.91 57.72,52.62 55.74,58.37 C 54.41,62.60 53.05,67.03 50.87,71.73 C 50.64,66.61 50.97,61.99 51.26,57.58 C 51.51,51.53 51.61,45.45 52.55,40.14 C 53.41,35.21 55.54,31.43 57.91,31.84 Z"/><path class="ink" d="M 61.89,51.94 C 65.76,48.56 70.20,45.28 74.55,43.61 L 74.93,44.69 C 70.74,46.59 66.53,49.71 62.87,52.92 Z"/><path class="ink" d="M 59.47,61.26 C 62.55,62.41 65.23,64.71 66.58,68.00 L 65.51,68.62 C 64.09,65.73 61.74,63.69 58.89,62.38 Z"/><path class="ink" d="M 48.45,49.57 C 46.46,45.16 44.00,40.66 41.11,37.71 L 40.47,38.62 C 43.17,41.73 45.50,46.00 47.36,50.19 Z"/><path class="ink" d="M 47.41,59.13 C 44.63,59.25 41.79,60.58 39.70,63.26 L 40.34,64.18 C 42.37,61.90 44.86,60.71 47.52,60.37 Z"/><path class="ink" d="M 54.01,37.35 C 54.13,36.70 54.65,36.24 55.17,36.33 C 55.69,36.43 56.02,37.03 55.90,37.68 C 55.79,38.33 55.27,38.79 54.75,38.70 C 54.23,38.61 53.90,38.00 54.01,37.35 Z"/><path class="ink" d="M 57.97,38.05 C 58.09,37.40 58.68,36.95 59.30,37.06 C 59.92,37.17 60.33,37.79 60.22,38.44 C 60.10,39.09 59.50,39.54 58.88,39.43 C 58.27,39.32 57.86,38.70 57.97,38.05 Z"/></svg>
-        <span class="chip">Available now</span>
-        <h3>Butterflyfish</h3>
-        <p>Bluesky laid out like Bluesky: your pinned feeds, threads, verification badges, Profile Links, posting with pictures and profile editing. Sign in on Bluesky's own page, no app password needed. X has its own tab.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/butterflyfish/releases/latest/download/Butterflyfish.apk">Download APK</a></div>
-      </div>
-    </div>
-    <h3 class="apps-heading">The installer</h3>
-    <p class="apps-note">Optional: Shoal installs and keeps the apps above up to date for you.</p>
-    <div class="apps">
-      <div class="card fish-card" style="--fish-c:#9FF2E2;--fish-p:#006B5E;--fish-dc:#005047;--fish-dp:#83D5C6">
-        <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Shoal"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" fill-rule="evenodd" d="M 51 44.5 C 54 39.3 62 38.5 69.5 44.5 C 62 50.5 54 49.7 51 44.5 Z"/><path class="ink" d="M63.90,43.50 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" fill-rule="evenodd" d="M 53 44.5 L 47.5 40.1 L 48.8 44.5 L 47.5 48.9 Z"/><path class="fish" fill-rule="evenodd" d="M 38 55 C 41 49.8 49 49 56.5 55 C 49 61 41 60.2 38 55 Z"/><path class="ink" d="M50.90,54.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" fill-rule="evenodd" d="M 40 55 L 34.5 50.6 L 35.8 55 L 34.5 59.4 Z"/><path class="fish" fill-rule="evenodd" d="M 52 65 C 55 59.8 63 59 70.5 65 C 63 71 55 70.2 52 65 Z"/><path class="ink" d="M64.90,64.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" fill-rule="evenodd" d="M 54 65 L 48.5 60.6 L 49.8 65 L 48.5 69.4 Z"/></svg>
-        <span class="chip">Start here</span>
-        <h3>Shoal</h3>
-        <p>Installs and updates every app in the shoal, silently with Shevery, Shizuku or root, and only ever installs apps signed by Shoal. Sign in to your accounts once here and the apps use them.</p>
-        <div class="row"><a class="btn filled" href="https://github.com/ShoalApps/shoal/releases/latest/download/Shoal.apk">Download APK</a></div>
-      </div>
-    </div>
-    <h3 class="apps-heading" id="archived">Archived for now</h3>
-    <p class="apps-note">These aren't good enough yet, so they're set aside for the moment and Shoal no longer lists them. You can still download them here, but expect things not to work.</p>
-    <div class="apps">
-      <div class="card fish-card archived" style="--fish-c:#FFE1E1;--fish-p:#DD4458;--fish-dc:#8A172C;--fish-dp:#FFB3B6">
-        <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Clownfish"><path class="cookie" d="M41,25 H67 A16,16 0 0 1 83,41 V67 A16,16 0 0 1 67,83 H41 A16,16 0 0 1 25,67 V41 A16,16 0 0 1 41,25 Z"/><path fill="#6DD1CD" d="M 32.8 53.6 C 34.8 44.1 44.8 40.6 54.8 40.6 C 64.8 40.6 71.8 46.6 73.8 53.6 C 71.8 60.6 64.8 66.6 54.8 66.6 C 44.8 66.6 34.8 63.1 32.8 53.6 Z"/><path fill="#6DD1CD" d="M 35.3 53.6 L 28 47.2 C 27 49.6 26.6 51.6 26.6 53.6 C 26.6 55.6 27 57.6 28 60 Z"/><path fill="#6DD1CD" d="M 44.8 42.2 C 46.8 35.6 55.8 34.6 60.8 39.2 C 61.8 40.2 61.8 41.2 61.2 42 Z"/><path fill="#6DD1CD" d="M 46.8 65 C 47.8 69.6 52.8 70.6 56.2 66.4 Z"/><path class="fish" fill-rule="evenodd" d="M 34.6 55 C 36.6 45.5 46.6 42 56.6 42 C 66.6 42 73.6 48 75.6 55 C 73.6 62 66.6 68 56.6 68 C 46.6 68 36.6 64.5 34.6 55 Z"/><path class="ink" d="M 66 52 a 1.8 1.8 0 1 0 3.6 0 a 1.8 1.8 0 1 0 -3.6 0 Z"/><path class="ink" d="M 62 42.6 C 64 48 64 62 62 67.4 L 59.4 67.8 C 61.4 62 61.4 48 59.4 42.2 Z"/><path class="ink" d="M 49.4 43.3 C 51.4 49 51.4 61 49.4 66.7 L 46.8 66.1 C 48.8 60.6 48.8 49.4 46.8 43.9 Z"/><path class="ink" d="M 40.2 48.4 C 41.4 52 41.4 58 40.2 61.6 L 38.1 60.4 C 38.9 57.6 38.9 52.4 38.1 49.6 Z"/><path class="fish" fill-rule="evenodd" d="M 37.1 55 L 29.8 48.6 C 28.8 51 28.4 53 28.4 55 C 28.4 57 28.8 59 29.8 61.4 Z"/><path class="fish" fill-rule="evenodd" d="M 46.6 43.6 C 48.6 37 57.6 36 62.6 40.6 C 63.6 41.6 63.6 42.6 63 43.4 Z"/><path class="fish" fill-rule="evenodd" d="M 48.6 66.4 C 49.6 71 54.6 72 58 67.8 Z"/></svg>
-        <span class="chip">Archived</span>
-        <h3>Clownfish</h3>
-        <p>YouTube Shorts, TikTok and Instagram Reels in one app, each in its own tab and signed in with your own accounts, without the sites' get-the-app nags.</p>
-        <div class="row"><a class="btn tonal" href="https://github.com/ShoalApps/clownfish/releases/latest/download/Clownfish.apk">Download anyway</a></div>
-      </div>
-      <div class="card fish-card archived" style="--fish-c:#FFE1DF;--fish-p:#DD4649;--fish-dc:#8A1A21;--fish-dp:#FFB3AF">
-        <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Pufferfish"><path class="cookie" d="M28.00,54.00 a26,26 0 1,0 52,0 a26,26 0 1,0 -52,0 Z"/><path class="fish" fill-rule="evenodd" d="M35.80,54.00 a18.2,18.2 0 1,0 36.4,0 a18.2,18.2 0 1,0 -36.4,0 Z M38.20,54.00 a15.8,15.8 0 1,0 31.6,0 a15.8,15.8 0 1,0 -31.6,0 Z"/><path class="fish" fill-rule="evenodd" d="M44.40,54.00 a9.6,9.6 0 1,0 19.2,0 a9.6,9.6 0 1,0 -19.2,0 Z"/><path class="ink" d="M50.6,49.4 L59,54 L50.6,58.6 Z"/><path class="fish" fill-rule="evenodd" d="M63.20,52.85 L66.20,54.00 L63.20,55.15 Z"/><path class="fish" fill-rule="evenodd" d="M62.54,57.60 L64.57,60.10 L61.39,59.60 Z"/><path class="fish" fill-rule="evenodd" d="M59.60,61.39 L60.10,64.57 L57.60,62.54 Z"/><path class="fish" fill-rule="evenodd" d="M55.15,63.20 L54.00,66.20 L52.85,63.20 Z"/><path class="fish" fill-rule="evenodd" d="M50.40,62.54 L47.90,64.57 L48.40,61.39 Z"/><path class="fish" fill-rule="evenodd" d="M46.61,59.60 L43.43,60.10 L45.46,57.60 Z"/><path class="fish" fill-rule="evenodd" d="M44.80,55.15 L41.80,54.00 L44.80,52.85 Z"/><path class="fish" fill-rule="evenodd" d="M45.46,50.40 L43.43,47.90 L46.61,48.40 Z"/><path class="fish" fill-rule="evenodd" d="M48.40,46.61 L47.90,43.43 L50.40,45.46 Z"/><path class="fish" fill-rule="evenodd" d="M52.85,44.80 L54.00,41.80 L55.15,44.80 Z"/><path class="fish" fill-rule="evenodd" d="M57.60,45.46 L60.10,43.43 L59.60,46.61 Z"/><path class="fish" fill-rule="evenodd" d="M61.39,48.40 L64.57,47.90 L62.54,50.40 Z"/><path class="fish" fill-rule="evenodd" d="M44.8,54 L40.6,50.6 L41.6,54 L40.6,57.4 Z"/></svg>
-        <span class="chip">Archived</span>
-        <h3>Pufferfish</h3>
-        <p>YouTube Music laid out like Spotify: Home mixes, your library and playlists, offline downloads, lyrics when available, a sleep timer, and the whole app coloured from the album art.</p>
-        <div class="row"><a class="btn tonal" href="https://github.com/ShoalApps/pufferfish/releases/latest/download/Pufferfish.apk">Download anyway</a></div>
-      </div>
-      <div class="card fish-card archived" style="--fish-c:#FFE2DB;--fish-p:#DA4C22;--fish-dc:#872000;--fish-dp:#FFB5A1">
-        <svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Anglerfish"><path class="cookie" d="M28.00,54.00 a26,26 0 1,0 52,0 a26,26 0 1,0 -52,0 Z"/><path class="fish" fill-rule="evenodd" d="M40,58.4 C40,51.4 46.4,47 54,47 C61.6,47 68,51.4 68,58.4 C68,65.2 61.6,69 54,69 C46.4,69 40,65.2 40,58.4 Z"/><path class="ink" d="M45.90,57.00 a2.5,2.5 0 1,0 5.0,0 a2.5,2.5 0 1,0 -5.0,0 Z"/><path class="ink" d="M57.10,57.00 a2.5,2.5 0 1,0 5.0,0 a2.5,2.5 0 1,0 -5.0,0 Z"/><path class="ink" d="M47.4,62.6 C51,65.6 57,65.6 60.6,62.6 L61.3,63.8 C57.2,67.4 50.8,67.4 46.7,63.8 Z"/><path class="fish" fill-rule="evenodd" d="M41,58 L34,53 C35.2,55.4 35.5,56.8 35.5,58 C35.5,59.2 35.2,60.6 34,63 Z"/><path class="fish" fill-rule="evenodd" d="M55,47.4 C55.6,41.4 58.6,37.4 63.4,36.2 L63.8,37.6 C59.6,38.8 57.2,42.2 56.6,47.4 Z"/><path class="fish" fill-rule="evenodd" d="M62.00,35.60 a3.2,3.2 0 1,0 6.4,0 a3.2,3.2 0 1,0 -6.4,0 Z"/><path class="fish" fill-rule="evenodd" d="M64.6,50.6 L70,47.4 L68.6,53 Z"/></svg>
-        <span class="chip">Archived</span>
-        <h3>Anglerfish</h3>
-        <p>Reddit as an app: Material tabs for Home, Popular, Search, Inbox and you, without Reddit's get-the-app nags. Signed in on Reddit's own page.</p>
-        <div class="row"><a class="btn tonal" href="https://github.com/ShoalApps/anglerfish/releases/latest/download/Anglerfish.apk">Download anyway</a></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="ocean-art tidal-divider tide-middle" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 90" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <path fill="var(--primary-container)" opacity=".5" d="M0 23C145 78 240 0 389 25S625 77 786 31 1001 10 1120 29V90H0Z"/>
-  <path fill="var(--secondary-container)" opacity=".65" d="M0 47C143 10 249 80 411 47S652 28 785 53 1006 72 1120 42V90H0Z"/>
-  <path fill="var(--surface-container)" d="M0 66C140 95 248 49 397 65S643 92 801 66 1002 62 1120 74V90H0Z"/>
-</svg>
-</div>
-
-  <section id="video">
-<div class="ocean-art angelfish-companion" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 180" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <path fill="var(--primary-container)" d="M51 118C28 74 70 35 128 32 194 25 247 46 259 96 271 140 217 159 164 155 110 158 70 151 51 118Z"/>
   <!-- A side-on freshwater angelfish: tall dorsal and anal fins taper towards its snout. -->
   <g class="art-drift">
     <g fill="var(--primary)" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round">
@@ -486,10 +83,8 @@
   <g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".45" class="art-bubbles"><circle cx="285" cy="54" r="7"/><circle cx="303" cy="34" r="3"/></g>
   <path fill="none" stroke="var(--outline-variant)" stroke-width="2" stroke-linecap="round" d="M10 96H28M15 111H30"/>
 </svg>
-</div>
-    <h2>Angelfish</h2>
-    <p class="sub">Everything you'd expect from a video app, without the parts you wouldn't choose.</p>
-    <div class="features">
+</div></div><div class="screenshot-stage"><figure><img src="shots/angelfish-player.webp" alt="Angelfish: chapters, SponsorBlock segments and dislikes" loading="lazy" width="540" height="1200"><figcaption>Angelfish: chapters, SponsorBlock segments and dislikes</figcaption></figure></div></div>
+<div class="feature-heading"><h3>A small app.<br>A long list of possibilities.</h3><p>Features depend on each service and the streams it makes available. Shoal does not promise complete YouTube feature parity or access to paid content.</p></div><div class="features">
       <div class="feature"><b>Material You everywhere</b><span>The app, its icon and its launch screen follow your wallpaper, in light and dark.</span></div>
       <div class="feature"><b>No ads, no tracking</b><span>No account needed. Nothing is sent anywhere except the services listed below.</span></div>
       <div class="feature"><b>SponsorBlock and DeArrow</b><span>Skip sponsor segments and swap clickbait titles and thumbnails for community ones.</span></div>
@@ -498,28 +93,64 @@
       <div class="feature"><b>Learning feed</b><span>Swap recommendations for science, maths, history and more.</span></div>
       <div class="feature"><b>Phones, tablets, Chromebooks</b><span>Grid feeds and a two-pane watch page on big screens.</span></div>
       <div class="feature"><b>TV mode</b><span>YouTube's TV interface for big screens, with ad blocking and SponsorBlock from VacuumTube. Remote, touch or any Bluetooth controller.</span></div>
-      <div class="feature"><b>Optional sign-in</b><span>Bring your subscriptions, likes, history and Watch later across from your account.</span></div>
-    </div>
-  </section>
-
-  <section id="look">
-    <h2>A look inside</h2>
-    <p class="sub">Real screenshots from a phone. Every app works on tablets, Chromebooks and foldables too.</p>
-    <div class="gallery">
-      <figure><img src="shots/angelfish-player.webp" alt="Angelfish: chapters, SponsorBlock segments and dislikes" loading="lazy" width="540" height="1200"><figcaption>Angelfish: chapters, SponsorBlock segments and dislikes</figcaption></figure>
-      <figure><img src="shots/butterflyfish-signin.webp" alt="Butterflyfish: sign in on Bluesky's own page" loading="lazy" width="540" height="1200"><figcaption>Butterflyfish: sign in on Bluesky's own page</figcaption></figure>
-      <figure><img src="shots/shoal-apps.webp" alt="Shoal: installs the apps and keeps them up to date" loading="lazy" width="540" height="1200"><figcaption>Shoal: installs the apps and keeps them up to date</figcaption></figure>
-    </div>
-  </section>
-  <div class="ocean-art tidal-divider tide-deep" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 90" preserveAspectRatio="none" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <path fill="var(--primary-container)" opacity=".5" d="M0 23C145 78 240 0 389 25S625 77 786 31 1001 10 1120 29V90H0Z"/>
-  <path fill="var(--secondary-container)" opacity=".65" d="M0 47C143 10 249 80 411 47S652 28 785 53 1006 72 1120 42V90H0Z"/>
-  <path fill="var(--surface-container)" d="M0 66C140 95 248 49 397 65S643 92 801 66 1002 62 1120 74V90H0Z"/>
+      <div class="feature"><b>Optional sign-in</b><span>Bring your subscriptions, likes, history and Watch later across from your account.</span></div></div></section><section id="butterflyfish" class="wrap butterflyfish fish-card showcase" aria-labelledby="butter-title"><p class="section-label">03 / Butterflyfish</p><div class="butter-layout"><div class="butter-visual"><div class="ocean-art butter-art" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 340" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- The icon's left-facing fish: a small head and gill, with a butterfly-wing tail.
+       A quiet fin-ray pattern and a ringed eye-spot add detail at illustration size. -->
+  <g class="art-drift">
+    <g transform="translate(-237 -240) scale(8)">
+      <path fill="var(--primary)" d="M34.68 54C34.68 50.32 38.36 46.64 42.96 46.64L44.8 43.88Q47.56 45.72 48.48 49.4L50.32 50.32C51.24 44.8 54 39.28 59.52 36.52C65.04 33.76 71.48 36.52 72.4 41.12C74.24 47.56 67.8 52.16 58.6 54.92C64.12 54 69.64 55.84 71.48 59.52C73.32 64.12 68.72 68.72 64.12 67.8C57.68 66.88 53.08 60.44 50.32 57.68L47.56 60.44L43.88 63.2L42.96 61.36C39.28 61.36 36.52 59.52 35.14 56.76L36.52 55.38Z"/>
+      <g fill="none" stroke="var(--on-primary)" stroke-width=".3" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M51.5 51.5Q55.8 39.5 64 37.7M53.2 52.7Q63.4 51.9 70.6 44.5M53 58.3Q61.7 66.9 67.8 66.2"/>
+        <path d="M54.1 46.1 54.4 49.4M69.2 47.3 66.3 47.5"/>
+      </g>
+      <path fill="var(--on-primary)" d="M38.222 52.62A1.518 1.518 0 1 0 41.258 52.62A1.518 1.518 0 1 0 38.222 52.62Z"/>
+      <circle fill="var(--primary)" cx="39.35" cy="52.3" r=".48"/>
+      <path fill="var(--on-primary)" d="M44.8 50.32Q48.48 54 44.8 58.6L43.144 57.68Q46.18 54.46 43.144 51.24Z"/>
+      <path fill="var(--on-primary)" d="M59.52 45.72C58.6 42.96 61.36 39.28 65.04 39.28C68.72 39.28 68.72 42.96 65.96 45.72C63.2 48.48 60.44 48.48 59.52 45.72Z"/>
+      <path fill="var(--primary)" d="M61.2 44.8C60.7 43.3 62.4 41.1 64.4 41.1C66.3 41.1 66.2 43 64.6 44.6C63.1 46.1 61.7 46.3 61.2 44.8Z"/>
+      <path fill="var(--on-primary)" d="M56.76 58.6C61.36 58.6 65.96 60.44 67.8 63.2Q68.72 65.04 66.88 64.58C63.2 62.28 60.44 61.36 56.76 60.44Z"/>
+      <path fill="none" stroke="var(--on-primary)" stroke-width=".35" stroke-linecap="round" d="m44.5 46.2 1.3 2M44.4 60.8l1.3-1M48.2 53.5q2 .4 2.8 1.7-1.5 1.5-3.2 1.4"/>
+    </g>
+  </g>
+</svg></div><div class="screenshot-stage"><figure><img src="shots/butterflyfish-signin.webp" alt="Butterflyfish: sign in on Bluesky's own page" loading="lazy" width="540" height="1200"><figcaption>Butterflyfish: sign in on Bluesky's own page</figcaption></figure></div></div><div class="butter-copy"><span class="icon-source" style="--fish-c:#DFE8FF;--fish-p:#007AED;--fish-dc:#00468C;--fish-dp:#A9C7FF"><svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Butterflyfish"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" fill-rule="evenodd" d="M34.68 54 C34.68 50.32 38.36 46.64 42.96 46.64 L44.8 43.88 Q47.56 45.72 48.48 49.4 L50.32 50.32 C51.24 44.8 54 39.28 59.52 36.52 C65.04 33.76 71.48 36.52 72.4 41.12 C74.24 47.56 67.8 52.16 58.6 54.92 C64.12 54 69.64 55.84 71.48 59.52 C73.32 64.12 68.72 68.72 64.12 67.8 C57.68 66.88 53.08 60.44 50.32 57.68 L47.56 60.44 L43.88 63.2 L42.96 61.36 C39.28 61.36 36.52 59.52 35.14 56.76 L36.52 55.38 Z"/><path class="ink" d="M38.222 52.62 A1.518 1.518 0 1 0 41.258 52.62 A1.518 1.518 0 1 0 38.222 52.62 Z"/><path class="ink" d="M44.8 50.32 Q48.48 54 44.8 58.6 L43.144 57.68 Q46.18 54.46 43.144 51.24 Z"/><path class="ink" d="M59.52 45.72 C58.6 42.96 61.36 39.28 65.04 39.28 C68.72 39.28 68.72 42.96 65.96 45.72 C63.2 48.48 60.44 48.48 59.52 45.72 Z"/><path class="ink" d="M56.76 58.6 C61.36 58.6 65.96 60.44 67.8 63.2 Q68.72 65.04 66.88 64.58 C63.2 62.28 60.44 61.36 56.76 60.44 Z"/></svg></span><h2 id="butter-title">Follow people.<br><em>Find your<br>own flow.</em></h2><p>Bluesky laid out like Bluesky: your pinned feeds, threads, verification badges, Profile Links, posting with pictures and profile editing. Sign in on Bluesky's own page, no app password needed. X has its own tab.</p><p>Each service has its own tab. Where a service’s website is used, its pages and rules still apply.</p><a class="btn filled" href="https://github.com/ShoalApps/butterflyfish/releases/latest/download/Butterflyfish.apk">Download Butterflyfish <span aria-hidden="true">↗</span></a><p class="small-print">Built with Jetpack Compose and Material 3 Expressive. Free software under the GPL.</p></div></div></section></div><div class="descent" aria-hidden="true"><span>↓</span></div><div class="deep"><section id="our-current" class="manifesto wrap" aria-labelledby="our-current-title">
+    <p class="section-label">Our current</p>
+    <h2 id="our-current-title">Apps should feel like a natural habitat.</h2>
+    <div class="manifesto-flow">
+      <article class="manifesto-chapter"><h3>Less hassle.<br>More of what you love.</h3>
+        <p>Sometimes watching a video feels like an obstacle course: an advert, a sponsorship, another prompt to upgrade. Downloads sit behind a subscription, and the interface can feel generic, cluttered and tired.</p>
+        <p>We wanted a fresh current. So we dipped our hands into the water of app development.</p>
+        <p>Shoal puts the experience first: a unified Material You design, colours that adapt to your phone, and controls that feel familiar from one app to the next.</p>
+      </article>
+      <article class="manifesto-chapter"><h3>Your content shouldn't<br>need a costume change.</h3>
+        <p>Big companies use different designs to distinguish their brands. But when you're just catching up with people, why should every service feel like a completely different world?</p>
+        <p>One friend posts on Bluesky, another on X. Butterflyfish brings both into one app, each in its own tab, with a familiar home around them.</p>
+        <p>Not every service can share the same native interface. Where an app uses a service's website, its pages and rules still apply. We're building a shared home, not pretending those differences have disappeared.</p>
+      </article>
+      <article class="manifesto-chapter habitat-card"><h3>Why fish?</h3>
+        <p>Fish are free to swim through a vast ocean. They adapt to their surroundings and thrive in a natural habitat. That's the spirit behind Shoal: simple, adaptable apps that give you room to enjoy what you came for.</p>
+        <p>We believe you should have a choice beyond the primary apps made by monopolies and big companies. Shoal doesn't add advertising profiles or sell your personal information. The services you connect to keep their own privacy policies.</p>
+      <div class="ocean-art habitat-shoal" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <path fill="none" stroke="var(--outline-variant)" stroke-width="2" stroke-linecap="round" d="M9 57C60 29 89 81 140 62S222 22 265 34M109 88C162 102 190 76 225 71"/>
+  <g class="art-drift" fill="var(--primary)">
+    <path d="M48 35C59 18 84 18 107 35 85 53 60 53 48 35L30 21 34 35 30 49Z"/>
+    <path d="M141 59C151 44 174 44 194 59 174 75 152 75 141 59L125 46 128 59 125 72Z"/>
+    <path d="M253 38C264 20 291 20 314 38 291 56 264 56 253 38L235 23 239 38 235 53Z"/>
+  </g>
+  <g class="art-drift" fill="var(--on-primary)"><circle cx="92" cy="33" r="3"/><circle cx="181" cy="57" r="2.5"/><circle cx="300" cy="36" r="3"/></g>
+  <g fill="var(--tertiary-container)"><path d="M203 15C209 7 222 7 233 15 222 23 209 23 203 15L194 8 196 15 194 22Z"/><path d="M301 77C307 69 320 69 331 77 320 85 307 85 301 77L292 70 294 77 292 84Z"/></g>
 </svg>
 </div>
-  <section id="credits">
-    <h2>Credits</h2>
+      </article>
+      <article class="manifesto-chapter"><h3>Free to swim.<br>Free to stay.</h3>
+        <p>No Shoal feature paywalls. No subscription to unlock our controls. Payment is optional, and donations help keep the project moving. A thank-you should never decide what you're allowed to do.</p>
+        <p>Third-party services may still require an account, impose restrictions or charge for their own content. Shoal's features remain free.</p>
+        <p><a href="https://liberapay.com/ShoalApps">Support the shoal</a> or <a href="https://github.com/ShoalApps">help build it</a>. Both are welcome.</p>
+      </article>
+    </div>
+    <p class="community-line">By the community.<br>For the community.</p>
+  </section><section id="installer" class="wrap installer fish-card showcase"><p class="section-label">04 / Shoal, the installer</p><div class="installer-layout"><div><span class="icon-source" style="--fish-c:#9FF2E2;--fish-p:#006B5E;--fish-dc:#005047;--fish-dp:#83D5C6"><svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Shoal"><path class="cookie" d="M51.00,29.30Q54.00,27.00 57.00,29.30L57.00,29.30Q60.00,31.59 63.75,31.10L63.75,31.10Q67.50,30.62 68.95,34.11L68.95,34.11Q70.40,37.60 73.89,39.05L73.89,39.05Q77.38,40.50 76.90,44.25L76.90,44.25Q76.41,48.00 78.70,51.00L78.70,51.00Q81.00,54.00 78.70,57.00L78.70,57.00Q76.41,60.00 76.90,63.75L76.90,63.75Q77.38,67.50 73.89,68.95L73.89,68.95Q70.40,70.40 68.95,73.89L68.95,73.89Q67.50,77.38 63.75,76.90L63.75,76.90Q60.00,76.41 57.00,78.70L57.00,78.70Q54.00,81.00 51.00,78.70L51.00,78.70Q48.00,76.41 44.25,76.90L44.25,76.90Q40.50,77.38 39.05,73.89L39.05,73.89Q37.60,70.40 34.11,68.95L34.11,68.95Q30.62,67.50 31.10,63.75L31.10,63.75Q31.59,60.00 29.30,57.00L29.30,57.00Q27.00,54.00 29.30,51.00L29.30,51.00Q31.59,48.00 31.10,44.25L31.10,44.25Q30.62,40.50 34.11,39.05L34.11,39.05Q37.60,37.60 39.05,34.11L39.05,34.11Q40.50,30.62 44.25,31.10L44.25,31.10Q48.00,31.59 51.00,29.30Z"/><path class="fish" fill-rule="evenodd" d="M 51 44.5 C 54 39.3 62 38.5 69.5 44.5 C 62 50.5 54 49.7 51 44.5 Z"/><path class="ink" d="M63.90,43.50 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" fill-rule="evenodd" d="M 53 44.5 L 47.5 40.1 L 48.8 44.5 L 47.5 48.9 Z"/><path class="fish" fill-rule="evenodd" d="M 38 55 C 41 49.8 49 49 56.5 55 C 49 61 41 60.2 38 55 Z"/><path class="ink" d="M50.90,54.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" fill-rule="evenodd" d="M 40 55 L 34.5 50.6 L 35.8 55 L 34.5 59.4 Z"/><path class="fish" fill-rule="evenodd" d="M 52 65 C 55 59.8 63 59 70.5 65 C 63 71 55 70.2 52 65 Z"/><path class="ink" d="M64.90,64.00 a1.1,1.1 0 1,0 2.2,0 a1.1,1.1 0 1,0 -2.2,0 Z"/><path class="fish" fill-rule="evenodd" d="M 54 65 L 48.5 60.6 L 49.8 65 L 48.5 69.4 Z"/></svg></span><h2>The whole shoal.<br><em>One home.</em></h2><p class="lede">Install once. Keep swimming.</p><p>Installs and updates every app in the shoal, silently with Shevery, Shizuku or root, and only ever installs apps signed by Shoal. Sign in to your accounts once here and the apps use them.</p><p>Optional: you can also download each app directly from this page.</p><a class="btn filled" href="https://github.com/ShoalApps/shoal/releases/latest/download/Shoal.apk">Download Shoal <span aria-hidden="true">↗</span></a></div><div class="screenshot-stage"><figure><img src="shots/shoal-apps.webp" alt="Shoal: installs the apps and keeps them up to date" loading="lazy" width="540" height="1200"><figcaption>Shoal: installs the apps and keeps them up to date</figcaption></figure></div></div></section><section id="archived" class="wrap archive-section"><p class="section-label">05 / Out of the current</p><h2>Archived for now.</h2><p class="archive-note">These aren't good enough yet, so they're set aside for the moment and Shoal no longer lists them. You can still download them here, but expect things not to work.</p><div class="archive-list"><article class="archived fish-card"><span class="icon-source" style="--fish-c:#FFE1E1;--fish-p:#DD4458;--fish-dc:#8A172C;--fish-dp:#FFB3B6"><svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Clownfish"><path class="cookie" d="M41,25 H67 A16,16 0 0 1 83,41 V67 A16,16 0 0 1 67,83 H41 A16,16 0 0 1 25,67 V41 A16,16 0 0 1 41,25 Z"/><path fill="#6DD1CD" d="M 32.8 53.6 C 34.8 44.1 44.8 40.6 54.8 40.6 C 64.8 40.6 71.8 46.6 73.8 53.6 C 71.8 60.6 64.8 66.6 54.8 66.6 C 44.8 66.6 34.8 63.1 32.8 53.6 Z"/><path fill="#6DD1CD" d="M 35.3 53.6 L 28 47.2 C 27 49.6 26.6 51.6 26.6 53.6 C 26.6 55.6 27 57.6 28 60 Z"/><path fill="#6DD1CD" d="M 44.8 42.2 C 46.8 35.6 55.8 34.6 60.8 39.2 C 61.8 40.2 61.8 41.2 61.2 42 Z"/><path fill="#6DD1CD" d="M 46.8 65 C 47.8 69.6 52.8 70.6 56.2 66.4 Z"/><path class="fish" fill-rule="evenodd" d="M 34.6 55 C 36.6 45.5 46.6 42 56.6 42 C 66.6 42 73.6 48 75.6 55 C 73.6 62 66.6 68 56.6 68 C 46.6 68 36.6 64.5 34.6 55 Z"/><path class="ink" d="M 66 52 a 1.8 1.8 0 1 0 3.6 0 a 1.8 1.8 0 1 0 -3.6 0 Z"/><path class="ink" d="M 62 42.6 C 64 48 64 62 62 67.4 L 59.4 67.8 C 61.4 62 61.4 48 59.4 42.2 Z"/><path class="ink" d="M 49.4 43.3 C 51.4 49 51.4 61 49.4 66.7 L 46.8 66.1 C 48.8 60.6 48.8 49.4 46.8 43.9 Z"/><path class="ink" d="M 40.2 48.4 C 41.4 52 41.4 58 40.2 61.6 L 38.1 60.4 C 38.9 57.6 38.9 52.4 38.1 49.6 Z"/><path class="fish" fill-rule="evenodd" d="M 37.1 55 L 29.8 48.6 C 28.8 51 28.4 53 28.4 55 C 28.4 57 28.8 59 29.8 61.4 Z"/><path class="fish" fill-rule="evenodd" d="M 46.6 43.6 C 48.6 37 57.6 36 62.6 40.6 C 63.6 41.6 63.6 42.6 63 43.4 Z"/><path class="fish" fill-rule="evenodd" d="M 48.6 66.4 C 49.6 71 54.6 72 58 67.8 Z"/></svg></span><div><h3>Clownfish</h3><p>YouTube Shorts, TikTok and Instagram Reels in one app, each in its own tab and signed in with your own accounts, without the sites' get-the-app nags.</p><a href="https://github.com/ShoalApps/clownfish/releases/latest/download/Clownfish.apk">Download anyway <span aria-hidden="true">↗</span></a></div></article><article class="archived fish-card"><span class="icon-source" style="--fish-c:#FFE1DF;--fish-p:#DD4649;--fish-dc:#8A1A21;--fish-dp:#FFB3AF"><svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Pufferfish"><path class="cookie" d="M28.00,54.00 a26,26 0 1,0 52,0 a26,26 0 1,0 -52,0 Z"/><path class="fish" fill-rule="evenodd" d="M35.80,54.00 a18.2,18.2 0 1,0 36.4,0 a18.2,18.2 0 1,0 -36.4,0 Z M38.20,54.00 a15.8,15.8 0 1,0 31.6,0 a15.8,15.8 0 1,0 -31.6,0 Z"/><path class="fish" fill-rule="evenodd" d="M44.40,54.00 a9.6,9.6 0 1,0 19.2,0 a9.6,9.6 0 1,0 -19.2,0 Z"/><path class="ink" d="M50.6,49.4 L59,54 L50.6,58.6 Z"/><path class="fish" fill-rule="evenodd" d="M63.20,52.85 L66.20,54.00 L63.20,55.15 Z"/><path class="fish" fill-rule="evenodd" d="M62.54,57.60 L64.57,60.10 L61.39,59.60 Z"/><path class="fish" fill-rule="evenodd" d="M59.60,61.39 L60.10,64.57 L57.60,62.54 Z"/><path class="fish" fill-rule="evenodd" d="M55.15,63.20 L54.00,66.20 L52.85,63.20 Z"/><path class="fish" fill-rule="evenodd" d="M50.40,62.54 L47.90,64.57 L48.40,61.39 Z"/><path class="fish" fill-rule="evenodd" d="M46.61,59.60 L43.43,60.10 L45.46,57.60 Z"/><path class="fish" fill-rule="evenodd" d="M44.80,55.15 L41.80,54.00 L44.80,52.85 Z"/><path class="fish" fill-rule="evenodd" d="M45.46,50.40 L43.43,47.90 L46.61,48.40 Z"/><path class="fish" fill-rule="evenodd" d="M48.40,46.61 L47.90,43.43 L50.40,45.46 Z"/><path class="fish" fill-rule="evenodd" d="M52.85,44.80 L54.00,41.80 L55.15,44.80 Z"/><path class="fish" fill-rule="evenodd" d="M57.60,45.46 L60.10,43.43 L59.60,46.61 Z"/><path class="fish" fill-rule="evenodd" d="M61.39,48.40 L64.57,47.90 L62.54,50.40 Z"/><path class="fish" fill-rule="evenodd" d="M44.8,54 L40.6,50.6 L41.6,54 L40.6,57.4 Z"/></svg></span><div><h3>Pufferfish</h3><p>YouTube Music laid out like Spotify: Home mixes, your library and playlists, offline downloads, lyrics when available, a sleep timer, and the whole app coloured from the album art.</p><a href="https://github.com/ShoalApps/pufferfish/releases/latest/download/Pufferfish.apk">Download anyway <span aria-hidden="true">↗</span></a></div></article><article class="archived fish-card"><span class="icon-source" style="--fish-c:#FFE2DB;--fish-p:#DA4C22;--fish-dc:#872000;--fish-dp:#FFB5A1"><svg class="icon" viewBox="18 18 72 72" role="img" aria-label="Anglerfish"><path class="cookie" d="M28.00,54.00 a26,26 0 1,0 52,0 a26,26 0 1,0 -52,0 Z"/><path class="fish" fill-rule="evenodd" d="M40,58.4 C40,51.4 46.4,47 54,47 C61.6,47 68,51.4 68,58.4 C68,65.2 61.6,69 54,69 C46.4,69 40,65.2 40,58.4 Z"/><path class="ink" d="M45.90,57.00 a2.5,2.5 0 1,0 5.0,0 a2.5,2.5 0 1,0 -5.0,0 Z"/><path class="ink" d="M57.10,57.00 a2.5,2.5 0 1,0 5.0,0 a2.5,2.5 0 1,0 -5.0,0 Z"/><path class="ink" d="M47.4,62.6 C51,65.6 57,65.6 60.6,62.6 L61.3,63.8 C57.2,67.4 50.8,67.4 46.7,63.8 Z"/><path class="fish" fill-rule="evenodd" d="M41,58 L34,53 C35.2,55.4 35.5,56.8 35.5,58 C35.5,59.2 35.2,60.6 34,63 Z"/><path class="fish" fill-rule="evenodd" d="M55,47.4 C55.6,41.4 58.6,37.4 63.4,36.2 L63.8,37.6 C59.6,38.8 57.2,42.2 56.6,47.4 Z"/><path class="fish" fill-rule="evenodd" d="M62.00,35.60 a3.2,3.2 0 1,0 6.4,0 a3.2,3.2 0 1,0 -6.4,0 Z"/><path class="fish" fill-rule="evenodd" d="M64.6,50.6 L70,47.4 L68.6,53 Z"/></svg></span><div><h3>Anglerfish</h3><p>Reddit as an app: Material tabs for Home, Popular, Search, Inbox and you, without Reddit's get-the-app nags. Signed in on Reddit's own page.</p><a href="https://github.com/ShoalApps/anglerfish/releases/latest/download/Anglerfish.apk">Download anyway <span aria-hidden="true">↗</span></a></div></article></div></section><section id="credits" class="wrap credits">
+    <p class="section-label">06 / The people</p><h2>A little clockwork.<br>A lot of people.</h2>
     <p class="sub">The people who make Shoal, turning together. Updated from GitHub every day.</p>
     <div class="machine" id="machine"></div>
     <p class="names" id="names"></p>
@@ -531,9 +162,7 @@
       <a href="https://developer.android.com/jetpack/compose">Jetpack Compose</a>,
       <a href="https://developer.android.com/media/media3">Media3</a> and
       <a href="https://coil-kt.github.io/coil/">Coil</a>.</p>
-  </section>
-
-  <section id="legal">
+  </section><section id="legal" class="wrap legal-section">
     <h2>Legal</h2>
     <p class="sub">The short version, in plain words.</p>
     <div class="legal">
@@ -552,64 +181,136 @@
         <p>You are responsible for using the apps in line with the laws where you live and the terms of the services you use. <a href="legal.html">Licences, trademarks and notices in full</a>.</p>
       </article>
     </div>
-  </section>
-</main>
-
-<footer>
-<div class="ocean-art seabed" aria-hidden="true">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 180" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <!-- A continuous reef, including the centre cropped into view on phones. -->
-  <path fill="var(--surface-container-high)" d="M0 125C102 97 188 115 275 131S448 94 559 113 718 92 825 119 1001 94 1120 115V180H0Z"/>
-  <!-- Rounded branching coral, in three different sizes. -->
-  <g fill="none" stroke="var(--tertiary-container)" stroke-linecap="round" stroke-linejoin="round">
-    <path stroke-width="14" d="M143 145V58M143 115 119 98V74M143 91 170 75V43M170 62 188 51M143 77 129 63V42M119 91 103 83"/>
-    <path stroke-width="12" d="M628 145V63M628 113 603 94V65M603 84 588 72M628 92 650 74V44M650 65 667 55M628 78 618 65V46"/>
-    <path stroke-width="14" d="M976 146V81M976 121 950 104V82M976 102 1001 83V57M1001 73 1016 61M976 88 964 75V62"/>
+  </section></div></main><footer><div class="reef-line" aria-hidden="true"><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
   </g>
-  <!-- A broad, open sea fan keeps the central reef tall but airy. -->
-  <path fill="var(--primary-container)" d="M451 141C432 122 400 93 404 65 407 44 427 48 437 61 431 36 451 22 464 38 475 15 498 29 493 52 514 39 530 54 520 76 510 101 477 125 464 143Z"/>
-  <g fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M458 145 464 48M461 108 421 68M460 123 411 88M462 91 445 56M461 115 510 69M463 89 489 59M459 132 496 108"/>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
   </g>
-  <!-- Soft finger coral and a cluster of hollow tubes. -->
-  <path fill="var(--tertiary-container)" d="M254 146V116C254 102 269 99 274 112V125H280V89C280 73 298 73 298 89V119H304V103C304 87 322 87 322 103V127H328V113C328 99 344 99 344 113V144Z"/>
-  <g fill="var(--primary-container)" stroke="var(--primary)" stroke-width="2.5" stroke-linejoin="round">
-    <path d="M785 145 779 99Q789 92 800 98L807 146Z"/>
-    <path d="M807 145 810 77Q822 69 834 77L830 147Z"/>
-    <path d="M834 146 839 106Q851 99 861 107L855 147Z"/>
+</svg></div><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
   </g>
-  <g fill="var(--primary)"><ellipse cx="790" cy="99" rx="7" ry="3"/><ellipse cx="822" cy="78" rx="8" ry="3.5"/><ellipse cx="850" cy="107" rx="7" ry="3"/></g>
-  <!-- Kelp is rooted in the sand; the existing motion rules gently sway it. -->
-  <g fill="var(--primary)" class="art-sway">
-    <path d="M51 150C21 122 49 102 34 75 20 50 26 29 40 17 29 49 62 63 55 90 48 115 42 130 65 148Z"/>
-    <path d="M69 150C61 122 85 109 75 89 65 69 77 49 92 44 76 67 100 82 94 101 88 124 79 133 83 150Z"/>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
   </g>
-  <g fill="var(--primary)" class="art-sway art-sway-late">
-    <path d="M366 147C344 124 363 108 353 90 343 71 348 56 361 46 350 70 376 78 371 98 367 117 362 130 379 145Z"/>
-    <path d="M712 146C688 116 713 97 700 73 689 52 695 31 710 24 696 51 727 63 720 86 713 112 708 127 727 145Z"/>
-    <path d="M731 146C726 126 750 114 742 96 735 79 742 65 756 60 743 80 766 92 758 109 751 126 744 133 745 146Z"/>
+</svg></div><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
   </g>
-  <g fill="var(--primary)" class="art-sway">
-    <path d="M1053 149C1032 123 1053 105 1042 85 1030 62 1037 42 1052 32 1037 60 1067 73 1060 95 1053 119 1049 131 1068 148Z"/>
-    <path d="M1075 149C1065 127 1089 114 1081 96 1074 81 1083 66 1098 62 1082 82 1106 92 1099 109 1092 127 1085 136 1089 150Z"/>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
   </g>
-  <!-- Substantial sand banks and rounded rocks anchor the whole width. -->
-  <path fill="var(--secondary-container)" d="M0 150C102 127 191 152 286 147S448 134 558 146 731 126 834 145 1004 133 1120 143V180H0Z"/>
-  <g fill="var(--surface-container-highest)" stroke="var(--outline-variant)" stroke-width="2">
-    <path d="M178 155C174 142 184 129 199 129 210 118 232 131 235 154 219 161 195 162 178 155Z"/>
-    <path d="M515 158C513 141 526 132 540 136 554 124 575 135 579 155 561 163 532 165 515 158Z"/>
-    <path d="M883 153C879 139 895 126 909 131 921 121 940 135 942 151 927 158 898 159 883 153Z"/>
+</svg></div><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
   </g>
-  <g fill="none" stroke="var(--outline-variant)" stroke-width="2" stroke-linecap="round"><path d="M194 140 206 137 215 142M532 145 545 142M901 140 913 138"/></g>
-  <g fill="var(--outline-variant)"><ellipse cx="112" cy="165" rx="5" ry="2"/><ellipse cx="247" cy="166" rx="4" ry="2"/><ellipse cx="393" cy="159" rx="6" ry="2"/><ellipse cx="409" cy="164" rx="3" ry="2"/><ellipse cx="685" cy="164" rx="5" ry="2"/><ellipse cx="773" cy="155" rx="4" ry="2"/><ellipse cx="1005" cy="162" rx="6" ry="2"/></g>
-</svg>
-</div>
-  <div class="wrap">
-    Shoal · free software under the GPL-3.0 · <a href="https://github.com/ShoalApps">github.com/ShoalApps</a> · <a href="https://liberapay.com/ShoalApps">Support Shoal on Liberapay</a> · <a href="privacy.html">Privacy</a> · <a href="legal.html">Legal</a>
-  </div>
-</footer>
-
-<script type="module">
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
+  </g>
+</svg></div><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
+  </g>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
+  </g>
+</svg></div><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
+  </g>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
+  </g>
+</svg></div><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
+  </g>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
+  </g>
+</svg></div><div class="ocean-art reef-piece" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
+  </g>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
+  </g>
+</svg></div></div><div class="sand"><div class="wrap footer-content"><p class="footer-word">See you<br>in the current.</p><div><p>Shoal · free software under the GPL-3.0</p><p><a href="https://github.com/ShoalApps">github.com/ShoalApps</a><br><a href="https://liberapay.com/ShoalApps">Support Shoal on Liberapay</a></p><p><a href="privacy.html">Privacy</a> · <a href="legal.html">Legal</a> · <a href="#surface">Back to the surface ↑</a></p></div></div></div></footer><script type="module">
+  import { palette } from "./assets/palette.js";
   // Material shapes: a "cookie" is a circle with gentle scallops, like Material 3 Expressive's.
   function cookie(lobes, depth = 0.08, steps = 360) {
     let d = "";
@@ -644,28 +345,6 @@
   document.getElementById("cookie-clip-path").setAttribute("d",
     cookie(12, 0.06).replace(/(-?\d+\.\d+) (-?\d+\.\d+)/g, (_, x, y) => `${(+x / 2 + .5).toFixed(4)} ${(+y / 2 + .5).toFixed(4)}`));
 
-  const shape = document.getElementById("hero-shape");
-  const orbit = document.getElementById("orbit");
-  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let start = performance.now();
-  function frame(now) {
-    if (document.hidden || document.documentElement.dataset.motion === "off") {
-      shape.setAttribute("d", cookie(12, .08));
-      requestAnimationFrame(frame);
-      return;
-    }
-    const t = (now - start) / 1000 * (still ? 0.33 : 1);
-    const p = (Math.sin(t * 0.9) + 1) / 2;
-    const ease = p * p * (3 - 2 * p);
-    shape.setAttribute("d", morph(9, 12, ease));
-    shape.setAttribute("transform", `rotate(${(t * 8) % 360})`);
-    const a = t * 0.6;
-    orbit.setAttribute("cx", (Math.sin(a) * 1.08).toFixed(3));
-    orbit.setAttribute("cy", (-Math.cos(a) * 1.08).toFixed(3));
-    requestAnimationFrame(frame);
-  }
-  requestAnimationFrame(frame);
-
   // Material You: build a full colour scheme from one seed colour, like Android does from a wallpaper.
   const seeds = ["#00796b", "#1f5f99", "#4a3c8c", "#c25e7e", "#e8590c", "#6750a4", "#00695f", "#b3261e", "#386a20", "#0061a4", "#8b5000"];
   const swatches = document.getElementById("swatches");
@@ -689,33 +368,16 @@
   function localStorageGet(k) { try { return localStorage.getItem(k); } catch { return null; } }
   function localStorageSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
 
-  let mcu = null;
-  try {
-    mcu = await import("https://cdn.jsdelivr.net/npm/@material/material-color-utilities@0.3.0/+esm");
-  } catch { /* Offline or blocked: the teal fallback palette stays. */ }
-
-  const roles = {
-    "primary": "primary", "on-primary": "onPrimary",
-    "primary-container": "primaryContainer", "on-primary-container": "onPrimaryContainer",
-    "secondary-container": "secondaryContainer", "on-secondary-container": "onSecondaryContainer",
-    "tertiary-container": "tertiaryContainer", "on-tertiary-container": "onTertiaryContainer",
-    "surface": "surface", "on-surface": "onSurface", "on-surface-variant": "onSurfaceVariant",
-    "surface-container-low": "surfaceContainerLow", "surface-container": "surfaceContainer",
-    "surface-container-high": "surfaceContainerHigh", "surface-container-highest": "surfaceContainerHighest",
-    "outline": "outline", "outline-variant": "outlineVariant",
-  };
-
+  // Local, perceptual tonal palettes: no CDN dependency.
   function apply() {
     const dark = forced ? forced === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
     document.documentElement.dataset.theme = dark ? "dark" : "light";
     swatches.querySelectorAll(".swatch").forEach(b => b.setAttribute("aria-pressed", String(b.style.background && rgbToHex(b.style.background) === seed)));
-    if (!mcu) return;
-    const scheme = new mcu.SchemeTonalSpot(mcu.Hct.fromInt(mcu.argbFromHex(seed)), dark, 0);
-    const root = document.documentElement.style;
-    for (const [css, role] of Object.entries(roles)) {
-      root.setProperty("--" + css, mcu.hexFromArgb(mcu.MaterialDynamicColors[role].getArgb(scheme)));
-    }
-    document.querySelector('meta[name="theme-color"]').content = mcu.hexFromArgb(mcu.MaterialDynamicColors.surface.getArgb(scheme));
+    const colours = palette(seed, dark);
+    for (const [role, colour] of Object.entries(colours)) document.documentElement.style.setProperty('--' + role, colour);
+    document.querySelector('meta[name="theme-color"]').content = colours.surface;
+    document.getElementById('theme-toggle').setAttribute('aria-pressed', String(dark));
+    document.getElementById('theme-toggle').textContent = dark ? 'Light mode' : 'Dark mode';
   }
   function rgbToHex(rgb) {
     const m = rgb.match(/\d+/g); if (!m) return rgb;
@@ -950,6 +612,4 @@
   build();
   let resizeTimer;
   addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(build, 150); });
-</script>
-</body>
-</html>
+</script></body></html>

@@ -204,6 +204,14 @@
   .doc th, .doc td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--outline-variant); vertical-align: top; }
   .doc a { color: var(--primary); }
   .back { display: inline-flex; gap: 6px; align-items: center; color: var(--primary); text-decoration: none; font-weight: 600; }
+  /* Match the open typography of the homepage without changing policy text. */
+  .doc { max-width:820px; padding-top:48px; }
+  .doc h1 { font-weight:800; letter-spacing:-.045em; }
+  .doc h2 { padding-top:20px; border-top:1px solid var(--outline-variant); }
+  .doc a { text-underline-offset:.2em; overflow-wrap:anywhere; }
+  .doc :focus-visible { outline:3px solid var(--primary); outline-offset:4px; }
+  .doc td,.doc th { overflow-wrap:anywhere; }
+  @media(max-width:480px) { .doc table { font-size:13px; } .doc td,.doc th { padding:8px 5px; } }
 </style>
 </head>
 <body>

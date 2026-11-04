@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 260" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <!-- Whole specimens only. Plants and rocks are inset; only sand reaches the edges.
+       Both banks meet their neighbours at the same height with horizontal tangents. -->
+  <path fill="var(--reef-back)" d="M0 222C55 222 95 206 160 216S265 222 320 222V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <g fill="var(--reef-leaf)"><path d="M43 232c-36-39-7-64-22-99C7 99 20 67 38 56c-22 44 23 60 15 95-7 33-26 48 5 79Z"/><path d="M65 234c-18-32 12-51 4-76-7-22 1-45 20-55-18 32 13 42 4 66-9 25-23 40-14 65Z"/></g>
+    <path fill="var(--reef-fan)" d="M160 246c-21-44-74-79-65-122 4-18 23-18 37-4-12-34 17-52 35-27 9-41 42-40 45-9 36-13 54 17 36 44-14 36-56 94-71 119Z"/>
+    <g fill="none" stroke="var(--reef-leaf)" stroke-width="3" stroke-linecap="round"><path d="m166 248 18-148m-10 86-57-51m53 73-65-48m73 1-34-43m31 81 59-60m-53 28 46-56"/></g>
+    <g fill="none" stroke="var(--reef-coral)" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"><path d="M277 244V126m0 70-23-23v-28m23 24 22-22v-28m-22 21-10-14v-18"/></g>
+  </g>
+  <!-- Foreground sand covers every root. Its solid bottom continues into the footer. -->
+  <path fill="var(--sand)" d="M0 236C55 236 95 222 160 230S265 236 320 236V260H0Z"/>
+  <g transform="translate(16 0) scale(.9 1)">
+    <path fill="var(--reef-back)" stroke="var(--reef-leaf)" stroke-width="1.5" d="M198 245c-4-20 8-27 20-23 13-13 30 3 32 22-14 6-36 7-52 1Z"/>
+    <g fill="var(--reef-leaf)" opacity=".5"><ellipse cx="105" cy="246" rx="4" ry="2"/><ellipse cx="118" cy="250" rx="2" ry="1"/><ellipse cx="297" cy="246" rx="4" ry="2"/></g>
+  </g>
+</svg>

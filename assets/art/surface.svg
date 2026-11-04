@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 420" aria-hidden="true" focusable="false" style="pointer-events:none">
+<!-- No containing blob: currents and rays cross the entire surface. -->
+<g fill="var(--primary)" opacity=".07"><path d="M100 0H390L680 420H540Z"/><path d="M700 0h120l290 420H990Z"/><path d="M1120 0h65l210 420h-95Z"/></g>
+<g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".26"><path d="M-40 105C170 10 320 170 560 90S985 10 1490 100M-40 140C170 45 320 205 560 125S985 45 1490 135M-40 290C180 190 390 360 650 270S1150 200 1490 270"/><path d="M-40 307C180 207 390 377 650 287S1150 217 1490 287"/></g>
+<g class="art-drift" fill="var(--primary)"><path d="M990 188c25-29 70-29 101 0-31 29-76 29-101 0l-28-21 7 21-7 21Z"/><path d="M1130 241c18-20 48-20 70 0-22 20-52 20-70 0l-20-15 5 15-5 15Z"/><path d="M843 240c18-20 48-20 70 0-22 20-52 20-70 0l-20-15 5 15-5 15Z"/></g>
+<g fill="var(--on-primary)"><circle cx="1070" cy="184" r="4"/><circle cx="1184" cy="238" r="3"/><circle cx="897" cy="237" r="3"/></g>
+<g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".4"><circle cx="1240" cy="145" r="9"/><circle cx="1264" cy="111" r="4"/><circle cx="741" cy="317" r="7"/></g>
+</svg>
