@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 180" aria-hidden="true" focusable="false" style="pointer-events:none">
+  <path fill="var(--primary-container)" d="M51 118C28 74 70 35 128 32 194 25 247 46 259 96 271 140 217 159 164 155 110 158 70 151 51 118Z"/>
+  <!-- A side-on freshwater angelfish: tall dorsal and anal fins taper towards its snout. -->
+  <g class="art-drift">
+    <g fill="var(--primary)" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round">
+      <path d="M132 82C117 81 101 71 85 64 91 80 93 96 86 115 102 108 116 101 132 99Z"/>
+      <path d="M246 88C234 77 220 73 206 69 183 57 162 34 140 18Q136 15 137 22C141 43 135 59 128 75 122 85 123 97 129 107 138 123 140 139 136 156Q135 161 140 157C162 141 183 126 205 116 223 110 237 101 246 88Z"/>
+    </g>
+    <!-- Vertical bars follow the deep body; light fin rays keep the silhouette legible. -->
+    <g fill="var(--on-primary)">
+      <path d="M153 39 161 47C168 73 168 107 159 138L151 144C160 108 161 75 153 39Z"/>
+      <path d="M180 62 188 67C195 83 195 105 187 125L179 130C187 104 188 82 180 62Z"/>
+      <path d="M210 77 216 79Q207 92 215 109L209 113Q200 94 210 77Z"/>
+      <circle cx="231" cy="85" r="4"/>
+    </g>
+    <g fill="none" stroke="var(--on-primary)" stroke-width="1.6" stroke-linecap="round">
+      <path d="M145 31 176 60M143 46 157 64M145 147 174 125M144 134 156 123M96 77 118 87M96 103 117 95"/>
+    </g>
+    <circle fill="var(--primary)" cx="232" cy="85" r="1.5"/>
+    <!-- The long paired pelvic filaments are characteristic of freshwater angelfish. -->
+    <g fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round">
+      <path d="M200 117Q187 145 173 163M207 115Q201 145 188 158"/>
+    </g>
+  </g>
+  <g fill="none" stroke="var(--primary)" stroke-width="2" opacity=".45" class="art-bubbles"><circle cx="285" cy="54" r="7"/><circle cx="303" cy="34" r="3"/></g>
+  <path fill="none" stroke="var(--outline-variant)" stroke-width="2" stroke-linecap="round" d="M10 96H28M15 111H30"/>
+</svg>

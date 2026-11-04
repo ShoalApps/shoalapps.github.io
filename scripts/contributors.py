@@ -1,4 +1,4 @@
-"""Writes contributors.json: everyone who has contributed to a public Tintloom repository.
+"""Writes contributors.json: everyone who has contributed to a public Shoal repository.
 
 Run by GitHub Actions with its token, so the website never calls the GitHub API from
 visitors' browsers (which fails on shared or VPN addresses once the anonymous limit is used).
@@ -7,7 +7,7 @@ import json
 import os
 import urllib.request
 
-ORG = "Tintloom"
+ORG = "ShoalApps"
 # The maintainer's alternate accounts: their work is credited under calamityCocoa.
 HIDDEN = {"aaronateataco2", "calamitycocoa2"}
 

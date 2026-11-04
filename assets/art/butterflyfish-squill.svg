@@ -1,20 +1,27 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 430 210" aria-hidden="true" focusable="false" style="pointer-events:none">
-  <!-- Rounded head and soft taper, with broader near fins in three-quarter view. -->
+  <!-- Butterflyfish from above: a slender body, small forefins and broader hind fins. -->
   <path fill="var(--surface)" d="M15 106C3 47 59 17 121 25 168 26 186 81 173 129 161 171 103 191 57 168 30 156 19 133 15 106Z"/>
   <g class="art-drift">
-    <g fill="var(--primary)">
-      <path d="M89 89C87 65 76 37 59 39 39 41 43 78 57 96 68 111 84 114 91 103Z"/>
-      <path d="M84 115C66 106 45 113 44 130 42 147 55 155 68 147 79 141 85 128 87 121Z"/>
-      <path d="M111 88C126 58 151 38 169 47 189 58 178 88 159 104 143 118 123 122 111 111Z"/>
-      <path d="M107 117C126 110 151 121 153 140 155 157 137 166 124 155 114 147 108 133 104 127Z"/>
+    <g transform="rotate(10 103 104)">
+      <g fill="var(--primary)" stroke="var(--primary)" stroke-width="2" stroke-linejoin="round">
+        <!-- Paired fins join the body rather than a butterfly's thorax. -->
+        <path d="M97 71C85 60 67 53 58 59 49 66 59 87 75 96 82 100 91 101 98 96Z"/>
+        <path d="M110 71C122 60 140 53 149 59 158 66 148 87 132 96 125 100 116 101 109 96Z"/>
+        <path d="M97 100C76 91 45 96 35 116 25 137 40 159 58 157 77 155 91 134 100 116Z"/>
+        <path d="M110 100C131 91 162 96 172 116 182 137 167 159 149 157 130 155 116 134 107 116Z"/>
+        <!-- A narrow caudal peduncle ends in a small, forked fish tail. -->
+        <path d="M101 143 94 169 103 163 113 169 106 143Z"/>
+      </g>
+      <g fill="none" stroke="var(--on-primary)" stroke-width="2" stroke-linecap="round">
+        <path d="M92 85Q76 69 62 63M91 92 64 79M115 85Q131 69 145 63M116 92 143 79"/>
+        <path d="M93 110Q61 114 43 139M93 117Q78 143 56 151M114 110Q146 114 164 139M114 117Q129 143 151 151"/>
+      </g>
+      <path fill="var(--primary)" stroke="var(--on-primary)" stroke-width="2" stroke-linejoin="round" d="M103 35C112 36 117 49 115 63 113 80 112 94 112 108 112 123 108 137 105 150Q103 154 101 150C98 137 94 123 94 108 94 94 93 80 91 63 89 49 94 36 103 35Z"/>
+      <g fill="var(--on-primary)"><ellipse cx="96" cy="52" rx="2.3" ry="3"/><ellipse cx="110" cy="52" rx="2.3" ry="3"/></g>
+      <g fill="none" stroke="var(--on-primary)" stroke-width="1.6" stroke-linecap="round">
+        <path d="M95 62 96 70M111 62 110 70M103 77V135"/>
+      </g>
     </g>
-    <g fill="none" stroke="var(--on-primary)" stroke-width="2.5" stroke-linecap="round">
-      <path d="M76 94Q63 74 59 54"/><path d="M73 124 55 135"/>
-      <path d="M126 103Q144 80 162 62"/><path d="M120 129Q132 136 140 149"/>
-    </g>
-    <path fill="var(--primary)" stroke="var(--on-primary)" stroke-width="2.5" stroke-linejoin="round" d="M102 53C118 55 129 66 126 82 124 96 114 104 112 118 109 135 104 151 96 160 91 166 83 163 82 155 80 144 84 132 84 119 85 104 76 94 76 81 75 64 86 51 102 53Z"/>
-    <g fill="var(--on-primary)"><ellipse cx="91" cy="75" rx="3" ry="3.8"/><ellipse cx="108" cy="78" rx="3.4" ry="3.8"/></g>
-    <path fill="none" stroke="var(--on-primary)" stroke-width="2.8" stroke-linecap="round" d="M90 96Q98 87 106 99"/>
   </g>
   <!-- Squill's pointed mantle, side fins and four curling arms echo its app icon. -->
   <path fill="var(--primary-container)" d="M240 163C213 137 224 63 274 42 313 26 367 53 377 99 388 148 348 175 304 177Z"/>
