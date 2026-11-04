@@ -8,6 +8,7 @@ from pathlib import Path
 from html import escape
 A='{http://schemas.android.com/apk/res/android}'
 ROOT=Path(__file__).resolve().parents[1]
+ARCHIVED={'anglerfish','clownfish','pufferfish'} # keep their own headers, but leave them off everyone else's
 
 def request(url):
     headers={'Accept':'application/vnd.github+json','User-Agent':'Shoal-README-headers'}
@@ -48,7 +49,7 @@ def discover(org,local=None):
 
 def icon(app,x,y,size):return f'<svg x="{x}" y="{y}" width="{size}" height="{size}" viewBox="22 22 64 64">{app["paths"]}</svg>'
 def render(current,apps):
-    others=[a for a in apps if a['slug']!=current['slug']]
+    others=[a for a in apps if a['slug']!=current['slug'] and a['slug'] not in ARCHIVED]
     columns=10;rows=max(1,(len(others)+columns-1)//columns);height=320+rows*96
     out=[f'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="{height}" viewBox="0 0 1200 {height}" role="img" aria-label="{escape(current["name"],quote=True)} - a Shoal app"><title>{escape(current["name"])} - a Shoal app</title><rect width="1200" height="{height}" rx="36" fill="#0e211f"/>',icon(current,60,40,172),f'<text x="265" y="143" fill="#def5ed" font-family="sans-serif" font-size="70" font-weight="700">{escape(current["name"])}</text>']
     shoal=next(a for a in apps if a['slug']=='shoal')
