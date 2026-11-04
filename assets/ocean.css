@@ -20,3 +20,57 @@
 :root[data-motion="off"] *, :root[data-motion="off"] *::before, :root[data-motion="off"] *::after { animation-play-state:paused!important; scroll-behavior:auto!important; }
 @media(max-width:650px) { .manifesto-grid { grid-template-columns:1fr; } nav.links a { padding:8px; } }
 @media(prefers-reduced-motion:reduce) { .fish-swimmer { animation:none; } html {scroll-behavior:auto;} }
+
+/* Original underwater drawings. Source SVGs live in assets/art; inlining lets
+   every shape inherit the live wallpaper palette without another request. */
+.ocean-art { pointer-events:none; user-select:none; overflow:hidden; isolation:isolate; }
+.ocean-art *, .ocean-art svg { pointer-events:none; }
+.ocean-art svg { display:block; width:100%; height:100%; overflow:hidden; }
+.shape-stage { isolation:isolate; max-width:460px; }
+.shape-stage > svg { position:absolute; width:72%; height:72%; left:14%; top:9%; }
+.hero-reef { position:absolute; inset:0; }
+.hero-reef svg { width:100%; height:100%; }
+.tidal-divider { height:70px; margin:16px 0 0; border-radius:40% 40% 24px 24px / 10% 10% 12px 12px; }
+.tide-middle { height:80px; }
+.tide-middle svg { --primary-container:var(--secondary-container); }
+.tide-deep { height:90px; }
+.tide-deep svg { --primary-container:var(--surface-container-highest); --secondary-container:var(--surface-container-high); }
+.habitat-shoal { width:min(100%,360px); height:100px; margin:24px 0 0 auto; }
+.apps-companions { float:right; width:330px; height:170px; margin:-12px 0 16px 28px; }
+#apps > .apps { clear:both; }
+.swordfish-companion { float:right; width:300px; height:160px; margin:-32px 0 12px 28px; }
+#video > .features { clear:both; }
+footer { position:relative; padding-top:0; border-top:0; }
+.seabed { width:100%; height:180px; margin:0 0 24px; }
+footer > .wrap { position:relative; }
+.art-drift { animation:reef-drift 8s ease-in-out infinite; }
+.art-quill { animation:quill-poise 9s ease-in-out infinite; transform-origin:320px 155px; }
+.art-sway { animation:kelp-sway 10s ease-in-out infinite; transform-box:fill-box; transform-origin:50% 100%; }
+.art-sway-late { animation-delay:-4s; animation-duration:12s; }
+.art-bubbles { animation:bubble-rise 9s ease-in-out infinite; }
+@keyframes reef-drift { 0%,100% { transform:translate(0,0); } 50% { transform:translate(3px,-5px); } }
+@keyframes quill-poise { 0%,100% { transform:rotate(0deg); } 50% { transform:rotate(2deg); } }
+@keyframes kelp-sway { 0%,100% { transform:rotate(-2deg); } 50% { transform:rotate(3deg); } }
+@keyframes bubble-rise { 0%,100% { transform:translateY(3px); opacity:.45; } 50% { transform:translateY(-7px); opacity:.8; } }
+@media(max-width:760px) {
+  .shape-stage { max-width:320px; }
+  .hero { gap:16px; }
+  .tidal-divider { height:48px; margin-top:12px; }
+  .apps-companions { width:240px; height:125px; margin:0 0 16px 20px; }
+  .swordfish-companion { width:220px; height:120px; margin:-16px 0 12px 16px; }
+  .seabed { height:145px; }
+}
+@media(max-width:480px) {
+  .apps-companions { float:none; width:250px; max-width:100%; height:125px; margin:0 0 16px auto; }
+  .swordfish-companion { float:none; width:230px; max-width:100%; height:125px; margin:0 0 12px auto; }
+  .habitat-shoal { height:80px; margin-top:16px; }
+  .seabed { height:120px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .ocean-art * { animation:none!important; }
+}
+/* Let the existing grids and script-sized credits fit the 288px content area
+   on a 320px phone too; decoration is clipped only inside .ocean-art. */
+.legal { grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr)); }
+.machine { max-width:100%; }
+.hero > *, .manifesto-grid > * { min-width:0; }
