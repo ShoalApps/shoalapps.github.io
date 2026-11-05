@@ -47,8 +47,7 @@ section { scroll-margin-top: 88px; }
 #swatches { display: flex; flex-wrap: wrap; gap: 2px; }
 .swatch { width: 44px; height: 44px; padding: 0; border: 10px solid transparent; background-clip: padding-box !important; border-radius: 50%; outline-offset: -5px; }
 .swatch[aria-pressed="true"] { outline: 2px solid var(--on-surface); }
-.theme-toggle, .ocean-controls button { min-height: 44px; padding: 8px 16px; border: 1px solid var(--outline); border-radius: 999px; color: inherit; background: transparent; font-size: var(--label); }
-.ocean-controls { margin-top: 8px; }
+.theme-toggle, #motion-toggle { min-height: 44px; padding: 8px 16px; border: 1px solid var(--outline); border-radius: 999px; color: inherit; background: transparent; font-size: var(--label); }
 .surface-art { margin-top: clamp(20px, 3vw, 40px); }
 .surface-art svg { width: 100%; height: clamp(56px, 7vw, 110px); }
 .surface-art path { vector-effect: non-scaling-stroke; }
