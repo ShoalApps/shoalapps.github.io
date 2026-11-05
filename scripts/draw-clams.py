@@ -21,8 +21,8 @@ from functools import lru_cache
 
 OUT = Path(__file__).resolve().parents[1] / 'assets/art'
 VIEW = '0 0 120 110'
-POSES = dict(shut=(0, 2), barely=(10, 1), half=(24, 2),
-             rest=(46, 3), wide=(62, 2), settle=(37, 2))
+POSES = dict(shut=(0, 2), barely=(10, 1), half=(28, 2),
+             rest=(56, 3), wide=(70, 2), settle=(48, 2))
 NS, NP = 14, 60
 BANDS = [.18, .29, .43, .58, .74, .88]
 THICK = .075
@@ -590,7 +590,7 @@ def sheets(dest,svg,frames):
         nacre='#e6e7cf' if theme=='light' else '#dce5ca'
         colours=dict(ink=mix(abyss,'#100f18',.86),wash=wash,shade=mix(wash,abyss,.58),edge='#e6eee0' if theme=='light' else '#ecf5de',nacre=nacre,sand=sand,shadow='#102520')
         colours.update({'tone-1':mix(wash,'#244b40',.35),'tone-2':mix(wash,'#476e59',.65),'tone-3':wash,'tone-4':mix(wash,'#fff0cb',.58)})
-        colours.update({'nacre-1':mix(nacre,'#23584e',.25),'nacre-2':mix(nacre,'#548e7d',.55),'nacre-3':mix(nacre,'#86aa93',.8),'nacre-4':nacre})
+        colours.update({'nacre-1':mix(nacre,'#4f8a7a',.5),'nacre-2':mix(nacre,'#7fae9c',.75),'nacre-3':mix(nacre,'#a9c4b0',.9),'nacre-4':nacre})
         resolved=re.sub(r'var\(--clam-([\w-]+)\)',lambda m:colours[m[1]],svg)
         panels=[]
         for n,f in frames.items():

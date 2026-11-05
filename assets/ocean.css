@@ -205,9 +205,9 @@ footer { background: var(--abyss); color: var(--foam); }
   --clam-tone-2: color-mix(in srgb, var(--clam-wash) 65%, #476e59);
   --clam-tone-3: var(--clam-wash);
   --clam-tone-4: color-mix(in srgb, var(--clam-wash) 58%, #fff0cb);
-  --clam-nacre-1: color-mix(in srgb, var(--clam-nacre) 25%, #23584e);
-  --clam-nacre-2: color-mix(in srgb, var(--clam-nacre) 55%, #548e7d);
-  --clam-nacre-3: color-mix(in srgb, var(--clam-nacre) 80%, #86aa93);
+  --clam-nacre-1: color-mix(in srgb, var(--clam-nacre) 50%, #4f8a7a);
+  --clam-nacre-2: color-mix(in srgb, var(--clam-nacre) 75%, #7fae9c);
+  --clam-nacre-3: color-mix(in srgb, var(--clam-nacre) 90%, #a9c4b0);
   --clam-nacre-4: var(--clam-nacre);
   --clam-sand: var(--sand);
 }
@@ -223,7 +223,7 @@ footer { background: var(--abyss); color: var(--foam); }
 .clam-pearl img[hidden] { display: none; }
 .clam-drawn .clam-pearl { overflow: hidden; background: var(--clam-nacre); }
 .clam-drawn .clam-pearl img { position: absolute; inset: 0; width: 100%; height: 100%; }
-@media (max-width: 639px) { .clam { width: min(100px, 100%); } }
+@media (max-width: 639px) { .clam { width: min(128px, 100%); } }
 .clam:hover, .clam:focus-visible { z-index: 3; }
 .clam:focus-visible { outline-color: var(--foam); outline-offset: 2px; }
 .clam-name { position: absolute; bottom: calc(100% + 2px); left: 50%; z-index: 2; transform: translateX(calc(-50% + var(--name-shift, 0px))); max-width: calc(100vw - 16px); overflow-wrap: anywhere; padding: 4px 10px; border-radius: 10px; background: var(--foam); color: var(--abyss); font-size: var(--label); font-weight: 600; width: max-content; display: none; pointer-events: none; }

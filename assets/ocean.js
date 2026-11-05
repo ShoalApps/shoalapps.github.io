@@ -114,7 +114,7 @@
     link.className = 'clam';
     link.href = person.url;
     link.setAttribute('aria-label', `${person.login} on GitHub`);
-    link.style.setProperty('--clam', `${110 + Math.round(random() * 20)}px`);
+    link.style.setProperty('--clam', `${152 + Math.round(random() * 24)}px`);
     link.style.setProperty('--clam-wash', ['var(--clam-wash-leaf)', 'var(--clam-wash-coral)', 'var(--clam-wash-sand)'][Math.floor(random() * 3)]);
     const window = document.createElement('span');
     window.className = 'clam-pearl-window';
