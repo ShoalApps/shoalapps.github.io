@@ -599,7 +599,7 @@ def draw(theta,variant):
     return layers,vis,None
 
 
-def symbol(name,body): return f'<symbol id="{name}" viewBox="{VIEW}">{body}</symbol>'
+def symbol(name,body): return f'<symbol overflow="visible" id="{name}" viewBox="{VIEW}">{body}</symbol>'
 
 def validate():
     for j in range(NP+1):

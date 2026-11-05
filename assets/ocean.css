@@ -169,8 +169,6 @@ figcaption { margin-top: 12px; color: var(--on-surface-variant); font-size: var(
 footer { background: var(--abyss); color: var(--foam); }
 .reef-line { --reef-count: 1; background: linear-gradient(transparent 85.4%, var(--reef-back) 85.4% 90.8%, var(--sand) 90.8%); display: grid; grid-template-columns: repeat(var(--reef-count), minmax(0, 1fr)); align-items: start; pointer-events: none; }
 .reef-piece { display: none; min-width: 0; width: 100%; aspect-ratio: 320 / 260; }
-/* Grow every tile toward the next by one pixel; reserve that pixel at the page edge.
-   A mirrored tile needs the extra width on its local left to grow right on screen. */
 .reef-piece:first-child { display: block; }
 .reef-piece:nth-child(even) { transform: scaleX(-1); }
 .reef-piece:nth-child(3n) { --reef-fan: var(--reef-coral); }
