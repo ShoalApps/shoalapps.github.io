@@ -25,13 +25,21 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 | [Butterflyfish](https://github.com/ShoalApps/butterflyfish) | Support multiple Bluesky and multiple X accounts. | Planned |
 | [Butterflyfish](https://github.com/ShoalApps/butterflyfish) | Make X faster and as native as Bluesky, and keep following upstream changes to both services. | Planned |
 
+## Butterflyfish parity
+
+Follow the [feature parity tracker](https://github.com/ShoalApps/butterflyfish/blob/main/compat/FEATURES.md) for Bluesky and X coverage.
+
+- **Search** — Independent Posts and People loading. Add Top and Latest sorting, cursor paging, and retry for Bluesky posts.
+- **Next Bluesky features** — Private bookmarks, notification read state and filters, quote composition, and deleting your own posts. Then tackle chat, starter packs, and feed and list management.
+- **X** — Verify access and account requirements for each native feature before implementing it. Track bookmarks, lists, media, notifications, and messaging individually.
+- **Quality** — Test account isolation, cancellation, slow-network recovery, and pagination. Measure startup, first feed item, and scrolling on a real device. Review opt-in Sentry reports by app and release.
+
 ## Later
 
 - **Squill painting** — Work towards Krita’s full feature set: filter masks and other non-destructive tools, vector layers, an animation timeline, CMYK and high bit depth, and plugins.
 - **Squill documents** — Improve document and slide round trips using real files. Explore optional Google Drive and Slides integration while keeping local editing available.
 - **Squill imports** — Check real Google Keep, Evernote and Notion exports, including attachments and links.
 - **Butterflyfish networks** — Add the Fediverse and other Twitter-like networks.
-- **Butterflyfish features** — After the polish, add the Bluesky features still missing, such as bookmarks, deleting your own posts, quote posts and threads.
 
 Clownfish, Pufferfish and Anglerfish are on hold. The [Shoal website](https://shoalapps.github.io/) lists them in its archive section. If they return, Clownfish would bring Shorts, Reels and TikTok into one feed with reliable sign-in, and Pufferfish would become a full music app with recommendations on its home page and colours from your wallpaper.
 
