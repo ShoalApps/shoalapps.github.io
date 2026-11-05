@@ -103,14 +103,14 @@
     const edge = [];
     for (let i = 0; i <= count; i++) {
       const angle = Math.PI * i / count;
-      edge.push([50 - 44 * Math.cos(angle), 84 - 44 * Math.sin(angle)]);
+      edge.push([50 - 44 * Math.cos(angle), 84 - 74 * Math.sin(angle)]);
     }
     let d = 'M50 84L6 84';
     for (let i = 1; i <= count; i++) {
       const angle = Math.PI * (i - .5) / count;
       const [x, y] = edge[i];
       // Each quadratic bulges outward between two notches, one bump per rib.
-      d += `Q${50 - 49 * Math.cos(angle)} ${84 - 49 * Math.sin(angle)} ${x} ${y}`;
+      d += `Q${50 - 49 * Math.cos(angle)} ${84 - 80 * Math.sin(angle)} ${x} ${y}`;
     }
     d += 'L50 84Z';
     fan.append(svgElement('path', { class: 'clam-shell', d }));
