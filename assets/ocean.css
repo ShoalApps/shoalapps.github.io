@@ -506,3 +506,5 @@ h1, h2, h3 { word-spacing:.14em; }
   .butter-art { width:min(220px,24vh); margin:0; }
   .butter-visual .screenshot-stage { width:min(300px,31vh); }
 }
+.squill-desktop { margin-top:24px; font-size:clamp(16px,.85rem + .2vw,20px); }
+.squill-desktop a { text-decoration:underline; }
