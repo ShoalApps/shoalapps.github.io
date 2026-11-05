@@ -9,6 +9,10 @@ credits are fetched live from GitHub. Pushing to `main` publishes it with GitHub
 
 Free software under the GPL-3.0.
 
+## Roadmap
+
+See the [Shoal roadmap](ROADMAP.md) for shipped features and planned work across the apps.
+
 ## Support
 
 Shoal is free, open source and has no ads. If you'd like to help it keep going, you can [support Shoal on Liberapay](https://liberapay.com/ShoalApps).
