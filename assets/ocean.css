@@ -168,6 +168,12 @@ figcaption { margin-top: 12px; color: var(--on-surface-variant); font-size: var(
    screens, and never part of one. */
 footer { background: var(--abyss); color: var(--foam); }
 .reef-line { --reef-count: 1; background: linear-gradient(transparent 85.4%, var(--reef-back) 85.4% 90.8%, var(--sand) 90.8%); display: grid; grid-template-columns: repeat(var(--reef-count), minmax(0, 1fr)); align-items: start; pointer-events: none; }
+/* Each tile is a bank with sand on top. On a fractional width the two blend into the seam's pixel
+   and the bank bleeds through as a mark, so tiles take whole pixels. The gradient on .reef-line
+   fills the few pixels left at the right-hand end. */
+@supports (width: round(down, 10.5px, 1px)) {
+  .reef-line { grid-template-columns: repeat(var(--reef-count), round(down, calc(100% / var(--reef-count)), 1px)); justify-content: start; }
+}
 .reef-piece { display: none; min-width: 0; width: 100%; aspect-ratio: 320 / 260; }
 .reef-piece:first-child { display: block; }
 .reef-piece:nth-child(even) { transform: scaleX(-1); }
