@@ -177,6 +177,23 @@ footer { background: var(--abyss); color: var(--foam); }
 .footer-word { margin: 0; font-size: var(--heading-2); font-weight: 750; line-height: 1.05; letter-spacing: -.025em; }
 .footer-content > div { font-size: var(--text-small); }
 .footer-content a { display: inline-block; padding-block: 8px; }
+/* Sea urchins: one for each follower, always whole, however many there are. */
+.urchins { margin: 40px auto 0; width: min(100% - 2 * var(--gutter), var(--page-width)); padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--foam) 25%, transparent); scroll-margin-top: 88px; }
+.urchins[hidden] { display: none; }
+.urchins-note { margin: 0 0 12px; font-size: var(--text-small); }
+.urchin-bed { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 8px; }
+.urchin { position: relative; display: block; width: var(--urchin, 76px); aspect-ratio: 1; flex: none; border-radius: 50%; }
+.urchin svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 50%; animation: urchin-sway var(--sway, 7s) ease-in-out infinite; animation-delay: var(--delay, 0s); transition: scale .35s var(--spring); }
+.urchin:hover svg, .urchin:focus-visible svg { scale: 1.12; }
+.urchin .spines { fill: none; stroke: var(--reef-leaf); stroke-width: 2.6; stroke-linecap: round; }
+.urchin .spines-back { fill: none; stroke: var(--reef-coral); stroke-width: 2.2; stroke-linecap: round; opacity: .85; }
+.urchin .shell { fill: var(--reef-fan); stroke: var(--reef-leaf); stroke-width: 2; }
+.urchin img { position: absolute; inset: 29%; width: 42%; height: 42%; border-radius: 50%; object-fit: cover; background: var(--reef-fan); }
+.urchin:focus-visible { outline-offset: 0; }
+.urchin-name { position: absolute; bottom: calc(100% + 2px); left: 50%; z-index: 2; translate: -50% 0; padding: 4px 10px; border-radius: 10px; background: var(--foam); color: var(--abyss); font-size: var(--label); font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.urchin:hover .urchin-name, .urchin:focus-visible .urchin-name { opacity: 1; }
+.urchin-more { align-self: center; padding: 8px 12px; font-size: var(--text-small); }
+@keyframes urchin-sway { 0%, 100% { rotate: -5deg; } 50% { rotate: 5deg; } }
 .art-drift { animation: drift 9s ease-in-out infinite; }
 .art-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: sway 10s ease-in-out infinite; }
 @keyframes drift { 50% { transform: translateY(-7px); } }

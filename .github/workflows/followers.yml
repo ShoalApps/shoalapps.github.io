@@ -1,0 +1,30 @@
+name: Update the sea urchins
+
+on:
+  schedule:
+    - cron: "43 * * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [scripts/followers.py]
+
+permissions:
+  contents: write
+
+jobs:
+  followers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect followers
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/followers.py
+      - name: Save if changed
+        run: |
+          git diff --quiet followers.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git add followers.json
+          git commit -m "Update the sea urchins"
+          git push
