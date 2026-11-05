@@ -1,202 +1,611 @@
 #!/usr/bin/env python3
-"""Original clam pencil-test plates. Python 3 stdlib; no SVG strokes or transforms.
+"""Perspective bivalve plates. Python 3 standard library only.
 
-The six keys below are drawing coordinates, not deformations of a master fan.
-Each ink mark is an authored cubic, expanded into a pressure-shaped filled ribbon.
-Retraces perturb its four controls and pressure independently, before expansion.
-Run from any directory to reproduce the committed sprite and exposure sheet.
+X is the straight, immovable hinge; +Y is the front, +Z is up. The
+commissure is Z=0. Both valves use the SAME scalloped margin. The upper
+valve is one rigid body, rotated around X, never a rescaled drawing.
+A thick shell has an outward ribbed face, a smooth inward offset and a
+connecting rim. Visibility and shadow tests use this geometry. The finish
+samples smooth lighting fields on a separate fine grid, traces their level
+regions and fits cubic wash and ink contours without emitting mesh edges. --check-sheets writes temporary
+colour-resolved SVGs/PNGs for rsvg-convert; it is not needed for generation.
 """
 from pathlib import Path
+from collections import defaultdict
+import argparse
 import json
 import math
 import random
-import re
+import subprocess
+from functools import lru_cache
 
-OUT = Path(__file__).resolve().parents[1] / 'assets' / 'art'
+OUT = Path(__file__).resolve().parents[1] / 'assets/art'
 VIEW = '0 0 120 110'
+POSES = dict(shut=(0, 2), barely=(10, 1), half=(24, 2),
+             rest=(46, 3), wide=(62, 2), settle=(37, 2))
+NS, NP = 14, 60
+BANDS = [.18, .29, .43, .58, .74, .88]
+THICK = .075
 
-def points(s):
-    n = [float(v) for v in s.split()]
-    return list(zip(n[::2], n[1::2]))
+def add(a,b): return tuple(x+y for x,y in zip(a,b))
+def sub(a,b): return tuple(x-y for x,y in zip(a,b))
+def mul(a,s): return tuple(x*s for x in a)
+def dot(a,b): return sum(x*y for x,y in zip(a,b))
+def cross(a,b): return (a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0])
+def unit(a): return mul(a,1/(math.sqrt(dot(a,a)) or 1))
+def mean(ps): return mul(tuple(map(sum,zip(*ps))),1/len(ps))
+def rotate(p,t):
+    c,s=math.cos(math.radians(t)),math.sin(math.radians(t))
+    return p[0], p[1]*c-p[2]*s, p[1]*s+p[2]*c
 
-def fmt(n):
-    return f'{n:.1f}'
+# Close camera gives visibly larger near scallops. All poses share this camera.
+ELEV, YAW, DIST, FOCAL = 31, 20, 6.3, 184
+TARGET = (0,.72,.12)
+E = math.radians(ELEV); A = math.radians(YAW)
+TOWARD = (math.sin(A)*math.cos(E),math.cos(A)*math.cos(E),math.sin(E))
+CAM = add(TARGET,mul(TOWARD,DIST))
+RIGHT = (math.cos(A),-math.sin(A),0)
+UP = cross(RIGHT,TOWARD)
+LIGHT = unit((-.7,.45,1.5))
 
-def coords(ps):
-    return ' '.join(f'{fmt(x)} {fmt(y)}' for x, y in ps)
+def project(p):
+    q=sub(p,CAM); depth=-dot(q,TOWARD)
+    return (60+FOCAL*dot(q,RIGHT)/depth, 66-FOCAL*dot(q,UP)/depth, depth)
 
-def blob(d, colour='wash', opacity=None):
-    d = re.sub(r'-?\d+(?:\.\d+)?', lambda m: fmt(float(m[0])), d)
-    return f'<path fill="var(--clam-{colour})"' + (f' opacity="{opacity}"' if opacity else '') + f' d="{d}"/>'
+def exterior(s,phi,sign,smooth=False):
+    # Ovate fan, wider than long; posterior ends lie ON the hinge axis.
+    # The small left/right difference is an outline asymmetry, not a pose warp.
+    scallop=1+.018*math.cos(30*phi)
+    x=-.12*(1-s)+s*1.9*math.cos(phi)*(.32+.82*math.sin(phi))**.45*scallop*(1+.045*math.cos(phi))
+    y=1.64*s*math.sin(phi)**.82*scallop
+    profile=(s**.72*(1-s)**1.3)/(.356**.72*(1-.356)**1.3) if 0<s<1 else 0
+    dome=.72*profile*math.sin(phi)**.65
+    ribs=.042*s**.8*math.sin(math.pi*s)*math.cos(30*phi)*math.sin(phi)
+    # Irregular stepped growth on the exterior only; zero at the commissure.
+    growth=sum(.009 for b in BANDS if s>b)*math.sin(math.pi*s)*math.sin(phi)
+    return (x,y,sign*(dome+(0 if smooth else ribs+growth)))
 
-def pen(s, width=1.4, rng=None, colour='ink'):
-    """Cubic ribbon: pointed ends, unequal shoulders, independently varied pressure.
-    Offset control handles keep the two sides truly curved, without SVG strokes.
+def point(s,phi,sign,inside=False):
+    p=exterior(s,phi,sign)
+    if not inside: return p
+    p=exterior(s,phi,sign,True)
+    # Offset the smoothed envelope inward; exterior ribs add local thickness. Thickness tapers
+    # at the umbo and hinge ends so the two beaks almost meet the ligament.
+    h=.0001
+    ds=sub(exterior(min(1,s+h),phi,sign,True),exterior(max(0,s-h),phi,sign,True))
+    dp=sub(exterior(s,min(math.pi,phi+h),sign,True),exterior(s,max(0,phi-h),sign,True))
+    n=unit(cross(ds,dp))
+    if n[2]*sign<0: n=mul(n,-1)
+    thickness=THICK*min(1,s*8)*math.sin(phi)**.35
+    p= sub(p,mul(n,thickness))
+    return p
+
+# Sphere rests against the lowest inner point. Its location never depends on theta.
+DEEP=min((point(i/300,math.pi/2,-1,True) for i in range(1,300)),key=lambda p:p[2])
+RADIUS=.55
+# Lift only enough to satisfy sphere/cup contact, once at modelling time.
+# The sphere settles to minimum gravitational potential inside the cup, rather
+# than balancing on a steep rear wall. This is a numeric sphere/surface contact
+# solve; no artist-authored screen coordinate or pose-dependent lift is used.
+INNER=[point(i/180,j*math.pi/100,-1,True) for i in range(1,180) for j in range(1,100)]
+def support(y):
+    candidates=[]
+    for p in INNER:
+        r2=(p[0]-DEEP[0])**2+(p[1]-y)**2
+        if r2<RADIUS**2: candidates.append((p[2]+math.sqrt(RADIUS**2-r2),p))
+    return max(candidates)
+settled=[]
+for i in range(81):
+    y=.5+i*.008
+    height,contact=support(y)
+    settled.append((height,y,contact))
+_HEIGHT,_Y,CONTACT=min(settled)
+PEARL=(DEEP[0],_Y,_HEIGHT)
+PC=project(PEARL)
+# Exact apparent radius of a sphere measured perpendicular to its sight line.
+DIAM=2*FOCAL*RADIUS/math.sqrt(PC[2]**2-RADIUS**2)
+
+
+def mesh(theta, ns=NS, np=NP):
+    cells=[]; vertices={}
+    for sign in [-1,1]:
+        for inside in [False,True]:
+            label=(sign,inside)
+            for i in range(ns+1):
+                for j in range(np+1):
+                    p=point(i/ns,j*math.pi/np,sign,inside)
+                    vertices[(sign,inside,i,j)] = rotate(p,theta) if sign==1 else p
+            for i in range(ns):
+                for j in range(np):
+                    ids=[(*label,i,j),(*label,i+1,j),(*label,i+1,j+1),(*label,i,j+1)]
+                    ps=[vertices[k] for k in ids]
+                    n=unit(cross(sub(ps[1],ps[0]),sub(ps[3],ps[0])))
+                    # Parametric normal points up; reverse for lower exterior/upper interior.
+                    if (sign==-1) != inside: n=mul(n,-1)
+                    cells.append(dict(ids=ids,ps=ps,n=n,c=mean(ps),sign=sign,inside=inside,s=(i+.5)/NS,phi=(j+.5)*math.pi/np,rim=False))
+        for j in range(np):
+            ids=[(sign,False,ns,j),(sign,False,ns,j+1),(sign,True,ns,j+1),(sign,True,ns,j)]
+            ps=[vertices[k] for k in ids]
+            n=unit(cross(sub(ps[1],ps[0]),sub(ps[3],ps[0])))
+            if sign==1: n=mul(n,-1)
+            cells.append(dict(ids=ids,ps=ps,n=n,c=mean(ps),sign=sign,inside=False,s=1,phi=(j+.5)*math.pi/np,rim=True))
+    return vertices,cells
+
+
+def bary(p,a,b,c):
+    v0=(b[0]-a[0],b[1]-a[1]); v1=(c[0]-a[0],c[1]-a[1]); v2=(p[0]-a[0],p[1]-a[1])
+    d=v0[0]*v1[1]-v1[0]*v0[1]
+    if abs(d)<1e-9: return None
+    u=(v2[0]*v1[1]-v1[0]*v2[1])/d; v=(v0[0]*v2[1]-v2[0]*v0[1])/d
+    return (1-u-v,u,v) if u>=-1e-6 and v>=-1e-6 and u+v<=1.000001 else None
+
+class Screen:
+    """Spatially indexed perspective triangles; depth is reciprocal interpolated."""
+    def __init__(self,cells,projection=project):
+        self.bins=defaultdict(list)
+        for idx,c in enumerate(cells):
+            q=[projection(p) for p in c['ps']]
+            for ks in [(0,1,2),(0,2,3)]:
+                tri=[q[k] for k in ks]
+                for x in range(math.floor(min(p[0] for p in tri)/8),math.floor(max(p[0] for p in tri)/8)+1):
+                    for y in range(math.floor(min(p[1] for p in tri)/8),math.floor(max(p[1] for p in tri)/8)+1):
+                        self.bins[x,y].append((idx,tri))
+    def hit(self,p):
+        best=1e9; who=-1
+        for idx,t in self.bins.get((math.floor(p[0]/8),math.floor(p[1]/8)),[]):
+            b=bary(p,*t)
+            if b:
+                d=1/sum(w/q[2] for w,q in zip(b,t))
+                if d<best: best,who=d,idx
+        return best,who
+
+# Orthogonal light-space triangle tests for shadows (not a painted dark patch).
+LR=unit(cross(LIGHT,(0,0,1))); LU=cross(LIGHT,LR)
+def light_project(p): return (dot(p,LR)*30,dot(p,LU)*30,10-dot(p,LIGHT))
+
+def simplify(ps,tol=.25):
+    if len(ps)<4: return ps
+    a,b=ps[0],ps[-1]
+    dx,dy=b[0]-a[0],b[1]-a[1]; length=math.hypot(dx,dy)
+    distances=[abs(dy*(p[0]-a[0])-dx*(p[1]-a[1]))/length if length else math.hypot(p[0]-a[0],p[1]-a[1]) for p in ps]
+    k=max(range(len(ps)),key=lambda i:distances[i])
+    if distances[k]<=tol: return [a,b]
+    return simplify(ps[:k+1],tol)[:-1]+simplify(ps[k:],tol)
+
+def fill(d,c,opacity=None):
+    return f'<path fill="var(--clam-{c})"'+(f' opacity="{opacity}"' if opacity else '')+f' d="{d}"/>'
+
+def brush(ps,width,rng,colour='ink',jitter=.1):
+    """Filled tapered ribbon, never a mesh stroke. Endpoints stay attached."""
+    if len(ps)<2: return ''
+    ps=simplify(ps,.32)
+    ps=[(p[0]+(rng.uniform(-jitter,jitter) if 0<i<len(ps)-1 else 0),p[1]+(rng.uniform(-jitter,jitter) if 0<i<len(ps)-1 else 0)) for i,p in enumerate(ps)]
+    left=[]; right=[]
+    width*=rng.uniform(.86,1.14)
+    phase=rng.uniform(0,math.tau)
+    for i,p in enumerate(ps):
+        a,b=ps[max(i-1,0)],ps[min(i+1,len(ps)-1)]
+        dx,dy=b[0]-a[0],b[1]-a[1]; l=math.hypot(dx,dy) or 1
+        w=width*(.15+.85*max(0,math.sin(math.pi*i/(len(ps)-1)))**.5)*(.94+.06*math.sin(i/max(1,len(ps)-1)*math.tau*1.5+phase))/2
+        left.append((p[0]-dy/l*w,p[1]+dx/l*w)); right.append((p[0]+dy/l*w,p[1]-dx/l*w))
+    return fill(curve(left+right[::-1],0,.22),colour)
+
+# Rendering resolution is independent of the anatomical/control mesh. Neither
+# sample count changes the parametric surface, camera, pose or resting sphere.
+SCALE = 3
+RW, RH = 120*SCALE, 110*SCALE
+
+
+def chaikin(ps, rounds=2):
+    ps=[p[:2] for p in ps]
+    if ps and ps[0]==ps[-1]: ps=ps[:-1]
+    for _ in range(rounds):
+        ps=[q for a,b in zip(ps,ps[1:]+ps[:1])
+            for q in [(a[0]*.75+b[0]*.25,a[1]*.75+b[1]*.25),
+                      (a[0]*.25+b[0]*.75,a[1]*.25+b[1]*.75)]]
+    return ps
+
+
+def curve(ps, smooth=0, tolerance=.22):
+    """Closed, smooth cubic contour; no polygon corners survive in the SVG."""
+    ps=chaikin(ps,smooth)
+    if len(ps)<3: return ''
+    ps=simplify(ps+[ps[0]],tolerance)[:-1]
+    if len(ps)<3: return ''
+    # Consecutive Catmull-Rom spans have reflected handles: SVG's smooth
+    # relative command preserves the cubic while avoiding redundant controls.
+    def num(v):
+        v=round(v,1)
+        return f'{v:.1f}'.rstrip('0').rstrip('.') if v else '0'
+    def pair(p): return num(p[0])+','+num(p[1])
+    rounded=lambda p:(round(p[0],1),round(p[1],1))
+    d='M'+pair(ps[0])
+    for i,b in enumerate(ps):
+        a=ps[i-1]; c=ps[(i+1)%len(ps)]; e=ps[(i+2)%len(ps)]
+        q=(b[0]+(c[0]-a[0])/7,b[1]+(c[1]-a[1])/7)
+        r=(c[0]-(e[0]-b[0])/7,c[1]-(e[1]-b[1])/7)
+        origin=rounded(b)
+        relative=lambda p:sub(rounded(p),origin)
+        if i==0: d+='c'+pair(relative(q))+' '+pair(relative(r))+' '+pair(relative(c))
+        else: d+='s'+pair(relative(r))+' '+pair(relative(c))
+    return d+'Z'
+
+
+def field_contours(mask):
+    """Trace subpixel field regions, smooth the lattice, then fit cubic curves.
+
+    The pixel lattice is only an internal sampling device. Its edges are never
+    emitted as wash edges, silhouette strokes, or rim divisions.
     """
-    p = points(s) if isinstance(s, str) else s
-    if rng:
-        p = [(x + rng.uniform(-.55, .55), y + rng.uniform(-.55, .55)) for x, y in p]
-        width *= rng.uniform(.8, 1.2)
-    normals = []
-    for i in range(4):
-        a, b = p[max(0, i-1)], p[min(3, i+1)]
-        dx, dy = b[0]-a[0], b[1]-a[1]
-        length = math.hypot(dx, dy) or 1
-        pressure = [0, .72, 1.12, .025][i]
-        normals.append((-dy/length*width*pressure, dx/length*width*pressure))
-    left = [(x+nx, y+ny) for (x,y),(nx,ny) in zip(p,normals)]
-    right = [(x-nx, y-ny) for (x,y),(nx,ny) in zip(p,normals)]
-    return blob(f'M{coords(left[:1])} C{coords(left[1:])} L{coords(right[3:])} C{coords(right[2::-1])} Z', colour)
+    edges=defaultdict(list)
+    for y in range(RH):
+        off=y*RW
+        for x in range(RW):
+            k=off+x
+            if not mask[k]: continue
+            if y==0 or not mask[k-RW]: edges[(x,y)].append((x+1,y))
+            if x==RW-1 or not mask[k+1]: edges[(x+1,y)].append((x+1,y+1))
+            if y==RH-1 or not mask[k+RW]: edges[(x+1,y+1)].append((x,y+1))
+            if x==0 or not mask[k-1]: edges[(x,y+1)].append((x,y))
+    loops=[]
+    while edges:
+        start=next(iter(edges)); at=start; loop=[at]
+        while at in edges:
+            nxt=edges[at].pop()
+            if not edges[at]: del edges[at]
+            loop.append(nxt); at=nxt
+            if at==start: break
+        if len(loop)<5: continue
+        area=abs(sum(a[0]*b[1]-b[0]*a[1] for a,b in zip(loop,loop[1:])))/2/SCALE**2
+        if area<.3: continue
+        loops.append([(x/SCALE,y/SCALE) for x,y in loop])
+    return loops
 
-# Outer wash and the ink fragments are deliberately separately drawn.
-# Ribs finish at different points around the rear-left hinge, not one radial pole.
-KEYS = {
- 'shut': dict(
- wash='M13 78 C11 73 18 70 23 71 C25 65 33 66 38 67 C47 61 55 65 59 67 C68 63 76 65 80 69 C89 68 97 72 102 76 C112 78 110 83 103 87 C79 96 37 96 17 87 Q10 84 13 78Z',
- edge=['12 80 11 74 18 70 24 71','25 70 27 64 34 65 40 67','40 67 48 62 54 64 60 67','61 67 70 63 77 66 81 69','82 69 93 69 100 73 105 78','108 79 114 88 85 91 68 91','65 92 43 94 18 88 11 81'],
- ribs=['24 73 27 78 32 82 42 85','40 69 40 74 43 80 48 85','59 69 57 76 56 80 55 85','79 71 75 77 68 83 63 86','99 77 89 81 78 85 70 87'],
- growth=['21 80 43 88 77 89 100 82','29 75 49 82 76 82 88 78'],
- mouth='M16 83 C43 88 82 90 107 81 Q101 96 58 95 Q29 94 16 83Z',
- front='M13 84 C39 93 80 94 109 82 C105 92 91 100 70 101 C44 103 23 98 13 84Z',
- lip=['12 83 38 92 75 94 109 82','109 84 100 98 81 101 65 100','62 101 40 103 20 96 13 85'],
- fribs=['26 90 30 94 36 96 40 97','46 93 47 96 49 98 52 99','72 94 71 97 69 99 68 100','94 90 91 95 87 97 83 98'], pearl=[62,82,45], window=[79,89], visible=False),
- 'barely': dict(
- wash='M13 71 C12 64 18 60 24 62 C26 54 34 55 39 57 C44 48 53 50 60 55 C67 49 76 53 80 59 C89 55 96 62 98 66 C107 66 110 74 105 79 C88 89 38 90 18 81Z',
- edge=['13 74 11 65 18 60 24 61','25 61 26 53 34 54 40 56','40 56 45 48 54 49 61 54','62 55 68 49 77 53 81 59','82 59 92 55 97 61 99 66','100 66 109 66 112 75 106 79','104 80 81 90 41 89 15 78'],
- ribs=['25 63 26 70 32 78 40 81','40 58 39 66 43 75 47 82','60 57 57 66 56 75 54 82','79 61 75 70 66 78 62 83','99 69 91 77 78 82 69 84'],
- growth=['22 72 43 82 78 84 102 75','29 65 47 74 79 76 91 69'],
- mouth='M14 77 C43 83 85 84 108 75 Q113 91 69 97 Q29 95 14 77Z',
- front='M12 83 C37 91 79 92 110 80 C106 91 90 100 69 101 C44 102 22 96 12 83Z',
- lip=['12 82 38 91 77 91 109 80','109 82 103 94 84 100 67 100','64 101 40 102 20 94 12 83'],
- fribs=['24 88 29 93 33 94 40 97','46 92 47 95 48 97 51 99','74 92 72 96 71 98 68 100','96 88 94 93 88 97 83 98'], pearl=[62,99,45], window=[0,88], visible=True),
- 'half': dict(
- wash='M12 65 C10 57 17 49 23 51 C21 41 31 39 37 41 C40 31 49 31 57 37 C63 28 74 33 78 41 C88 37 96 45 95 51 C105 52 110 61 105 69 C83 84 41 87 17 76Z',
- edge=['12 68 9 57 16 49 23 50','23 50 21 41 30 38 37 40','38 40 39 31 49 30 57 36','58 36 64 28 74 32 79 40','79 41 89 36 97 45 96 51','96 52 107 52 112 61 106 69','104 71 81 86 37 86 14 73'],
- ribs=['24 53 25 62 30 71 39 77','38 43 37 55 41 68 46 78','58 39 54 51 54 67 53 78','78 43 73 55 65 71 60 79','97 55 87 66 77 77 67 81'],
- growth=['20 64 39 77 76 81 102 66','28 56 48 65 78 69 90 59'],
- mouth='M14 70 C41 79 84 77 108 66 C114 81 96 94 69 97 C38 99 20 87 14 70Z',
- front='M12 81 C34 90 78 93 110 77 C108 89 94 99 73 101 C45 104 23 96 12 81Z',
- lip=['11 80 36 90 79 91 110 77','110 79 105 92 89 100 71 101','67 102 39 103 19 93 12 81'],
- fribs=['25 88 29 92 34 95 40 97','46 92 46 95 49 99 51 100','75 92 74 96 71 99 68 101','98 86 94 93 90 96 84 98'], pearl=[62,82,45], window=[0,89], visible=True),
- 'rest': dict(
- wash='M13 61 C8 51 14 43 21 44 C17 32 26 27 34 30 C34 17 45 16 54 24 C58 12 71 17 76 28 C85 23 97 32 95 41 C107 42 112 53 107 64 C87 80 40 86 17 73Z',
- edge=['13 64 8 53 13 43 21 43','21 42 17 31 26 26 34 29','35 29 33 17 44 15 54 23','55 23 59 12 71 16 77 28','77 29 87 23 98 32 96 41','97 41 108 41 114 53 108 64','106 66 84 82 39 84 14 70'],
- ribs=['22 46 23 58 29 68 38 75','35 32 35 48 39 65 45 76','55 27 51 42 52 61 52 76','76 31 70 47 64 66 60 77','97 45 88 59 78 72 68 78'],
- growth=['19 59 37 73 74 78 104 61','27 48 47 59 80 65 92 51','42 37 54 45 66 48 75 47'],
- mouth='M14 68 C43 76 88 72 109 61 C117 79 99 95 70 98 C38 100 19 87 14 68Z',
- front='M12 80 C36 91 79 91 111 75 C110 87 97 99 75 101 C47 105 23 97 12 80Z',
- lip=['11 79 35 90 78 91 111 75','111 77 108 90 91 100 73 101','69 102 41 105 20 94 12 81'],
- fribs=['25 87 30 93 34 94 40 98','46 92 47 96 49 98 52 101','76 91 75 96 72 99 69 101','99 84 97 91 90 96 85 98'], pearl=[62,65,46], window=[38,89], visible=True),
- 'wide': dict(
- wash='M14 57 C8 46 12 35 20 36 C15 24 24 17 32 21 C30 8 43 5 52 14 C56 1 69 5 75 19 C86 13 98 23 95 32 C110 32 115 46 109 59 C87 77 39 83 17 69Z',
- edge=['14 60 7 47 11 35 20 35','20 34 14 23 23 17 32 20','32 20 30 8 43 4 52 13','53 13 57 1 69 5 76 18','77 19 87 13 99 22 96 32','97 33 111 32 117 46 110 59','108 61 83 80 39 80 14 66'],
- ribs=['21 39 21 53 28 65 37 72','33 23 33 40 38 61 44 73','54 17 49 35 51 58 51 73','75 22 70 41 63 61 59 74','98 36 89 54 78 68 67 75'],
- growth=['18 54 37 69 76 74 106 55','26 39 45 54 79 59 93 42','39 27 53 35 67 40 78 37'],
- mouth='M13 64 C45 71 88 67 111 56 C119 75 102 95 72 99 C37 101 18 84 13 64Z',
- front='M11 78 C35 90 81 89 112 72 C114 87 98 100 76 102 C47 107 22 95 11 78Z',
- lip=['10 77 34 89 80 89 112 72','112 74 114 90 93 101 75 102','71 103 41 106 19 93 11 79'],
- fribs=['24 85 29 90 34 94 40 98','46 91 46 96 50 100 53 102','77 90 77 95 73 100 70 102','101 81 99 89 92 95 86 98'], pearl=[62,59,47], window=[30,89], visible=True),
- 'settle': dict(
- wash='M12 63 C9 53 16 45 22 47 C19 35 28 31 36 34 C37 22 48 21 56 28 C62 18 73 23 78 33 C89 28 98 37 97 45 C108 47 112 57 106 66 C84 83 40 85 16 75Z',
- edge=['12 66 9 55 15 45 22 46','22 45 19 35 28 30 36 33','37 33 36 22 48 20 56 27','57 27 63 18 73 22 79 33','80 33 90 28 99 37 98 45','98 46 110 46 114 57 107 66','105 68 84 83 38 85 13 72'],
- ribs=['23 49 24 60 30 70 39 76','37 36 36 51 40 66 46 77','57 31 53 46 53 63 53 77','78 36 73 51 65 68 61 78','99 49 89 62 79 74 69 80'],
- growth=['19 62 38 75 76 79 103 64','28 52 47 62 79 67 92 55'],
- mouth='M13 70 C44 77 87 74 109 63 C116 80 98 94 70 98 C37 100 18 87 13 70Z',
- front='M12 82 C36 92 79 92 110 77 C109 90 94 100 73 102 C46 104 22 97 12 82Z',
- lip=['11 81 36 91 78 92 110 77','110 79 107 93 88 101 72 102','68 103 40 104 20 95 12 83'],
- fribs=['25 89 30 94 35 96 41 99','47 93 48 97 50 99 53 102','75 93 74 97 71 100 68 102','98 86 96 93 89 97 84 99'], pearl=[62,67,46], window=[40,90], visible=True),
-}
 
-def draw(key, variant, seed):
-    k = KEYS[key]
-    rng = random.Random(seed)
-    # A wash retrace has its own controls; it never shares an ink boundary.
-    wash = k['wash']
-    if variant:
-        wash = re.sub(r'-?\d+(?:\.\d+)?', lambda m: fmt(float(m[0])+rng.uniform(-.5,.5)), wash)
-    back = blob('M17 95 C30 89 88 90 111 96 C104 104 40 108 17 99Z', 'shade', '.45')
-    back += blob(k['mouth'], 'inside') + blob(wash)
-    # Uneven brush fragments leave air between scallops and overshoot the corners.
-    for s in k['edge']:
-        back += pen(s, 1.65, rng)
-    for i,s in enumerate(k['ribs']):
-        back += pen(s, 1.0 if i%2 else 1.3, rng)
-        p = points(s)
-        # Short parallel hatch, authored as a fragment of this particular wandering rib.
-        back += pen([(p[2][0]+2.2,p[2][1]-5), (p[2][0]+1,p[2][1]-2),
-                     (p[3][0]+2,p[3][1]-2), (p[3][0]+3,p[3][1])], .65, rng, 'shade')
-    for s in k['growth']:
-        back += pen(s, .48, rng, 'shade')
-    # A tiny off-centre barnacle, with a broken rim and an inky little cleft.
-    p = points(k['ribs'][0])[1]
-    x,y = p[0]+3,p[1]-1
-    back += blob(f'M{x-2} {y+2} q-2 -4 1 -5 q4 -2 5 2 q0 4 -6 3Z', 'shade')
-    back += pen([(x-2,y+1),(x-3,y-4),(x+3,y-5),(x+4,y)], .7, rng)
-    back += pen([(x,y+1),(x-.8,y-1),(x+1,y-2),(x+2,y-2)], .65, rng)
-    front = blob(k['front'])
-    # Low tide wash pooling under the lip; distinct from its outline.
-    front += blob('M24 92 C42 99 82 103 102 87 Q92 103 68 102 Q37 102 24 92Z', 'shade', '.5')
-    for s in k['lip']:
-        front += pen(s, 1.8, rng)
-    for s in k['fribs']:
-        front += pen(s, .95, rng)
-    front += pen('20 86 43 96 78 97 103 83', .6, rng, 'shade')
-    front += pen('32 94 52 101 74 100 90 93', .45, rng, 'shade')
-    # Two quick lip shadows, and a small chipped edge on the right.
-    front += pen('28 88 37 93 42 93 46 94', .9, rng)
-    front += pen('79 90 85 89 91 87 96 85', 1, rng)
-    front += pen('103 88 101 90 104 92 100 93', .85, rng)
-    return back, front
+def field_path(mask):
+    return ''.join(curve(loop,2,.42) for loop in field_contours(mask))
 
-def symbol(id_, body):
-    return f'<symbol id="{id_}" viewBox="{VIEW}">{body}</symbol>'
+
+def shading_normal(s,phi,sign,inside,theta):
+    # The physical growth steps remain in the model. In the wash they are
+    # represented by ink arcs, not discontinuities in a faceted normal field.
+    def envelope(u,v):
+        p=exterior(u,v,sign,True)
+        if not inside:
+            ridge=.042*u**.8*math.sin(math.pi*u)*math.cos(30*v)*math.sin(v)
+            p=add(p,(0,0,sign*ridge))
+        return p
+    h=.0002
+    ds=sub(envelope(min(1,s+h),phi),envelope(max(0,s-h),phi))
+    dp=sub(envelope(s,min(math.pi,phi+h)),envelope(s,max(0,phi-h)))
+    n=unit(cross(ds,dp))
+    if (sign==-1)!=inside: n=mul(n,-1)
+    return rotate(n,theta) if sign==1 else n
+
+
+@lru_cache(maxsize=6)
+def paint(theta):
+    # A fine numeric tessellation samples the unchanged surface. Smooth normals
+    # and continuous scalar washes are interpolated BEFORE tone quantisation.
+    verts,cells=mesh(theta,48,240)
+    oldverts,oldcells=mesh(theta)
+    light=Screen([c for c in oldcells if c['sign']==1 and not c['inside']],light_project)
+    def shadow(p):
+        q=light_project(add(p,mul(LIGHT,.012)))
+        return float(light.hit(q)[0]<q[2]-.025)
+    projected={k:project(p) for k,p in verts.items()}
+    values={}
+    for k,p in verts.items():
+        sign,inside,i,j=k; u=i/48; v=j*math.pi/240
+        n=shading_normal(u,v,sign,inside,theta)
+        lam=max(0,dot(n,LIGHT))
+        # Fade corrugated lighting into the beak, rather than ending stripes
+        # with rectangular highlight patches near the umbo.
+        if not inside:
+            smoothn=shading_normal(u,v,sign,True,theta)
+            smoothlam=max(0,dot(mul(smoothn,-1),LIGHT))
+            fade=min(1,max(0,(u-.13)/.45))
+            lam=smoothlam*(1-fade)+lam*fade
+        ao=(.22*(1-u)+.12*(1-p[1]/1.7)) if inside else 0
+        values[k]=.2+.8*lam-ao-(.28*shadow(p) if inside else 0)
+    z=[1e9]*(RW*RH); kinds=[None]*(RW*RH); field=[0.]*(RW*RH)
+    for c in cells:
+        if dot(c['n'],sub(CAM,c['c']))<=0: continue
+        ids=c['ids']; q=[projected[k] for k in ids]
+        for ks in [(0,1,2),(0,2,3)]:
+            t=[q[k] for k in ks]
+            xmin=max(0,math.floor(min(p[0] for p in t)*SCALE)); xmax=min(RW-1,math.ceil(max(p[0] for p in t)*SCALE))
+            ymin=max(0,math.floor(min(p[1] for p in t)*SCALE)); ymax=min(RH-1,math.ceil(max(p[1] for p in t)*SCALE))
+            for y in range(ymin,ymax+1):
+                for x in range(xmin,xmax+1):
+                    b=bary(((x+.5)/SCALE,(y+.5)/SCALE),*t)
+                    if b is None: continue
+                    inv=sum(w/p[2] for w,p in zip(b,t)); depth=1/inv; idx=y*RW+x
+                    if depth>=z[idx]: continue
+                    z[idx]=depth
+                    kinds[idx]=(int(depth<PC[2]),c['sign'],2 if c['rim'] else int(c['inside']))
+                    field[idx]=sum(w*values[ids[k]]/p[2] for w,p,k in zip(b,t,ks))/inv
+    # A small surface-aware low pass removes sampling noise without smearing
+    # a valve over its rim or mixing the upper and lower valves.
+    for _ in range(3):
+        blurred=field[:]
+        for y in range(1,RH-1):
+            for x in range(1,RW-1):
+                k=y*RW+x
+                if kinds[k] is None: continue
+                ns=[i for i in (k-1,k+1,k-RW,k+RW) if kinds[i]==kinds[k]]
+                blurred[k]=(field[k]*2+sum(field[i] for i in ns))/(2+len(ns))
+        field=blurred
+    # Nacre has broad washes, not the exterior's narrowly corrugated light.
+    # Smooth its continuous field at a two-unit footprint before taking level
+    # sets. This removes angular cast-shadow transitions without blurring ribs.
+    for _ in range(2):
+        for vertical in [False,True]:
+            blurred=field[:]
+            for y in range(RH):
+                for x in range(RW):
+                    k=y*RW+x; label=kinds[k]
+                    if label is None or label[2]!=1: continue
+                    total=0.; weight=0
+                    for d in range(-7,8):
+                        xx=x if vertical else x+d; yy=y+d if vertical else y
+                        if not (0<=xx<RW and 0<=yy<RH): continue
+                        i=yy*RW+xx; other=kinds[i]
+                        if other is not None and other[1:]==label[1:]:
+                            total+=field[i]; weight+=1
+                    if weight: blurred[k]=total/weight
+            field=blurred
+    layers=['','']; outlines=[]
+    groups=set(k for k in kinds if k is not None)
+    for kind in sorted(groups,key=lambda kind:sum(z[i] for i,k in enumerate(kinds) if k==kind)/kinds.count(kind),reverse=True):
+        layer,sign,inside=kind
+        # BACK may include the same material behind its FRONT continuation.
+        # The continuation is painted again over the avatar. This overlap
+        # prevents fitted curves on opposite sides of the virtual pearl-depth
+        # plane from leaving a hairline that could resemble a nacre crack.
+        mask=[k==kind if layer else k is not None and k[1:]==kind[1:] for k in kinds]
+        # A continuous pale rim, never individual mesh bricks. Only the long
+        # contours on its two borders are inked below; no transverse edges.
+        if inside==2:
+            rimd=field_path(mask)
+            layers[layer]+=fill(rimd,'edge')+f'<path fill="url(#clam-rim)" d="{rimd}"/>'
+            continue
+        prefix='nacre-' if inside else 'tone-'
+        for tone,threshold in [(1,-100),(2,.27),(3,.54),(4,.81)]:
+            d=field_path([m and v>=threshold for m,v in zip(mask,field)])
+            if d: layers[layer]+=fill(d,prefix+str(tone)).replace('<path ','<path fill-rule="evenodd" ')
+    # Per-valve silhouettes, including true occlusion edges, not the boundaries
+    # of cell visibility or the virtual BACK/FRONT split through the pearl.
+    for sign in [-1,1]:
+        loops=field_contours([k is not None and k[1]==sign for k in kinds])
+        for loop in loops:
+            signed=sum(a[0]*b[1]-b[0]*a[1] for a,b in zip(loop,loop[1:]))
+            if signed<=0: continue
+            ps=chaikin(loop,2); ps=simplify(ps+[ps[0]],.19)
+            runs=[]; run=[]; oldlayer=None
+            for p in ps:
+                x=min(RW-1,max(0,int(p[0]*SCALE))); y=min(RH-1,max(0,int(p[1]*SCALE)))
+                candidates=[y*RW+x]+[yy*RW+xx for yy in range(max(0,y-2),min(RH,y+3)) for xx in range(max(0,x-2),min(RW,x+3))]
+                near=next((i for i in candidates if kinds[i] is not None and kinds[i][1]==sign),None)
+                if near is None: continue
+                layer=kinds[near][0]
+                if run and layer!=oldlayer: runs.append((oldlayer,run)); run=[]
+                run.append(p); oldlayer=layer
+            if run: runs.append((oldlayer,run))
+            outlines.extend((layer,ps,True) for layer,ps in runs if len(ps)>2)
+    # True scalloped margin borders, sampled densely enough to round each lobe.
+    def visible(p,sign,inside=None):
+        q=project(p); x=int(q[0]*SCALE); y=int(q[1]*SCALE)
+        if not (0<=x<RW and 0<=y<RH): return None
+        k=y*RW+x; label=kinds[k]
+        if label is None or label[1]!=sign: return None
+        if inside is not None and label[2]!=inside: return None
+        return label[0] if q[2]<=z[k]+.045 else None
+    details=[]
+    def trace(sign,samples,inside,width,colour='ink',opacity=None):
+        runs=[]; run=[]; oldlayer=None
+        for u,v in samples:
+            p=point(u,v,sign,inside); p=rotate(p,theta) if sign==1 else p
+            layer=visible(p,sign,int(inside))
+            if layer is not None:
+                if run and layer!=oldlayer: runs.append((oldlayer,run)); run=[]
+                run.append(project(p)); oldlayer=layer
+            elif run: runs.append((oldlayer,run)); run=[]
+        if run: runs.append((oldlayer,run))
+        details.extend((layer,ps,width,colour,opacity) for layer,ps in runs if len(ps)>3)
+    for sign in [-1,1]:
+        for inside in [False,True]:
+            # Rim classification is allowed at a margin sample; it is one
+            # continuous border, not strokes across each sampled segment.
+            run=[]; oldlayer=None
+            for j in range(241):
+                p=point(1,j*math.pi/240,sign,inside); p=rotate(p,theta) if sign==1 else p
+                layer=visible(p,sign)
+                if layer is not None:
+                    if run and layer!=oldlayer:
+                        if len(run)>3: outlines.append((oldlayer,run,False))
+                        run=[]
+                    run.append(project(p)); oldlayer=layer
+                elif run:
+                    if len(run)>3: outlines.append((oldlayer,run,False))
+                    run=[]
+            if len(run)>3: outlines.append((oldlayer,run,False))
+        # Exterior details require the visible surface to be EXTERIOR. This
+        # prevents the old rib tuft shining through the thin beak's interior.
+        for j in [2,4,7,10,13]:
+            phi=j*math.pi/15
+            trace(sign,[(u/40,phi) for u in range(12,38)],False,.22,'ink','.35')
+        for band in [.29,.58,.88]:
+            for lo,hi in [(.16,.75),(.92,1.8),(2.02,2.9)]:
+                trace(sign,[(band,lo+(hi-lo)*j/30) for j in range(31)],False,.17,'shade','.5')
+        for j in range(2,6):
+            trace(sign,[(u/40,j*math.pi/15+.035) for u in range(24,34)],False,.28,'ink','.6')
+        # Deliberately no nacre veins: a smooth cup and quiet hinge shadow.
+    # Small ligament, geometrically at the immovable hinge, never a rib fan.
+    lig=[(-.42,0,0),(.24,0,0),(.18,.085,.025),(-.32,.085,.025)]
+    q=project(mean(lig)); x=int(q[0]*SCALE); y=int(q[1]*SCALE)
+    if 0<=x<RW and 0<=y<RH and q[2]<=z[y*RW+x]+.1:
+        layers[int(q[2]<PC[2])]+=fill(curve([project(p) for p in lig]),'ink')
+    # Light-projected ground silhouette, with a gently rounded envelope.
+    ground=-.61; pts=[]
+    for p in oldverts.values():
+        t=max(0,(p[2]-ground)/LIGHT[2]); q=project(sub(p,mul(LIGHT,t)))
+        pts.append(q[:2])
+    pts=sorted(set(pts))
+    def half(seq):
+        out=[]
+        for p in seq:
+            while len(out)>1 and ((out[-1][0]-out[-2][0])*(p[1]-out[-2][1])-(out[-1][1]-out[-2][1])*(p[0]-out[-2][0]))<=0: out.pop()
+            out.append(p)
+        return out
+    hull=half(pts)[:-1]+half(pts[::-1])[:-1]
+    groundshadow=fill(curve(hull,2,.15),'shadow','.22').replace('<path ','<path filter="url(#clam-soft)" ')
+    layers[0]=groundshadow+layers[0]
+    # A soft contact pool on the lower cup; no pale sand strip in front.
+    contact=[project((CONTACT[0]+.24*math.cos(i*math.tau/32),CONTACT[1]+.12*math.sin(i*math.tau/32),CONTACT[2]+.008)) for i in range(32)]
+    layers[0]+=fill(curve(contact),'shadow','.35').replace('<path ','<path filter="url(#clam-soft)" ')
+    # Sphere shadow sampled as a fine, continuous screen-space field, reduced
+    # to one smooth contour and softly feathered inside the projected sphere.
+    mask=[False]*(RW*RH)
+    count=clear=0
+    for y in range(max(0,int((PC[1]-DIAM/2)*SCALE)),min(RH,int((PC[1]+DIAM/2)*SCALE)+1)):
+        for x in range(max(0,int((PC[0]-DIAM/2)*SCALE)),min(RW,int((PC[0]+DIAM/2)*SCALE)+1)):
+            q=((x+.5)/SCALE,(y+.5)/SCALE)
+            ray=unit(add(mul(TOWARD,-1),add(mul(RIGHT,(q[0]-60)/FOCAL),mul(UP,(66-q[1])/FOCAL))))
+            oc=sub(CAM,PEARL); b=dot(oc,ray); disc=b*b-dot(oc,oc)+RADIUS**2
+            if disc<0: continue
+            p=add(CAM,mul(ray,-b-math.sqrt(disc))); depth=project(p)[2]; k=y*RW+x
+            count+=1
+            clear+=z[k]>=depth-.015 and (kinds[k] is None or kinds[k][0]==0)
+            mask[k]=bool(shadow(p))
+    contours=field_contours(mask)
+    if contours:
+        # Tiny detached islands from coarse light testing are not ink marks.
+        loop=max(contours,key=len)
+        d=curve(loop,3,.25)
+        layers[1]=fill(d,'shadow','.12').replace('<path ','<path filter="url(#clam-soft)" clip-path="url(#clam-pearl-clip)" ')+layers[1]
+    return layers,outlines,details,clear/count
+
+
+def draw(theta,variant):
+    base,outlines,details,vis=paint(theta)
+    layers=base[:]; rng=random.Random(130+variant*97)
+    for layer,ps,silhouette in outlines:
+        if silhouette: layers[layer]+=brush(ps,1.25,random.Random(7),'edge',0)
+        layers[layer]+=brush(ps,.73 if silhouette else .38,rng)
+    for layer,ps,width,colour,opacity in details:
+        ink=brush(ps,width,rng,colour)
+        if opacity: ink=ink.replace('<path ',f'<path opacity="{opacity}" ')
+        layers[layer]+=ink
+    return layers,vis,None
+
+
+def symbol(name,body): return f'<symbol id="{name}" viewBox="{VIEW}">{body}</symbol>'
+
+def validate():
+    for j in range(NP+1):
+        phi=j*math.pi/NP
+        assert math.dist(exterior(1,phi,1),exterior(1,phi,-1))<1e-9
+    reference,_=mesh(0)
+    for theta,_ in POSES.values():
+        assert 0<=theta<=70
+        posed,_=mesh(theta)
+        for k,p in reference.items():
+            q=posed[k]
+            if k[0]==-1: assert math.dist(p,q)<1e-12, 'lower valve moved'
+            else: assert abs(math.hypot(p[1],p[2])-math.hypot(q[1],q[2]))<1e-10
+        for x in [-1.6,-.12,1.6]: assert rotate((x,0,0),theta)==(x,0.,0.)
+    width=max(project(exterior(1,j*math.pi/NP,-1))[0] for j in range(NP+1))-min(project(exterior(1,j*math.pi/NP,-1))[0] for j in range(NP+1))
+    assert DIAM/width>=.36, f'avatar is only {DIAM/width:.1%} of shell width'
+    # Sphere touches the inner cup and cannot penetrate any sampled inner point.
+    assert abs(math.dist(CONTACT,PEARL)-RADIUS)<1e-10
+    for i in range(1,NS):
+        for j in range(1,NP): assert math.dist(point(i/NS,j*math.pi/NP,-1,True),PEARL)>=RADIUS-.015
+
 
 def main():
-    symbols, frames, poses = [], {}, {}
-    # Twelve plates per layer, with more retraces on the long-held exposures.
-    counts = {'shut':2, 'barely':1, 'half':2, 'rest':3, 'wide':2, 'settle':2}
-    for pose,count in counts.items():
-        poses[pose] = []
+    parser=argparse.ArgumentParser(); parser.add_argument('--check-sheets',type=Path); args=parser.parse_args()
+    validate(); symbols=[]; frames={}; poses={}; checks={}
+    for pose,(theta,count) in POSES.items():
+        poses[pose]=[]
         for v in range(count):
-            name = f'{pose}-{v}'
-            back,front = draw(pose,v,110+list(KEYS).index(pose)*17+v)
-            ids = [f'clam-{name}-back', f'clam-{name}-front']
-            symbols.extend([symbol(ids[0],back),symbol(ids[1],front)])
-            frames[name] = dict(back=ids[0],front=ids[1],pearl=KEYS[pose]['pearl'],
-                                window=KEYS[pose]['window'],visible=KEYS[pose]['visible'])
+            name=f'{pose}-{v}'; layers,vis,shadow=draw(theta,v)
+            checks[name]=vis
+            if pose=='rest': assert vis>=.85, f'rest pearl visibility {vis:.1%}'
+            ids=[f'clam-{name}-back',f'clam-{name}-front']
+            symbols.extend(symbol(k,b) for k,b in zip(ids,layers))
+            frames[name]=dict(back=ids[0],front=ids[1],pearl=[round(PC[0],1),round(PC[1],1),round(DIAM,1)],window=[0,110],visible=True)
             poses[pose].append(name)
-    # The pearl rim is drawn at the same viewBox as the shell plates.
-    for v in range(2):
-        rng = random.Random(900+v)
-        ring = ''.join(pen(s,1.6,rng) for s in [
-            '7 53 3 27 28 3 57 4','58 4 89 1 115 25 113 52',
-            '113 54 117 84 91 107 62 105','59 106 26 109 4 84 7 56'])
-        ring += blob('M27 31 C29 20 40 17 45 20 Q40 25 36 30 Q29 36 27 31Z', 'wash', '.85')
-        ring += pen('21 47 20 38 22 34 24 31', .8, rng, 'wash')
-        symbols.append(symbol(f'clam-ring-{v}',ring))
-    # Three separate bubble drawings; the air pocket climbs in stepped exposures.
-    bubbles = [
-        ['85 46 80 40 84 32 90 33','91 33 99 35 98 44 93 47','92 47 88 49 85 47 85 46'],
-        ['87 31 80 24 85 15 92 17','94 17 102 20 100 29 95 32','94 32 91 34 88 32 87 31'],
-        ['88 15 82 10 88 2 94 4','96 4 102 8 100 14 95 16','94 16 91 17 89 16 88 15']]
-    for v,strokes in enumerate(bubbles):
-        body = ''.join(pen(s,.8,random.Random(950+v+i),'wash') for i,s in enumerate(strokes))
-        symbols.append(symbol(f'clam-bubble-{v}',body))
-    # Pencil-drawn sand curls disperse sideways, rather than scaling a cloud.
-    puffs = [
-        ['15 94 7 88 12 81 20 87','99 94 110 85 117 91 111 96','25 99 31 94 37 95 40 98'],
-        ['10 90 1 81 7 74 15 80','104 89 112 77 120 83 116 88','20 101 25 94 31 94 35 96','91 101 96 94 103 95 106 98'],
-        ['3 79 0 76 4 72 8 74','111 77 114 71 118 73 120 76','12 98 16 92 21 93 23 95','101 99 105 92 110 94 113 95']]
-    for v,strokes in enumerate(puffs):
-        symbols.append(symbol(f'clam-sand-{v}', ''.join(pen(s,1.15,random.Random(980+v+i),'shade') for i,s in enumerate(strokes))))
-    # All output, including handwritten wash paths, is rounded to one decimal.
-    svg = '<svg xmlns="http://www.w3.org/2000/svg"><!-- Original Shoal clam exposure plates; generated by scripts/draw-clams.py. -->' + ''.join(symbols) + '</svg>\n'
-    OUT.mkdir(exist_ok=True)
+    # Subtle sphere overlay remains over the avatar. Cast-shadow side is derived
+    # by sampling the upper valve in light space, per pose, in the shell plates.
+    ring='<ellipse cx="60" cy="55" rx="60" ry="55" fill="url(#clam-sphere)"/><ellipse cx="43" cy="28" rx="10" ry="6" fill="var(--clam-edge)" opacity=".55"/><path d="M27,88 Q60,105 90,84 Q66,98 27,88Z" fill="var(--clam-nacre)" opacity=".32"/>'
+    for v in range(2): symbols.append(symbol(f'clam-ring-{v}',ring))
+    for v in range(3):
+        rng=random.Random(v)
+        p=project((1,1.1,.35+v*.42)); x,y=p[:2]; r=2.2+v*.35
+        ps=[(x+r*math.cos(i*math.tau/24),y+r*math.sin(i*math.tau/24)) for i in range(25)]
+        symbols.append(symbol(f'clam-bubble-{v}',brush(ps,.65,rng,'edge')))
+        ps=[(12-v*3,89-v*4),(15-v*3,85-v*5),(20-v*2,87-v*4)]
+        symbols.append(symbol(f'clam-sand-{v}',brush(ps,1.1,rng,'shade')+brush([(99+v*2,90-v*4),(105+v*2,85-v*5),(109+v*2,89-v*4)],.9,rng,'shade')))
+    defs='<defs><radialGradient id="clam-sphere" cx="35%" cy="28%" r="72%"><stop offset="0" stop-color="#ffffff" stop-opacity=".16"/><stop offset=".5" stop-color="#ffffff" stop-opacity="0"/><stop offset=".72" stop-color="#173734" stop-opacity=".08"/><stop offset="1" stop-color="#102b29" stop-opacity=".62"/></radialGradient></defs>'
+    defs=defs[:-7]+'<linearGradient id="clam-rim"><stop stop-color="#102520" stop-opacity="0"/><stop offset=".5" stop-color="#102520" stop-opacity="0"/><stop offset="1" stop-color="#102520" stop-opacity=".22"/></linearGradient></defs>'
+    defs=defs[:-7]+f'<filter id="clam-soft" x="-15%" y="-15%" width="130%" height="130%"><feGaussianBlur stdDeviation="0.5"/></filter><clipPath id="clam-pearl-clip"><circle cx="{PC[0]:.1f}" cy="{PC[1]:.1f}" r="{DIAM/2:.1f}"/></clipPath></defs>'
+    import re
+    from collections import Counter
+    body=''.join(symbols)
+    pattern=r'<path ([^>]*?)d="([^"]*)"([^>]*)/>'
+    repeats=Counter(m[1] for m in re.findall(pattern,body))
+    shared=[]; names={}
+    for d,n in repeats.items():
+        if n>1 and len(d)>120:
+            ident=f'clam-p{len(shared)}'; names[d]=ident
+            shared.append(f'<path id="{ident}" d="{d}"/>')
+    def reference(m):
+        before,d,after=m.groups()
+        return f'<use {before}{after} href="#{names[d]}"/>' if d in names else m[0]
+    body=re.sub(pattern,reference,body)
+    defs=defs[:-7]+''.join(shared)+'</defs>'
+    svg='<svg xmlns="http://www.w3.org/2000/svg">'+defs+body+'</svg>\n'
+    assert len(svg.encode())<300_000, len(svg.encode())
     (OUT/'clams.svg').write_text(svg)
-    (OUT/'clams.json').write_text(json.dumps(dict(viewBox=VIEW,poses=poses,frames=frames,
-        rings=['clam-ring-0','clam-ring-1'], bubbles=[f'clam-bubble-{i}' for i in range(3)],
-        sand=[f'clam-sand-{i}' for i in range(3)]),indent=2)+'\n')
-    print(f'{len(frames)} drawings per layer; {len(symbols)} symbols; {len(svg.encode())} bytes')
+    (OUT/'clams.json').write_text(json.dumps(dict(viewBox=VIEW,poses=poses,frames=frames,rings=['clam-ring-0','clam-ring-1'],bubbles=[f'clam-bubble-{i}' for i in range(3)],sand=[f'clam-sand-{i}' for i in range(3)]),indent=2)+'\n')
+    print(f'{len(svg.encode())} bytes; camera elevation {ELEV}, yaw {YAW}, distance {DIST}; pearl {PC}, diameter {DIAM:.1f}')
+    print('visible pearl: '+', '.join(f'{k} {v:.1%}' for k,v in checks.items()))
+    if args.check_sheets: sheets(args.check_sheets,svg,frames)
 
-if __name__ == '__main__':
-    main()
+
+def sheets(dest,svg,frames):
+    """Disposable review render: same BACK / avatar / FRONT composition as CSS."""
+    dest.mkdir(parents=True,exist_ok=True)
+    import re
+    def mix(a,b,t):
+        aa=[int(a[i:i+2],16) for i in (1,3,5)]; bb=[int(b[i:i+2],16) for i in (1,3,5)]
+        return '#'+''.join(f'{round(x*t+y*(1-t)):02x}' for x,y in zip(aa,bb))
+    for theme in ['light','dark']:
+        foam='#e6faf5'; abyss='#112b29'
+        secondary='#cae6de' if theme=='light' else '#354e49'
+        primary_container='#9ff2e2' if theme=='light' else '#005047'
+        sand=mix(abyss,secondary,.76)
+        wash=mix(mix(primary_container,foam,.55),foam,.65)
+        nacre='#e6e7cf' if theme=='light' else '#dce5ca'
+        colours=dict(ink=mix(abyss,'#100f18',.86),wash=wash,shade=mix(wash,abyss,.58),edge='#e6eee0' if theme=='light' else '#ecf5de',nacre=nacre,sand=sand,shadow='#102520')
+        colours.update({'tone-1':mix(wash,'#244b40',.35),'tone-2':mix(wash,'#476e59',.65),'tone-3':wash,'tone-4':mix(wash,'#fff0cb',.58)})
+        colours.update({'nacre-1':mix(nacre,'#23584e',.25),'nacre-2':mix(nacre,'#548e7d',.55),'nacre-3':mix(nacre,'#86aa93',.8),'nacre-4':nacre})
+        resolved=re.sub(r'var\(--clam-([\w-]+)\)',lambda m:colours[m[1]],svg)
+        panels=[]
+        for n,f in frames.items():
+            x,y,d=f['pearl']; r=d/2
+            face=f'<circle cx="{x}" cy="{y}" r="{r}" fill="#dbb58f"/><path d="M{x-r*.88},{y-r*.25} Q{x-r*.8},{y-r*1.4} {x+r*.75},{y-r*.6} L{x+r*.9},{y-r*.1} Q{x},{y-r*.65} {x-r*.88},{y-r*.25}" fill="#463b35"/><ellipse cx="{x-r*.3}" cy="{y-r*.05}" rx="1.4" ry="1.9" fill="#23332f"/><ellipse cx="{x+r*.3}" cy="{y-r*.05}" rx="1.4" ry="1.9" fill="#23332f"/><path d="M{x-r*.3},{y+r*.35} Q{x},{y+r*.65} {x+r*.3},{y+r*.35}" fill="none" stroke="#704e43" stroke-width="1"/>'
+            body=f'<rect width="120" height="110" fill="{sand}"/><use href="#{f["back"]}"/>'+face+f'<svg x="{x-r}" y="{y-r}" width="{d}" height="{d}" preserveAspectRatio="none" viewBox="0 0 120 110"><use href="#clam-ring-0"/></svg>'+f'<use href="#{f["front"]}"/><text x="4" y="10" fill="#eef5e8" font-size="6">{n}</text>'
+            document='<svg xmlns="http://www.w3.org/2000/svg" width="360" height="330" viewBox="0 0 120 110">'+resolved+body+'</svg>'
+            src=dest/f'{theme}-{n}.svg'; png=src.with_suffix('.png'); src.write_text(document)
+            subprocess.run(['rsvg-convert',str(src),'-o',str(png)],check=True); panels.append(str(png))
+        subprocess.run(['montage',*panels,'-tile','4x3','-geometry','360x330+4+4',str(dest/f'{theme}.png')],check=True)
+        small=[]
+        for panel in panels:
+            src=Path(panel).with_suffix('.svg'); target=src.with_name(src.stem+'-120.png')
+            subprocess.run(['rsvg-convert','-w','120','-h','110',str(src),'-o',str(target)],check=True)
+            small.append(str(target))
+        subprocess.run(['montage',*small,'-tile','4x3','-geometry','120x110+4+4',str(dest/f'{theme}-120.png')],check=True)
+
+if __name__=='__main__': main()

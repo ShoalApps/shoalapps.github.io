@@ -114,7 +114,7 @@
     link.className = 'clam';
     link.href = person.url;
     link.setAttribute('aria-label', `${person.login} on GitHub`);
-    link.style.setProperty('--clam', `${96 + Math.round(random() * 24)}px`);
+    link.style.setProperty('--clam', `${110 + Math.round(random() * 20)}px`);
     link.style.setProperty('--clam-wash', ['var(--clam-wash-leaf)', 'var(--clam-wash-coral)', 'var(--clam-wash-sand)'][Math.floor(random() * 3)]);
     const window = document.createElement('span');
     window.className = 'clam-pearl-window';
@@ -163,7 +163,7 @@
   let art;
   try {
     const [spriteResponse, sheetResponse] = await Promise.all([
-      fetch('assets/art/clams.svg?v=20261105h'), fetch('assets/art/clams.json?v=20261105h')
+      fetch('assets/art/clams.svg?v=20261105i'), fetch('assets/art/clams.json?v=20261105i')
     ]);
     if (!spriteResponse.ok || !sheetResponse.ok) return;
     const [source, sheet] = await Promise.all([spriteResponse.text(), sheetResponse.json()]);
@@ -201,12 +201,11 @@
     state.back.setAttribute('href', `#${frame.back}`);
     state.front.setAttribute('href', `#${frame.front}`);
     const [x, y, size] = frame.pearl;
-    // Exposure-sheet coordinates, including the pearl, change in discrete steps.
+    // The fixed sphere and camera give every exposure the same pearl position.
     state.pearl.style.left = `${(x - size / 2) / 120 * 100}%`;
     state.pearl.style.top = `${(y - size / 2) / 110 * 100}%`;
     state.pearl.style.width = `${size / 120 * 100}%`;
     state.pearl.style.height = `${size / 110 * 100}%`;
-    state.window.style.clipPath = `inset(${frame.window[0] / 110 * 100}% 0 ${100 - frame.window[1] / 110 * 100}% 0)`;
     state.pearl.style.visibility = frame.visible ? 'visible' : 'hidden';
     state.ring.setAttribute('href', `#${art.rings[state.boil % art.rings.length]}`);
   }
@@ -250,6 +249,7 @@
     const ring = plate('clam-ring'), bubble = plate('clam-effect'), sand = plate('clam-effect');
     state.link.prepend(back.svg);
     state.window.after(front.svg, bubble.svg, sand.svg);
+    ring.svg.setAttribute('preserveAspectRatio', 'none');
     state.pearl.append(ring.svg);
     Object.assign(state, { back: back.use, front: front.use, ring: ring.use, bubbleUse: bubble.use, sandUse: sand.use });
     state.link.classList.add('clam-drawn');

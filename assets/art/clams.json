@@ -31,41 +31,41 @@
       "back": "clam-shut-0-back",
       "front": "clam-shut-0-front",
       "pearl": [
-        62,
-        82,
-        45
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        79,
-        89
+        0,
+        110
       ],
-      "visible": false
+      "visible": true
     },
     "shut-1": {
       "back": "clam-shut-1-back",
       "front": "clam-shut-1-front",
       "pearl": [
-        62,
-        82,
-        45
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        79,
-        89
+        0,
+        110
       ],
-      "visible": false
+      "visible": true
     },
     "barely-0": {
       "back": "clam-barely-0-back",
       "front": "clam-barely-0-front",
       "pearl": [
-        62,
-        99,
-        45
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
         0,
-        88
+        110
       ],
       "visible": true
     },
@@ -73,13 +73,13 @@
       "back": "clam-half-0-back",
       "front": "clam-half-0-front",
       "pearl": [
-        62,
-        82,
-        45
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
         0,
-        89
+        110
       ],
       "visible": true
     },
@@ -87,13 +87,13 @@
       "back": "clam-half-1-back",
       "front": "clam-half-1-front",
       "pearl": [
-        62,
-        82,
-        45
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
         0,
-        89
+        110
       ],
       "visible": true
     },
@@ -101,13 +101,13 @@
       "back": "clam-rest-0-back",
       "front": "clam-rest-0-front",
       "pearl": [
-        62,
-        65,
-        46
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        38,
-        89
+        0,
+        110
       ],
       "visible": true
     },
@@ -115,13 +115,13 @@
       "back": "clam-rest-1-back",
       "front": "clam-rest-1-front",
       "pearl": [
-        62,
-        65,
-        46
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        38,
-        89
+        0,
+        110
       ],
       "visible": true
     },
@@ -129,13 +129,13 @@
       "back": "clam-rest-2-back",
       "front": "clam-rest-2-front",
       "pearl": [
-        62,
-        65,
-        46
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        38,
-        89
+        0,
+        110
       ],
       "visible": true
     },
@@ -143,13 +143,13 @@
       "back": "clam-wide-0-back",
       "front": "clam-wide-0-front",
       "pearl": [
-        62,
-        59,
-        47
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        30,
-        89
+        0,
+        110
       ],
       "visible": true
     },
@@ -157,13 +157,13 @@
       "back": "clam-wide-1-back",
       "front": "clam-wide-1-front",
       "pearl": [
-        62,
-        59,
-        47
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        30,
-        89
+        0,
+        110
       ],
       "visible": true
     },
@@ -171,13 +171,13 @@
       "back": "clam-settle-0-back",
       "front": "clam-settle-0-front",
       "pearl": [
-        62,
-        67,
-        46
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        40,
-        90
+        0,
+        110
       ],
       "visible": true
     },
@@ -185,13 +185,13 @@
       "back": "clam-settle-1-back",
       "front": "clam-settle-1-front",
       "pearl": [
-        62,
-        67,
-        46
+        58.8,
+        68.2,
+        31.4
       ],
       "window": [
-        40,
-        90
+        0,
+        110
       ],
       "visible": true
     }
