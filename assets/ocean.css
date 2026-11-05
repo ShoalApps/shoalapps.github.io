@@ -7,7 +7,7 @@
   --reef-leaf: color-mix(in srgb, var(--primary-container) 55%, var(--foam));
   --reef-fan: color-mix(in srgb, var(--primary) 60%, var(--abyss));
   --reef-coral: color-mix(in srgb, var(--tertiary-container) 75%, var(--foam));
-  --shot: min(74vw, 300px);
+  --shot: min(64vw, 270px);
 }
 section { scroll-margin-top: 88px; }
 
