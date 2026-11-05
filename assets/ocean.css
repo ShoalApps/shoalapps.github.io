@@ -212,7 +212,7 @@ footer { background: var(--abyss); color: var(--foam); }
   :root:not([data-theme="light"]) .clams { --clam-edge: #ecf5de; --clam-nacre: #dce5ca; }
 }
 .clam-sprite { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
-.clam svg { position: absolute; inset: 0; pointer-events: none; display: block; width: 100%; height: 100%; }
+.clam svg { position: absolute; inset: 0; pointer-events: none; display: block; width: 100%; height: 100%; overflow: visible; }
 .clam-pearl-window { position: absolute; inset: 0; pointer-events: none; }
 .clam-pearl { position: absolute; left: 29%; top: 29%; width: 42%; aspect-ratio: 1; border-radius: 50%; background: var(--foam); }
 .clam-pearl img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
