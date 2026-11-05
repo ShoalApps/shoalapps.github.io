@@ -26,6 +26,7 @@ POSES = dict(shut=(0, 2), barely=(10, 1), half=(28, 2),
 NS, NP = 14, 60
 BANDS = [.18, .29, .43, .58, .74, .88]
 THICK = .075
+NACRE_LEVELS = (.12, .30, .50)
 
 def add(a,b): return tuple(x+y for x,y in zip(a,b))
 def sub(a,b): return tuple(x-y for x,y in zip(a,b))
@@ -178,15 +179,30 @@ def fill(d,c,opacity=None):
 def brush(ps,width,rng,colour='ink',jitter=.1):
     """Filled tapered ribbon, never a mesh stroke. Endpoints stay attached."""
     if len(ps)<2: return ''
-    ps=simplify(ps,.32)
+    ps=simplify(ps,.52)
+    # Preserve a pressure belly even on short, nearly straight marks.
+    if len(ps)==2:
+        a,b=ps; ps=[a,((a[0]+b[0])/2,(a[1]+b[1])/2),b]
     ps=[(p[0]+(rng.uniform(-jitter,jitter) if 0<i<len(ps)-1 else 0),p[1]+(rng.uniform(-jitter,jitter) if 0<i<len(ps)-1 else 0)) for i,p in enumerate(ps)]
+    # Short hatch dabs need only two quadratic sides. Retain their curved
+    # centre and pointed ends without spending six cubic spans per mark.
+    if len(ps)==3:
+        a,m,b=ps
+        dx,dy=b[0]-a[0],b[1]-a[1]; length=math.hypot(dx,dy) or 1
+        w=width*rng.uniform(.78,1.15)
+        c=(2*m[0]-(a[0]+b[0])/2,2*m[1]-(a[1]+b[1])/2)
+        def xy(p): return ','.join(f'{v:.1f}'.rstrip('0').rstrip('.') if round(v,1) else '0' for v in p)
+        l=(c[0]-dy/length*w,c[1]+dx/length*w)
+        r=(c[0]+dy/length*w,c[1]-dx/length*w)
+        a,b,l,r=[tuple(round(v,1) for v in p) for p in (a,b,l,r)]
+        return fill('M'+xy(a)+'q'+xy(sub(l,a))+' '+xy(sub(b,a))+'q'+xy(sub(r,b))+' '+xy(sub(a,b))+'Z',colour)
     left=[]; right=[]
     width*=rng.uniform(.86,1.14)
     phase=rng.uniform(0,math.tau)
     for i,p in enumerate(ps):
         a,b=ps[max(i-1,0)],ps[min(i+1,len(ps)-1)]
         dx,dy=b[0]-a[0],b[1]-a[1]; l=math.hypot(dx,dy) or 1
-        w=width*(.15+.85*max(0,math.sin(math.pi*i/(len(ps)-1)))**.5)*(.94+.06*math.sin(i/max(1,len(ps)-1)*math.tau*1.5+phase))/2
+        w=width*(.025+.975*max(0,math.sin(math.pi*i/(len(ps)-1)))**.75)*(.76+.24*math.sin(i/max(1,len(ps)-1)*math.tau*1.5+phase))/2
         left.append((p[0]-dy/l*w,p[1]+dx/l*w)); right.append((p[0]+dy/l*w,p[1]-dx/l*w))
     return fill(curve(left+right[::-1],0,.22),colour)
 
@@ -263,14 +279,14 @@ def field_contours(mask):
 
 
 def field_path(mask):
-    return ''.join(curve(loop,2,.42) for loop in field_contours(mask))
+    return ''.join(curve(loop,2,.56) for loop in field_contours(mask))
 
 
 def shading_normal(s,phi,sign,inside,theta):
     # The physical growth steps remain in the model. In the wash they are
     # represented by ink arcs, not discontinuities in a faceted normal field.
     def envelope(u,v):
-        p=exterior(u,v,sign,True)
+        p=point(u,v,sign,True) if inside else exterior(u,v,sign,True)
         if not inside:
             ridge=.042*u**.8*math.sin(math.pi*u)*math.cos(30*v)*math.sin(v)
             p=add(p,(0,0,sign*ridge))
@@ -306,8 +322,20 @@ def paint(theta):
             smoothlam=max(0,dot(mul(smoothn,-1),LIGHT))
             fade=min(1,max(0,(u-.13)/.45))
             lam=smoothlam*(1-fade)+lam*fade
-        ao=(.22*(1-u)+.12*(1-p[1]/1.7)) if inside else 0
-        values[k]=.2+.8*lam-ao-(.28*shadow(p) if inside else 0)
+        if inside:
+            # Evaluate cavity depth and distance from the hinge in the valve's
+            # own coordinates. World Y stops being a cup-depth measure when
+            # the upper valve opens. Both cups receive the same nacre finish.
+            local=point(u,v,sign,True)
+            depth=min(1,abs(local[2])/.65)
+            hinge=math.exp(-max(0,local[1])/.34)
+            margin=math.exp(-((1-u)/.16)**2)
+            # Sky bounce enters through the opening, falling off into the
+            # hollow. Direct light still uses the actual offset-surface normal;
+            # the upper exterior/rim casts a geometric light-space shadow.
+            values[k]=.57+.30*lam+.32*margin-.36*depth-.53*hinge-.22*shadow(p)
+        else:
+            values[k]=.2+.8*lam
     z=[1e9]*(RW*RH); kinds=[None]*(RW*RH); field=[0.]*(RW*RH)
     for c in cells:
         if dot(c['n'],sub(CAM,c['c']))<=0: continue
@@ -355,6 +383,18 @@ def paint(theta):
                             total+=field[i]; weight+=1
                     if weight: blurred[k]=total/weight
             field=blurred
+    # Require substantial visible regions, rather than counting tiny islands
+    # or the nested underpaint paths as distinct tones.
+    if theta in (POSES['rest'][0],POSES['wide'][0]):
+        counts=defaultdict(int)
+        for pixel,(kind,value) in enumerate(zip(kinds,field)):
+            if kind is not None and kind[1:]==(1,1):
+                x=(pixel%RW+.5)/SCALE; y=(pixel//RW+.5)/SCALE
+                if not kind[0] and math.hypot(x-PC[0],y-PC[1])<DIAM/2:
+                    continue  # Do not count nacre hidden by the pearl/avatar.
+                counts[sum(value>=t for t in NACRE_LEVELS)+1]+=1
+        assert sum(n>=36*SCALE*SCALE for n in counts.values())>=3, (theta,dict(counts))
+        print(f'upper interior {theta}°: nacre areas '+str(dict(counts)))
     layers=['','']; outlines=[]
     groups=set(k for k in kinds if k is not None)
     for kind in sorted(groups,key=lambda kind:sum(z[i] for i,k in enumerate(kinds) if k==kind)/kinds.count(kind),reverse=True):
@@ -371,9 +411,15 @@ def paint(theta):
             layers[layer]+=fill(rimd,'edge')+f'<path fill="url(#clam-rim)" d="{rimd}"/>'
             continue
         prefix='nacre-' if inside else 'tone-'
-        for tone,threshold in [(1,-100),(2,.27),(3,.54),(4,.81)]:
+        thresholds=list(enumerate((-100,)+NACRE_LEVELS,1)) if inside else [(1,-100),(2,.27),(3,.54),(4,.81)]
+        # Pigment registration is deliberately a little loose; all tones
+        # move together, leaving small pale paper slivers beside the ink.
+        offset='.22 -.18' if inside else '-.38 .28'
+        layers[layer]+=f'<g transform="translate({offset})" fill-rule="evenodd">'
+        for tone,threshold in thresholds:
             d=field_path([m and v>=threshold for m,v in zip(mask,field)])
-            if d: layers[layer]+=fill(d,prefix+str(tone)).replace('<path ','<path fill-rule="evenodd" ')
+            if d: layers[layer]+=fill(d,prefix+str(tone))
+        layers[layer]+='</g>'
     # Per-valve silhouettes, including true occlusion edges, not the boundaries
     # of cell visibility or the virtual BACK/FRONT split through the pearl.
     for sign in [-1,1]:
@@ -440,7 +486,18 @@ def paint(theta):
                 trace(sign,[(band,lo+(hi-lo)*j/30) for j in range(31)],False,.17,'shade','.5')
         for j in range(2,6):
             trace(sign,[(u/40,j*math.pi/15+.035) for u in range(24,34)],False,.28,'ink','.6')
-        # Deliberately no nacre veins: a smooth cup and quiet hinge shadow.
+        # Short grouped marks wrap around the cup and along growth bands.
+        # They are surface samples, so visibility clips them at the real rim.
+        for band,lo in [(.43,.35),(.70,.65),(.84,1.85)]:
+            for h in range(6):
+                u=band+(h-2.5)*.013+(h%2)*.003
+                trace(sign,[(u+.008*math.sin(t*math.pi),lo+t*.23)
+                            for t in [i/8 for i in range(9)]],False,.32,'ink','.58')
+        for band,lo,span in [(.18,.65,.40),(.29,1.90,.43),(.93,.55,.38)]:
+            for h in range(5):
+                u=band+(h-2)*.012+(h%2)*.003
+                trace(sign,[(u+.012*math.sin(t*math.pi),lo+t*span)
+                            for t in [i/8 for i in range(9)]],True,.32,'ink','.55')
     # Small ligament, geometrically at the immovable hinge, never a rib fan.
     lig=[(-.42,0,0),(.24,0,0),(.18,.085,.025),(-.32,.085,.025)]
     q=project(mean(lig)); x=int(q[0]*SCALE); y=int(q[1]*SCALE)
@@ -461,6 +518,16 @@ def paint(theta):
     hull=half(pts)[:-1]+half(pts[::-1])[:-1]
     groundshadow=fill(curve(hull,2,.15),'shadow','.22').replace('<path ','<path filter="url(#clam-soft)" ')
     layers[0]=groundshadow+layers[0]
+    # Ground hatching nearest the shell; short arcs echo its footprint.
+    # Kept in BACK so shell and pearl occlude them naturally.
+    for lo in [.48,1.82]:
+        for h in range(6):
+            samples=[]
+            for j in range(9):
+                phi=lo+j*.035
+                p=exterior(1,phi,-1)
+                samples.append(project((p[0]*.98+.022*h,p[1]*.93+.015*h,ground)))
+            details.append((0,samples,.30,'ink','.38'))
     # A soft contact pool on the lower cup; no pale sand strip in front.
     contact=[project((CONTACT[0]+.24*math.cos(i*math.tau/32),CONTACT[1]+.12*math.sin(i*math.tau/32),CONTACT[2]+.008)) for i in range(32)]
     layers[0]+=fill(curve(contact),'shadow','.35').replace('<path ','<path filter="url(#clam-soft)" ')
@@ -490,13 +557,45 @@ def paint(theta):
 def draw(theta,variant):
     base,outlines,details,vis=paint(theta)
     layers=base[:]; rng=random.Random(130+variant*97)
+    paper=['','']; ink=['','']
     for layer,ps,silhouette in outlines:
-        if silhouette: layers[layer]+=brush(ps,1.25,random.Random(7),'edge',0)
-        layers[layer]+=brush(ps,.73 if silhouette else .38,rng)
+        if silhouette: paper[layer]+=brush(ps,1.25,random.Random(7),'edge',0)
+        # The silhouette is steady; pressure and short restatements breathe.
+        # Break a few lit contour runs, retaining their stable wash envelope.
+        lit=sum(p[0]+p[1] for p in ps)/len(ps)<112
+        runs=[ps]
+        if lit and len(ps)>12:
+            cut=len(ps)//3
+            runs=[ps[:cut],ps[cut+2:]]
+        for run in runs:
+            ink[layer]+=brush(run,.67 if lit else .94,rng,jitter=.065)
+        # Overlapping pencil/pen restatement beside the shadow-side contour.
+        if len(ps)>7:
+            a=len(ps)//3; b=min(len(ps),a+max(5,len(ps)//3))
+            restated=[]
+            for i,p in enumerate(ps[a:b]):
+                prev=ps[max(0,a+i-1)]; nxt=ps[min(len(ps)-1,a+i+1)]
+                dx,dy=nxt[0]-prev[0],nxt[1]-prev[1]; length=math.hypot(dx,dy) or 1
+                restated.append((p[0]-dy/length*.43,p[1]+dx/length*.43))
+            if len(restated)>2:
+                # Small overshoots at the restated ends, not shape changes.
+                restated[0]=add(restated[0],mul(sub(restated[0],restated[1]),.12))
+                restated[-1]=add(restated[-1],mul(sub(restated[-1],restated[-2]),.12))
+                ink[layer]+=brush(restated,.29,rng,jitter=.09).replace('<path ','<path opacity=".5" ')
     for layer,ps,width,colour,opacity in details:
-        ink=brush(ps,width,rng,colour)
-        if opacity: ink=ink.replace('<path ',f'<path opacity="{opacity}" ')
-        layers[layer]+=ink
+        mark=brush(ps,width,rng,colour,jitter=.21)
+        if opacity: mark=mark.replace('<path ',f'<path opacity="{opacity}" ')
+        ink[layer]+=mark
+    # A compound path preserves every individual tapered stroke while
+    # sharing its ink/opacity attributes. Wash and contour paper stay separate.
+    import re
+    def combine(marks):
+        groups=defaultdict(list)
+        for attrs,d in re.findall(r'<path ([^>]*?) d="([^"]*)"/>',marks):
+            groups[attrs].append(d)
+        return ''.join(f'<path {attrs} d="{"".join(paths)}"/>' for attrs,paths in groups.items())
+    for layer in range(2):
+        layers[layer]+=combine(paper[layer])+combine(ink[layer])
     return layers,vis,None
 
 
@@ -590,7 +689,7 @@ def sheets(dest,svg,frames):
         nacre='#e6e7cf' if theme=='light' else '#dce5ca'
         colours=dict(ink=mix(abyss,'#100f18',.86),wash=wash,shade=mix(wash,abyss,.58),edge='#e6eee0' if theme=='light' else '#ecf5de',nacre=nacre,sand=sand,shadow='#102520')
         colours.update({'tone-1':mix(wash,'#244b40',.35),'tone-2':mix(wash,'#476e59',.65),'tone-3':wash,'tone-4':mix(wash,'#fff0cb',.58)})
-        colours.update({'nacre-1':mix(nacre,'#4f8a7a',.5),'nacre-2':mix(nacre,'#7fae9c',.75),'nacre-3':mix(nacre,'#a9c4b0',.9),'nacre-4':nacre})
+        colours.update({'nacre-1':mix(nacre,'#3c7066',.35),'nacre-2':mix(nacre,'#7fae9c',.60),'nacre-3':mix(nacre,'#a9c4b0',.85),'nacre-4':nacre})
         resolved=re.sub(r'var\(--clam-([\w-]+)\)',lambda m:colours[m[1]],svg)
         panels=[]
         for n,f in frames.items():
@@ -603,9 +702,9 @@ def sheets(dest,svg,frames):
         subprocess.run(['montage',*panels,'-tile','4x3','-geometry','360x330+4+4',str(dest/f'{theme}.png')],check=True)
         small=[]
         for panel in panels:
-            src=Path(panel).with_suffix('.svg'); target=src.with_name(src.stem+'-120.png')
-            subprocess.run(['rsvg-convert','-w','120','-h','110',str(src),'-o',str(target)],check=True)
+            src=Path(panel).with_suffix('.svg'); target=src.with_name(src.stem+'-150.png')
+            subprocess.run(['rsvg-convert','-w','150','-h','138',str(src),'-o',str(target)],check=True)
             small.append(str(target))
-        subprocess.run(['montage',*small,'-tile','4x3','-geometry','120x110+4+4',str(dest/f'{theme}-120.png')],check=True)
+        subprocess.run(['montage',*small,'-tile','4x3','-geometry','150x138+4+4',str(dest/f'{theme}-150.png')],check=True)
 
 if __name__=='__main__': main()

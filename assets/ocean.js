@@ -163,7 +163,7 @@
   let art;
   try {
     const [spriteResponse, sheetResponse] = await Promise.all([
-      fetch('assets/art/clams.svg?v=20261105i'), fetch('assets/art/clams.json?v=20261105i')
+      fetch('assets/art/clams.svg?v=20261105j'), fetch('assets/art/clams.json?v=20261105j')
     ]);
     if (!spriteResponse.ok || !sheetResponse.ok) return;
     const [source, sheet] = await Promise.all([spriteResponse.text(), sheetResponse.json()]);
