@@ -97,26 +97,37 @@
     for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, value);
     return node;
   }
-  // Both fans radiate from the same back hinge (50, 57). The lower fan faces forward.
-  function shellFan(count, lower) {
-    const fan = svgElement('g', { class: lower ? 'clam-lower' : 'clam-upper' });
+  // A standing scallop fan: notches and straight ribs meet at the bottom hinge.
+  function shellFan(count) {
+    const fan = svgElement('g', { class: 'clam-upper' });
     const edge = [];
     for (let i = 0; i <= count; i++) {
       const angle = Math.PI * i / count;
-      edge.push([50 - 45 * Math.cos(angle), 57 + (lower ? 32 : -45) * Math.sin(angle)]);
+      edge.push([50 - 44 * Math.cos(angle), 84 - 44 * Math.sin(angle)]);
     }
-    let d = 'M50 57L5 57';
+    let d = 'M50 84L6 84';
     for (let i = 1; i <= count; i++) {
+      const angle = Math.PI * (i - .5) / count;
       const [x, y] = edge[i];
-      const [px, py] = edge[i - 1];
-      d += `Q${(px + x) / 2} ${(py + y) / 2 + (lower ? 5 : -5)} ${x} ${y}`;
+      // Each quadratic bulges outward between two notches, one bump per rib.
+      d += `Q${50 - 49 * Math.cos(angle)} ${84 - 49 * Math.sin(angle)} ${x} ${y}`;
     }
-    fan.append(svgElement('path', { class: 'clam-shell', d: `${d}L50 57Z` }));
+    d += 'L50 84Z';
+    fan.append(svgElement('path', { class: 'clam-shell', d }));
+    fan.append(svgElement('path', { class: 'clam-mouth', d, transform: 'translate(50 84) scale(.82) translate(-50 -84)' }));
     for (let i = 1; i < count; i++) {
       const [x, y] = edge[i];
-      fan.append(svgElement('path', { class: 'clam-rib', d: `M50 57Q${50 + (x - 50) * .35} ${y} ${x} ${y}` }));
+      fan.append(svgElement('path', { class: 'clam-rib', d: `M50 84L${x} ${y}` }));
     }
     return fan;
+  }
+  function shellBowl() {
+    const bowl = svgElement('g', { class: 'clam-lower' });
+    bowl.append(svgElement('path', { class: 'clam-shell', d: 'M8 76Q50 116 92 76Q50 82 8 76Z' }));
+    for (const x of [22, 36, 50, 64, 78]) {
+      bowl.append(svgElement('path', { class: 'clam-rib', d: `M${x} 83l${(50 - x) * .16} ${6 - Math.abs(50 - x) * .1}` }));
+    }
+    return bowl;
   }
   function alignName(link) {
     const name = link.querySelector('.clam-name');
@@ -131,7 +142,7 @@
     link.className = 'clam';
     link.href = person.url;
     link.setAttribute('aria-label', `${person.login} on GitHub`);
-    link.style.setProperty('--clam', `${70 + Math.round(random() * 18)}px`);
+    link.style.setProperty('--clam', `${88 + Math.round(random() * 20)}px`);
     link.style.setProperty('--breath', `${6 + random() * 5}s`);
     link.style.setProperty('--delay', `${-random() * 11}s`);
     link.style.setProperty('--bubble-time', `${12 + random() * 12}s`);
@@ -139,12 +150,16 @@
     link.style.setProperty('--arrival-delay', `${(index % 8) * .09}s`);
     link.style.setProperty('--clam-tint', ['var(--reef-leaf)', 'var(--reef-coral)', 'var(--reef-back)'][Math.floor(random() * 3)]);
     const ribs = 7 + Math.floor(random() * 4);
-    const svg = svgElement('svg', { viewBox: '0 0 100 100', 'aria-hidden': 'true', focusable: 'false' });
+    const svg = svgElement('svg', { class: 'clam-back', viewBox: '0 0 100 100', 'aria-hidden': 'true', focusable: 'false' });
+    const reveal = svgElement('g', { class: 'clam-reveal' });
     const lid = svgElement('g', { class: 'clam-lid' });
     const breath = svgElement('g', { class: 'clam-lid-breath' });
-    breath.append(shellFan(ribs, false));
+    breath.append(shellFan(ribs));
     lid.append(breath);
-    svg.append(lid, svgElement('ellipse', { class: 'clam-mouth', cx: 50, cy: 60, rx: 42, ry: 17 }), shellFan(ribs, true));
+    reveal.append(lid);
+    svg.append(reveal);
+    const front = svgElement('svg', { class: 'clam-front', viewBox: '0 0 100 100', 'aria-hidden': 'true', focusable: 'false' });
+    front.append(shellBowl());
     const pearl = document.createElement('span');
     pearl.className = 'clam-pearl';
     pearl.setAttribute('aria-hidden', 'true');
@@ -165,7 +180,7 @@
     const name = document.createElement('span');
     name.className = 'clam-name';
     name.textContent = person.login;
-    link.append(svg, pearl, bubble, name);
+    link.append(svg, pearl, front, bubble, name);
     link.addEventListener('pointerenter', () => alignName(link));
     link.addEventListener('focus', () => alignName(link));
     link.addEventListener('animationend', event => {
