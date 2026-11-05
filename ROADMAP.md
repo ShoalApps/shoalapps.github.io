@@ -5,9 +5,9 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 ## Shipped
 
 - **Squill** — Markdown notes and folders, a link graph with drag-to-link, a welcome tour with Squilly, encrypted notes, desktop sync, painting layer groups, rulers and perspective guides, and custom brushes and palettes.
-- **Shoal** — First-run setup for background updates and per-app controls to keep an installed version.
+- **Shoal** — First-run setup for background updates and per-app controls to keep an installed version, and in-app release notes with expandable history.
 - **Angelfish** — Local playlists, adaptive video buffering, and optional offline downloads based on subscriptions.
-- **Butterflyfish** — Offline drafts, including replies, an upstream compatibility screen, mu-style code formatting, explanations for unavailable quotes, larger photo galleries, pinned posts on profiles, and text limits that count emoji correctly.
+- **Butterflyfish** — Offline drafts, including replies, an upstream compatibility screen, mu-style code formatting, explanations for unavailable quotes, larger photo galleries, pinned posts on profiles, text limits that count emoji correctly, private local follows, an NSFW-only filter, and optional break reminders.
 
 ## Next
 
@@ -29,7 +29,7 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 
 Follow the [feature parity tracker](https://github.com/ShoalApps/butterflyfish/blob/main/compat/FEATURES.md) for Bluesky and X coverage.
 
-- **Search** — Independent Posts and People loading. Add Top and Latest sorting, cursor paging, and retry for Bluesky posts.
+- **Search** — Independent Posts and People loading, Top and Latest sorting, automatic post paging, and retry. NSFW-only paging scans through pages without matches. People paging remains planned.
 - **Next Bluesky features** — Private bookmarks, notification read state and filters, quote composition, and deleting your own posts. Then tackle chat, starter packs, and feed and list management.
 - **X** — Verify access and account requirements for each native feature before implementing it. Track bookmarks, lists, media, notifications, and messaging individually.
 - **Quality** — Test account isolation, cancellation, slow-network recovery, and pagination. Measure startup, first feed item, and scrolling on a real device. Review opt-in Sentry reports by app and release.
