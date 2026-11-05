@@ -1,0 +1,213 @@
+{
+  "viewBox": "0 0 120 110",
+  "poses": {
+    "shut": [
+      "shut-0",
+      "shut-1"
+    ],
+    "barely": [
+      "barely-0"
+    ],
+    "half": [
+      "half-0",
+      "half-1"
+    ],
+    "rest": [
+      "rest-0",
+      "rest-1",
+      "rest-2"
+    ],
+    "wide": [
+      "wide-0",
+      "wide-1"
+    ],
+    "settle": [
+      "settle-0",
+      "settle-1"
+    ]
+  },
+  "frames": {
+    "shut-0": {
+      "back": "clam-shut-0-back",
+      "front": "clam-shut-0-front",
+      "pearl": [
+        62,
+        82,
+        45
+      ],
+      "window": [
+        79,
+        89
+      ],
+      "visible": false
+    },
+    "shut-1": {
+      "back": "clam-shut-1-back",
+      "front": "clam-shut-1-front",
+      "pearl": [
+        62,
+        82,
+        45
+      ],
+      "window": [
+        79,
+        89
+      ],
+      "visible": false
+    },
+    "barely-0": {
+      "back": "clam-barely-0-back",
+      "front": "clam-barely-0-front",
+      "pearl": [
+        62,
+        99,
+        45
+      ],
+      "window": [
+        0,
+        88
+      ],
+      "visible": true
+    },
+    "half-0": {
+      "back": "clam-half-0-back",
+      "front": "clam-half-0-front",
+      "pearl": [
+        62,
+        82,
+        45
+      ],
+      "window": [
+        0,
+        89
+      ],
+      "visible": true
+    },
+    "half-1": {
+      "back": "clam-half-1-back",
+      "front": "clam-half-1-front",
+      "pearl": [
+        62,
+        82,
+        45
+      ],
+      "window": [
+        0,
+        89
+      ],
+      "visible": true
+    },
+    "rest-0": {
+      "back": "clam-rest-0-back",
+      "front": "clam-rest-0-front",
+      "pearl": [
+        62,
+        65,
+        46
+      ],
+      "window": [
+        38,
+        89
+      ],
+      "visible": true
+    },
+    "rest-1": {
+      "back": "clam-rest-1-back",
+      "front": "clam-rest-1-front",
+      "pearl": [
+        62,
+        65,
+        46
+      ],
+      "window": [
+        38,
+        89
+      ],
+      "visible": true
+    },
+    "rest-2": {
+      "back": "clam-rest-2-back",
+      "front": "clam-rest-2-front",
+      "pearl": [
+        62,
+        65,
+        46
+      ],
+      "window": [
+        38,
+        89
+      ],
+      "visible": true
+    },
+    "wide-0": {
+      "back": "clam-wide-0-back",
+      "front": "clam-wide-0-front",
+      "pearl": [
+        62,
+        59,
+        47
+      ],
+      "window": [
+        30,
+        89
+      ],
+      "visible": true
+    },
+    "wide-1": {
+      "back": "clam-wide-1-back",
+      "front": "clam-wide-1-front",
+      "pearl": [
+        62,
+        59,
+        47
+      ],
+      "window": [
+        30,
+        89
+      ],
+      "visible": true
+    },
+    "settle-0": {
+      "back": "clam-settle-0-back",
+      "front": "clam-settle-0-front",
+      "pearl": [
+        62,
+        67,
+        46
+      ],
+      "window": [
+        40,
+        90
+      ],
+      "visible": true
+    },
+    "settle-1": {
+      "back": "clam-settle-1-back",
+      "front": "clam-settle-1-front",
+      "pearl": [
+        62,
+        67,
+        46
+      ],
+      "window": [
+        40,
+        90
+      ],
+      "visible": true
+    }
+  },
+  "rings": [
+    "clam-ring-0",
+    "clam-ring-1"
+  ],
+  "bubbles": [
+    "clam-bubble-0",
+    "clam-bubble-1",
+    "clam-bubble-2"
+  ],
+  "sand": [
+    "clam-sand-0",
+    "clam-sand-1",
+    "clam-sand-2"
+  ]
+}

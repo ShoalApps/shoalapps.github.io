@@ -181,45 +181,37 @@ footer { background: var(--abyss); color: var(--foam); }
 .footer-word { margin: 0; font-size: var(--heading-2); font-weight: 750; line-height: 1.05; letter-spacing: -.025em; }
 .footer-content > div { font-size: var(--text-small); }
 .footer-content a { display: inline-block; padding-block: 8px; }
-/* Clams: each follower is a pearl, held above two scalloped fans on the sand. */
-.clams { margin: 40px auto 0; width: min(100% - 2 * var(--gutter), var(--page-width)); padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--foam) 25%, transparent); scroll-margin-top: 88px; }
+/* Clams: discrete ink-and-wash exposure plates, with the avatar between shells. */
+.clams {
+  --clam-ink: color-mix(in srgb, var(--abyss) 86%, #100f18);
+  --clam-wash-leaf: color-mix(in srgb, var(--reef-leaf) 65%, var(--foam));
+  --clam-wash-coral: color-mix(in srgb, var(--reef-coral) 70%, var(--foam));
+  --clam-wash-sand: color-mix(in srgb, var(--secondary-container) 55%, var(--foam));
+  --clam-wash: var(--clam-wash-sand);
+  --clam-shade: color-mix(in srgb, var(--clam-wash) 58%, var(--abyss));
+  --clam-inside: color-mix(in srgb, var(--abyss) 90%, var(--clam-wash));
+  margin: 40px auto 0; width: min(100% - 2 * var(--gutter), var(--page-width)); padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--foam) 25%, transparent); scroll-margin-top: 88px;
+}
 .clams[hidden] { display: none; }
 .clams-note { margin: 0 0 12px; font-size: var(--text-small); }
 .clam-bed { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 28px 12px; padding-top: 28px; }
-.clam { position: relative; display: block; width: var(--clam, 98px); aspect-ratio: 1; flex: none; border-radius: 16px; }
-.clam svg { position: absolute; inset: 0; pointer-events: none; display: block; width: 100%; height: 100%; overflow: visible; }
-.clam-shell { fill: var(--clam-tint, var(--reef-leaf)); stroke: var(--reef-fan); stroke-width: 2; stroke-linejoin: round; }
-.clam-rib { fill: none; stroke: var(--reef-fan); stroke-width: 1.4; stroke-linecap: round; opacity: .65; }
-.clam-lower .clam-shell { fill: color-mix(in srgb, var(--clam-tint, var(--reef-leaf)) 78%, var(--reef-fan)); }
-.clam-lower .clam-rib { stroke: var(--reef-back); }
-.clam-mouth { fill: var(--abyss); }
-/* All upper layers scale in 2D around the bottom hinge in the 100 × 100 box. */
-.clam-reveal, .clam-lid, .clam-lid-breath { transform-box: view-box; transform-origin: 50% 84%; }
-.clam-reveal, .clam-lid { transform: scale(1); }
-.clam-lid, .clam-lid-breath { transition: transform .6s var(--spring); }
-.clam-lid-breath { transform: scaleY(.94); animation: clam-breathe var(--breath, 8s) var(--delay, 0s) ease-in-out infinite; }
-.clam:hover, .clam:focus-visible { z-index: 3; }
-.clam:hover .clam-lid, .clam:focus-visible .clam-lid { transform: scale(1.03, 1.06); }
-.clam:hover .clam-lid-breath, .clam:focus-visible .clam-lid-breath { animation: none; transform: scaleY(1); }
-.clam-pearl { position: absolute; left: 29%; top: 40%; width: 42%; aspect-ratio: 1; border-radius: 50%; background: var(--foam); box-shadow: 0 2px 5px color-mix(in srgb, var(--abyss) 65%, transparent); transition: transform .6s var(--spring); pointer-events: none; }
+.clam { position: relative; display: block; width: min(var(--clam, 108px), 100%); min-width: 44px; min-height: 44px; aspect-ratio: 120 / 110; flex: none; border-radius: 16px; }
+/* Derive shade here so it inherits this follower's seeded wash, including palette changes. */
+.clam-drawn { --clam-shade: color-mix(in srgb, var(--clam-wash) 58%, var(--abyss)); --clam-inside: color-mix(in srgb, var(--abyss) 90%, var(--clam-wash)); }
+.clam-sprite { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
+.clam svg { position: absolute; inset: 0; pointer-events: none; display: block; width: 100%; height: 100%; }
+.clam-pearl-window { position: absolute; inset: 0; pointer-events: none; }
+.clam-pearl { position: absolute; left: 29%; top: 29%; width: 42%; aspect-ratio: 1; border-radius: 50%; background: var(--foam); }
 .clam-pearl img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .clam-pearl img[hidden] { display: none; }
-/* A translucent rim sits over the avatar; the separate gleam keeps it a round pearl. */
-.clam-pearl::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--foam), inset 2px 3px 4px color-mix(in srgb, var(--foam) 80%, transparent), inset -2px -3px 5px color-mix(in srgb, var(--reef-fan) 65%, transparent); }
-.clam-pearl-gleam { position: absolute; left: 24%; top: 17%; width: 19%; height: 12%; transform: rotate(-35deg); border-radius: 50%; background: var(--foam); opacity: .9; }
-.clam:hover .clam-pearl, .clam:focus-visible .clam-pearl { transform: translateY(-4px); }
-.clam-bubble { position: absolute; bottom: 65%; left: 47%; width: 5px; height: 5px; border: 1px solid var(--foam); border-radius: 50%; background: color-mix(in srgb, var(--reef-back) 35%, transparent); opacity: 0; pointer-events: none; animation: clam-bubble var(--bubble-time, 18s) var(--bubble-delay, 0s) ease-out infinite; }
+.clam-drawn .clam-pearl { background: none; }
+.clam-drawn .clam-pearl img { position: absolute; inset: 5% 6%; width: 88%; height: 90%; border-radius: 48% 52% 49% 46% / 52% 47% 53% 48%; }
+.clam-drawn .clam-pearl::before { content: ""; position: absolute; inset: 5% 6%; border-radius: 48% 52% 49% 46% / 52% 47% 53% 48%; background: var(--foam); }
+.clam:hover, .clam:focus-visible { z-index: 3; }
 .clam:focus-visible { outline-color: var(--foam); outline-offset: 2px; }
-.clam-name { position: absolute; bottom: calc(100% + 2px); left: 50%; z-index: 2; transform: translateX(calc(-50% + var(--name-shift, 0px))); max-width: calc(100vw - 16px); overflow-wrap: anywhere; padding: 4px 10px; border-radius: 10px; background: var(--foam); color: var(--abyss); font-size: var(--label); font-weight: 600; width: max-content; opacity: 0; pointer-events: none; transition: opacity .15s; }
-.clam:hover .clam-name, .clam:focus-visible .clam-name { opacity: 1; }
-.clam-more { align-self: center; padding: 8px 12px; font-size: var(--text-small); }
-.clam-arriving .clam-reveal { animation: clam-arrival 1.3s var(--arrival-delay, 0s) var(--spring) backwards; }
-.clam-arriving .clam-pearl { animation: clam-pearl-arrival 1.3s var(--arrival-delay, 0s) var(--spring) backwards; }
-.clam-arriving:hover .clam-pearl, .clam-arriving:focus-visible .clam-pearl { animation: none; }
-@keyframes clam-breathe { 0%, 100% { transform: scaleY(.90); } 50% { transform: scaleY(.97); } }
-@keyframes clam-arrival { from { transform: scaleY(.585106); } to { transform: scaleY(1); } }
-@keyframes clam-pearl-arrival { from { transform: scale(.8); } to { transform: scale(1); } }
-@keyframes clam-bubble { 0%, 83% { transform: translateY(0); opacity: 0; } 86% { opacity: .7; } 100% { transform: translateY(-38px); opacity: 0; } }
+.clam-name { position: absolute; bottom: calc(100% + 2px); left: 50%; z-index: 2; transform: translateX(calc(-50% + var(--name-shift, 0px))); max-width: calc(100vw - 16px); overflow-wrap: anywhere; padding: 4px 10px; border-radius: 10px; background: var(--foam); color: var(--abyss); font-size: var(--label); font-weight: 600; width: max-content; display: none; pointer-events: none; }
+.clam:hover .clam-name, .clam:focus-visible .clam-name { display: block; }
+.clam-more { align-self: center; min-height: 44px; padding: 8px 12px; font-size: var(--text-small); }
 .art-drift { animation: drift 9s ease-in-out infinite; }
 .art-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: sway 10s ease-in-out infinite; }
 @keyframes drift { 50% { transform: translateY(-7px); } }
