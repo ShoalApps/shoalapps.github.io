@@ -71,10 +71,10 @@
   document.addEventListener('visibilitychange', () => { if(document.hidden) clearEffects(); });
 })();
 
-// Sea urchins on the sea floor: one for each person following Shoal on GitHub.
+// Clams on the sea floor: one for each person following Shoal on GitHub.
 (async () => {
-  const section = document.getElementById('urchins');
-  const bed = document.getElementById('urchin-bed');
+  const section = document.getElementById('clams');
+  const bed = document.getElementById('clam-bed');
   if (!section || !bed) return;
   const MOST = 200;
   let people = [];
@@ -86,42 +86,68 @@
   if (!people.length) return;
 
   const NS = 'http://www.w3.org/2000/svg';
-  // Everyone keeps the same urchin between visits, because it grows from their name.
+  // Everyone keeps the same clam between visits, because it grows from their name.
   function seeded(text) {
     let h = 2166136261;
     for (const c of text) h = Math.imul(h ^ c.codePointAt(0), 16777619);
     return () => { h = Math.imul(h ^ (h >>> 15), 2246822507) ^ Math.imul(h ^ (h >>> 13), 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; };
   }
-  function spines(random, count, from, shortest, longest, className) {
-    let d = '';
-    const turn = random() * Math.PI;
-    for (let i = 0; i < count; i++) {
-      const angle = turn + i / count * Math.PI * 2 + (random() - .5) * .08;
-      const reach = shortest + random() * (longest - shortest);
-      d += `M${(Math.cos(angle) * from).toFixed(1)} ${(Math.sin(angle) * from).toFixed(1)}L${(Math.cos(angle) * reach).toFixed(1)} ${(Math.sin(angle) * reach).toFixed(1)}`;
-    }
-    const path = document.createElementNS(NS, 'path');
-    path.setAttribute('class', className);
-    path.setAttribute('d', d);
-    return path;
+  function svgElement(tag, attributes = {}) {
+    const node = document.createElementNS(NS, tag);
+    for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, value);
+    return node;
   }
-  function urchin(person) {
+  // Both fans radiate from the same back hinge (50, 57). The lower fan faces forward.
+  function shellFan(count, lower) {
+    const fan = svgElement('g', { class: lower ? 'clam-lower' : 'clam-upper' });
+    const edge = [];
+    for (let i = 0; i <= count; i++) {
+      const angle = Math.PI * i / count;
+      edge.push([50 - 45 * Math.cos(angle), 57 + (lower ? 32 : -45) * Math.sin(angle)]);
+    }
+    let d = 'M50 57L5 57';
+    for (let i = 1; i <= count; i++) {
+      const [x, y] = edge[i];
+      const [px, py] = edge[i - 1];
+      d += `Q${(px + x) / 2} ${(py + y) / 2 + (lower ? 5 : -5)} ${x} ${y}`;
+    }
+    fan.append(svgElement('path', { class: 'clam-shell', d: `${d}L50 57Z` }));
+    for (let i = 1; i < count; i++) {
+      const [x, y] = edge[i];
+      fan.append(svgElement('path', { class: 'clam-rib', d: `M50 57Q${50 + (x - 50) * .35} ${y} ${x} ${y}` }));
+    }
+    return fan;
+  }
+  function alignName(link) {
+    const name = link.querySelector('.clam-name');
+    name.style.setProperty('--name-shift', '0px');
+    const bounds = name.getBoundingClientRect();
+    const shift = Math.max(8 - bounds.left, Math.min(0, document.documentElement.clientWidth - 8 - bounds.right));
+    name.style.setProperty('--name-shift', `${shift}px`);
+  }
+  function clam(person, index) {
     const random = seeded(person.login);
     const link = document.createElement('a');
-    link.className = 'urchin';
+    link.className = 'clam';
     link.href = person.url;
     link.setAttribute('aria-label', `${person.login} on GitHub`);
-    link.style.setProperty('--urchin', `${70 + Math.round(random() * 18)}px`);
-    link.style.setProperty('--sway', `${6 + random() * 4}s`);
-    link.style.setProperty('--delay', `${-random() * 8}s`);
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', '-50 -50 100 100');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.append(spines(random, 22, 22, 36, 42, 'spines-back'), spines(random, 26, 24, 40, 49, 'spines'));
-    const shell = document.createElementNS(NS, 'circle');
-    shell.setAttribute('class', 'shell');
-    shell.setAttribute('r', '25');
-    svg.append(shell);
+    link.style.setProperty('--clam', `${70 + Math.round(random() * 18)}px`);
+    link.style.setProperty('--breath', `${6 + random() * 5}s`);
+    link.style.setProperty('--delay', `${-random() * 11}s`);
+    link.style.setProperty('--bubble-time', `${12 + random() * 12}s`);
+    link.style.setProperty('--bubble-delay', `${-random() * 24}s`);
+    link.style.setProperty('--arrival-delay', `${(index % 8) * .09}s`);
+    link.style.setProperty('--clam-tint', ['var(--reef-leaf)', 'var(--reef-coral)', 'var(--reef-back)'][Math.floor(random() * 3)]);
+    const ribs = 7 + Math.floor(random() * 4);
+    const svg = svgElement('svg', { viewBox: '0 0 100 100', 'aria-hidden': 'true', focusable: 'false' });
+    const lid = svgElement('g', { class: 'clam-lid' });
+    const breath = svgElement('g', { class: 'clam-lid-breath' });
+    breath.append(shellFan(ribs, false));
+    lid.append(breath);
+    svg.append(lid, svgElement('ellipse', { class: 'clam-mouth', cx: 50, cy: 60, rx: 42, ry: 17 }), shellFan(ribs, true));
+    const pearl = document.createElement('span');
+    pearl.className = 'clam-pearl';
+    pearl.setAttribute('aria-hidden', 'true');
     const face = new Image();
     face.src = `${person.avatar}${person.avatar.includes('?') ? '&' : '?'}s=96`;
     face.alt = '';
@@ -129,26 +155,51 @@
     face.loading = 'lazy';
     face.decoding = 'async';
     face.referrerPolicy = 'no-referrer';
+    face.addEventListener('error', () => { face.hidden = true; });
+    const gleam = document.createElement('span');
+    gleam.className = 'clam-pearl-gleam';
+    pearl.append(face, gleam);
+    const bubble = document.createElement('span');
+    bubble.className = 'clam-bubble';
+    bubble.setAttribute('aria-hidden', 'true');
     const name = document.createElement('span');
-    name.className = 'urchin-name';
+    name.className = 'clam-name';
     name.textContent = person.login;
-    link.append(svg, face, name);
+    link.append(svg, pearl, bubble, name);
+    link.addEventListener('pointerenter', () => alignName(link));
+    link.addEventListener('focus', () => alignName(link));
+    link.addEventListener('animationend', event => {
+      if (event.animationName === 'clam-arrival') link.classList.remove('clam-arriving');
+    });
     return link;
   }
 
-  bed.append(...people.slice(0, MOST).map(urchin));
+  bed.append(...people.slice(0, MOST).map(clam));
   if (people.length > MOST) {
     const more = document.createElement('a');
-    more.className = 'urchin-more';
+    more.className = 'clam-more';
     more.href = 'https://github.com/orgs/ShoalApps/followers';
     more.textContent = `and ${people.length - MOST} more`;
     bed.append(more);
   }
-  const note = document.getElementById('urchins-title');
-  note.textContent = people.length === 1 ? 'One follower lives on our sea floor. ' : `${people.length} followers live on our sea floor. `;
+  const note = document.getElementById('clams-title');
+  note.textContent = people.length === 1 ? 'One pearl on our sea floor. ' : `${people.length} pearls on our sea floor. `;
   const join = document.createElement('a');
   join.href = 'https://github.com/ShoalApps';
-  join.textContent = 'Follow Shoal on GitHub to join them';
+  join.textContent = 'Follow Shoal on GitHub to add yours';
   note.append(join);
   section.hidden = false;
+  window.addEventListener('resize', () => {
+    bed.querySelectorAll('.clam:hover, .clam:focus').forEach(alignName);
+  });
+  if ('IntersectionObserver' in window) {
+    const arrival = new IntersectionObserver(entries => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.classList.add('clam-arriving');
+        arrival.unobserve(entry.target);
+      }
+    }, { threshold: .25 });
+    bed.querySelectorAll('.clam').forEach(link => arrival.observe(link));
+  }
 })();

@@ -1,6 +1,6 @@
 """Writes followers.json: everyone following ShoalApps on GitHub, oldest first as GitHub lists them.
 
-Each is drawn as a sea urchin on the website's sea floor. Run by GitHub Actions with its token,
+Each is drawn as a pearl inside a clam on the website's sea floor. Run by GitHub Actions with its token,
 so the website never calls the GitHub API from visitors' browsers.
 """
 import json

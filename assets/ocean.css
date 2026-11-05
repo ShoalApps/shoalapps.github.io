@@ -177,23 +177,41 @@ footer { background: var(--abyss); color: var(--foam); }
 .footer-word { margin: 0; font-size: var(--heading-2); font-weight: 750; line-height: 1.05; letter-spacing: -.025em; }
 .footer-content > div { font-size: var(--text-small); }
 .footer-content a { display: inline-block; padding-block: 8px; }
-/* Sea urchins: one for each follower, always whole, however many there are. */
-.urchins { margin: 40px auto 0; width: min(100% - 2 * var(--gutter), var(--page-width)); padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--foam) 25%, transparent); scroll-margin-top: 88px; }
-.urchins[hidden] { display: none; }
-.urchins-note { margin: 0 0 12px; font-size: var(--text-small); }
-.urchin-bed { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 4px 8px; }
-.urchin { position: relative; display: block; width: var(--urchin, 76px); aspect-ratio: 1; flex: none; border-radius: 50%; }
-.urchin svg { display: block; width: 100%; height: 100%; overflow: visible; transform-origin: 50% 50%; animation: urchin-sway var(--sway, 7s) ease-in-out infinite; animation-delay: var(--delay, 0s); transition: scale .35s var(--spring); }
-.urchin:hover svg, .urchin:focus-visible svg { scale: 1.12; }
-.urchin .spines { fill: none; stroke: var(--reef-leaf); stroke-width: 2.6; stroke-linecap: round; }
-.urchin .spines-back { fill: none; stroke: var(--reef-coral); stroke-width: 2.2; stroke-linecap: round; opacity: .85; }
-.urchin .shell { fill: var(--reef-fan); stroke: var(--reef-leaf); stroke-width: 2; }
-.urchin img { position: absolute; inset: 29%; width: 42%; height: 42%; border-radius: 50%; object-fit: cover; background: var(--reef-fan); }
-.urchin:focus-visible { outline-offset: 0; }
-.urchin-name { position: absolute; bottom: calc(100% + 2px); left: 50%; z-index: 2; translate: -50% 0; padding: 4px 10px; border-radius: 10px; background: var(--foam); color: var(--abyss); font-size: var(--label); font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .15s; }
-.urchin:hover .urchin-name, .urchin:focus-visible .urchin-name { opacity: 1; }
-.urchin-more { align-self: center; padding: 8px 12px; font-size: var(--text-small); }
-@keyframes urchin-sway { 0%, 100% { rotate: -5deg; } 50% { rotate: 5deg; } }
+/* Clams: each follower is a pearl, held above two scalloped fans on the sand. */
+.clams { margin: 40px auto 0; width: min(100% - 2 * var(--gutter), var(--page-width)); padding-top: 24px; border-top: 1px solid color-mix(in srgb, var(--foam) 25%, transparent); scroll-margin-top: 88px; }
+.clams[hidden] { display: none; }
+.clams-note { margin: 0 0 12px; font-size: var(--text-small); }
+.clam-bed { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 28px 12px; padding-top: 28px; }
+.clam { position: relative; display: block; width: var(--clam, 76px); aspect-ratio: 1; flex: none; border-radius: 16px; }
+.clam svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.clam-shell { fill: var(--clam-tint, var(--reef-leaf)); stroke: var(--reef-fan); stroke-width: 2; stroke-linejoin: round; }
+.clam-rib { fill: none; stroke: var(--reef-fan); stroke-width: 1.4; stroke-linecap: round; opacity: .65; }
+.clam-lower .clam-shell { fill: color-mix(in srgb, var(--clam-tint, var(--reef-leaf)) 78%, var(--reef-fan)); }
+.clam-lower .clam-rib { stroke: var(--reef-back); }
+.clam-mouth { fill: var(--abyss); stroke: var(--reef-fan); stroke-width: 2; }
+/* SVG view-box coordinates put both rotations exactly at the shared back hinge. */
+.clam-lid, .clam-lid-breath { transform-box: view-box; transform-origin: 50px 57px; }
+.clam-lid { transform: rotateX(0deg); transition: transform .6s var(--spring); }
+.clam-lid-breath { transform: rotateX(24deg); animation: clam-breathe var(--breath, 8s) var(--delay, 0s) ease-in-out infinite; }
+.clam:hover, .clam:focus-visible { z-index: 3; }
+.clam:hover .clam-lid, .clam:focus-visible .clam-lid { animation: none; transform: rotateX(-52deg); }
+.clam-pearl { position: absolute; left: 32%; top: 40%; width: 36%; aspect-ratio: 1; border-radius: 50%; background: var(--foam); box-shadow: 0 2px 5px color-mix(in srgb, var(--abyss) 65%, transparent); transition: transform .6s var(--spring); pointer-events: none; }
+.clam-pearl img { display: block; width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+.clam-pearl img[hidden] { display: none; }
+/* A translucent rim sits over the avatar; the separate gleam keeps it a round pearl. */
+.clam-pearl::after { content: ""; position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--foam), inset 2px 3px 4px color-mix(in srgb, var(--foam) 80%, transparent), inset -2px -3px 5px color-mix(in srgb, var(--reef-fan) 65%, transparent); }
+.clam-pearl-gleam { position: absolute; left: 24%; top: 17%; width: 19%; height: 12%; transform: rotate(-35deg); border-radius: 50%; background: var(--foam); opacity: .9; }
+.clam:hover .clam-pearl, .clam:focus-visible .clam-pearl { transform: translateY(-5px); }
+.clam-bubble { position: absolute; bottom: 62%; left: 47%; width: 5px; height: 5px; border: 1px solid var(--foam); border-radius: 50%; background: color-mix(in srgb, var(--reef-back) 35%, transparent); opacity: 0; pointer-events: none; animation: clam-bubble var(--bubble-time, 18s) var(--bubble-delay, 0s) ease-out infinite; }
+.clam:focus-visible { outline-color: var(--foam); outline-offset: 2px; }
+.clam-name { position: absolute; bottom: calc(100% + 2px); left: 50%; z-index: 2; transform: translateX(calc(-50% + var(--name-shift, 0px))); max-width: calc(100vw - 16px); overflow-wrap: anywhere; padding: 4px 10px; border-radius: 10px; background: var(--foam); color: var(--abyss); font-size: var(--label); font-weight: 600; width: max-content; opacity: 0; pointer-events: none; transition: opacity .15s; }
+.clam:hover .clam-name, .clam:focus-visible .clam-name { opacity: 1; }
+.clam-more { align-self: center; padding: 8px 12px; font-size: var(--text-small); }
+.clam-arriving .clam-lid { animation: clam-arrival 1.3s var(--arrival-delay, 0s) var(--spring) backwards; }
+.clam-arriving:hover .clam-lid, .clam-arriving:focus-visible .clam-lid { animation: none; }
+@keyframes clam-breathe { 0%, 100% { transform: rotateX(52deg); } 50% { transform: rotateX(60deg); } }
+@keyframes clam-arrival { 0%, 100% { transform: rotateX(0deg); } 45% { transform: rotateX(-52deg); } }
+@keyframes clam-bubble { 0%, 83% { transform: translateY(0); opacity: 0; } 86% { opacity: .7; } 100% { transform: translateY(-38px); opacity: 0; } }
 .art-drift { animation: drift 9s ease-in-out infinite; }
 .art-sway { transform-box: fill-box; transform-origin: 50% 100%; animation: sway 10s ease-in-out infinite; }
 @keyframes drift { 50% { transform: translateY(-7px); } }
