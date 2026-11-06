@@ -30,7 +30,8 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 Follow the [feature parity tracker](https://github.com/ShoalApps/butterflyfish/blob/main/compat/FEATURES.md) for Bluesky and X coverage.
 
 - **Search** — Independent Posts and People loading, Top and Latest sorting, automatic paging, and retry. NSFW-only paging scans through pages without matches. People search also loads more automatically and keeps its scroll position when switching tabs.
-- **Next Bluesky features** — Private bookmarks, notification read state and filters, quote composition, and deleting your own posts. Then tackle chat, starter packs, and feed and list management.
+- **Post management** — Delete your own Bluesky posts from the post menu.
+- **Next Bluesky features** — Private bookmarks, notification read state and filters, and quote composition. Then tackle chat, starter packs, and feed and list management.
 - **X** — Verify access and account requirements for each native feature before implementing it. Track bookmarks, lists, media, notifications, and messaging individually.
 - **Quality** — Test account isolation, cancellation, slow-network recovery, and pagination. Measure startup, first feed item, and scrolling on a real device. Review opt-in Sentry reports by app and release.
 
