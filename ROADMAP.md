@@ -5,7 +5,7 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 ## Shipped
 
 - **Squill** — Markdown notes and folders, a link graph with drag-to-link, a welcome tour with Squilly, encrypted notes, desktop sync, painting layer groups, rulers and perspective guides, and custom brushes and palettes.
-- **Shoal** — First-run setup for background updates and per-app controls to keep an installed version, and in-app release notes with expandable history.
+- **Shoal** — First-run setup for background updates and per-app controls to keep an installed version, in-app release notes with expandable history, and an update history of installs, updates and failures.
 - **Angelfish** — Local playlists, adaptive video buffering, and optional offline downloads based on subscriptions.
 - **Butterflyfish** — Offline drafts, including replies, an upstream compatibility screen, mu-style code formatting, explanations for unavailable quotes, larger photo galleries, pinned posts on profiles, text limits that count emoji correctly, private local follows, an NSFW-only filter, and optional break reminders.
 
@@ -15,7 +15,6 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 | --- | --- | --- |
 | [Squill](https://github.com/ShoalApps/squill) | Test stylus pressure, palm rejection and graph linking on real hardware. Cover zoomed graphs and nearby drop targets. | Planned |
 | [Squill](https://github.com/ShoalApps/squill) | Test device sync, encrypted note recovery and reminder delivery across real devices and reboots. | Planned |
-| [Shoal](https://github.com/ShoalApps/shoal) | Add an update history showing installs, updates and failures. | In development |
 | [Shoal](https://github.com/ShoalApps/shoal) | Offer stable, beta and nightly release channels, each with its own Material 3 icon. | Planned |
 | [Shared library](https://github.com/ShoalApps/shoal-common) | Adopt shared language handling and release notes across the apps. | In development |
 | [Shared library](https://github.com/ShoalApps/shoal-common) | Move settings components, shapes, error reporting and update helpers into the library, so one update reaches every app. | Planned |
