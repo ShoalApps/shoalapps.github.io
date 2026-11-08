@@ -8,7 +8,7 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 - **Shoal** — First-run setup for background updates and per-app controls to keep an installed version, in-app release notes with expandable history, an update history of installs, updates and failures, and Stable, Beta and Nightly release channels.
 - **Shared library** — The support card, app language, What's New, error reports, Expressive shapes and settings tiles are shared by Shoal, Angelfish and Butterflyfish, along with the self-updater in Angelfish and Butterflyfish, so one library update reaches each of them.
 - **Angelfish** — Local playlists, adaptive video buffering, and optional offline downloads based on subscriptions.
-- **Butterflyfish** — Offline drafts, including replies, an upstream compatibility screen, mu-style code formatting, explanations for unavailable quotes, larger photo galleries, pinned posts on profiles, text limits that count emoji correctly, private local follows, an NSFW-only filter, optional break reminders, and polished likes, reposts and follows, staying signed in through network failures, safer profile editing, clearer loading errors, and switching between several Bluesky accounts.
+- **Butterflyfish** — Offline drafts, including replies, an upstream compatibility screen, mu-style code formatting, explanations for unavailable quotes, larger photo galleries, pinned posts on profiles, text limits that count emoji correctly, private local follows, an NSFW-only filter, optional break reminders, and polished likes, reposts and follows, staying signed in through network failures, safer profile editing, clearer loading errors, and switching between several Bluesky and X accounts.
 
 ## Next
 
@@ -18,7 +18,6 @@ Squill is Shoal’s flagship. This roadmap groups the work across the apps by pr
 | [Squill](https://github.com/ShoalApps/squill) | Test device sync, encrypted note recovery and reminder delivery across real devices and reboots. | Planned |
 | [Angelfish](https://github.com/ShoalApps/angelfish) | Verify playback, queue transitions and offline audio on real devices across network conditions. | Planned |
 | [Butterflyfish](https://github.com/ShoalApps/butterflyfish) | Verify reply drafts and moderation against live Bluesky accounts. | Planned |
-| [Butterflyfish](https://github.com/ShoalApps/butterflyfish) | Support multiple X accounts. | Planned |
 | [Butterflyfish](https://github.com/ShoalApps/butterflyfish) | Make X faster and as native as Bluesky, and keep following upstream changes to both services. | Planned |
 
 ## Butterflyfish parity
